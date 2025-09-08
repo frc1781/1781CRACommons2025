@@ -88,7 +88,7 @@ public class SwerveSubsystem extends SubsystemBase
     // swerveDrive.pushOffsetsToEncoders(); // Set the absolute encoder to be used over the internal encoder and push the offsets onto it. Throws warning if not possible
     if (visionDriveTest)
     {
-      setupPhotonVision();
+      setupVision();
       // Stop the odometry thread if we are using vision that way we can synchronize updates better.
       swerveDrive.stopOdometryThread();
     }
@@ -109,10 +109,13 @@ public class SwerveSubsystem extends SubsystemBase
         new Pose2d(new Translation2d(Meter.of(2), Meter.of(0)), Rotation2d.fromDegrees(0)));
   }
 
-  public void setupPhotonVision()
+  public void setupVision()
   {
-    if (Constants.USING_VISION) {
+    if (Constants.USING_VISION == Constants.Vision.PHOTON_VISION) {
       vision = new Vision(swerveDrive::getPose, swerveDrive.field);
+    }
+    if (Constants.USING_VISION == Constants.Vision.LIMELIGHT_VISION) {
+      // WIP Limelight
     }
   }
 
@@ -123,7 +126,7 @@ public class SwerveSubsystem extends SubsystemBase
     if (visionDriveTest)
     {
       swerveDrive.updateOdometry();
-      if (Constants.USING_VISION) {
+      if (Constants.USING_VISION == Constants.Vision.PHOTON_VISION) {
         vision.updatePoseEstimation(swerveDrive);
       }
     }

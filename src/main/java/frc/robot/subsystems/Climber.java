@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -52,7 +53,7 @@ public class Climber extends SubsystemBase {
         }
         
         climberDutyCycle = climberPID.calculate(armEncoder.getPosition(), requestedPosition) + gravityDutyCycle;
-        climberDutyCycle = CRA.Util.clamp(-0.5, 0.5, climberDutyCycle);
+        climberDutyCycle = MathUtil.clamp(climberDutyCycle, -0.5, 0.5);
         motor.set(climberDutyCycle);
     }
 
@@ -67,4 +68,5 @@ public class Climber extends SubsystemBase {
             requestedPosition += .03;
         }, this).repeatedly();
     }
+
 }

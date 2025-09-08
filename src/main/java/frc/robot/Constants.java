@@ -42,6 +42,15 @@ public final class Constants
     public static final double WHEEL_LOCK_TIME = 10; // seconds
   }
 
+  public static final class TankDrivebaseConstants
+  {
+    // CAN IDs
+    public static final int LEFT_1  = 1;
+    public static final int LEFT_2  = 2;
+    public static final int RIGHT_1 = 3;
+    public static final int RIGHT_2 = 4;
+  }
+
   public static class OperatorConstants
   {
 
@@ -62,6 +71,7 @@ public final class Constants
 
   public static class Conveyor {
     public static final int MOTOR_CAN_ID = 15;
+    public static final int CURRENT_LIMIT = 30;
   }
 
  public class Climber {
@@ -83,5 +93,11 @@ public final class Constants
                 .i(I)
                 .d(D);
     }
+  
+  public enum Vision {
+    NO_VISION,
+    PHOTON_VISION,
+    LIMELIGHT_VISION
+  }
 
 }
