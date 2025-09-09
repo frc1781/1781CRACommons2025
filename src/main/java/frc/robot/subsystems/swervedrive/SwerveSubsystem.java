@@ -69,7 +69,7 @@ public class SwerveSubsystem extends SubsystemBase
     boolean blueAlliance = true;
     Pose2d startingPose = 
       blueAlliance ? 
-        new Pose2d(new Translation2d(Meter.of(1.2), Meter.of(7.0)), Rotation2d.fromDegrees(-55.0))
+        new Pose2d(new Translation2d(Meter.of(7.2), Meter.of(7.5)), Rotation2d.fromDegrees(270.0))
       : new Pose2d(new Translation2d(Meter.of(16.3), Meter.of(1.0)), Rotation2d.fromDegrees(125.0));
     SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
     try
