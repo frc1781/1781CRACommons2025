@@ -9,6 +9,12 @@
           "data": {
             "pathName": "leftSide"
           }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "leftSide2"
+          }
         }
       ]
     }
