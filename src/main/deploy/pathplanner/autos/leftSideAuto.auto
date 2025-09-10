@@ -21,6 +21,18 @@
           "data": {
             "pathName": "leftSide3"
           }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "leftSide4"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "leftSide3"
+          }
         }
       ]
     }
