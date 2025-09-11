@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.swervedrive.auto.Shoot;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import java.io.File;
@@ -36,7 +37,7 @@ public class RobotContainer
   private final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve/ava"));
   // private final TankDriveTrain tankDrive = new TankDriveTrain(driverXbox);
   // private final Conveyor conveyor = new Conveyor();
-  // private final Lights lights = new Lights();
+  private final Lights lights = new Lights();
   // private final Climber climber = new Climber();
   private final SendableChooser<Command> autoChooser;
   private double wait_seconds = 5;
@@ -92,6 +93,7 @@ public class RobotContainer
     SmartDashboard.putData("Auto Chooser", autoChooser);
     SmartDashboard.putNumber("Wait Time", wait_seconds);
     NamedCommands.registerCommand("CustomWaitCommand", new WaitCommand(SmartDashboard.getNumber("Wait Time", wait_seconds)));
+    NamedCommands.registerCommand("Shoot", new Shoot(lights));
   }
 
   private void configureBindings()

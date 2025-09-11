@@ -11,6 +11,12 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "Score"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "leftSide2"
@@ -23,6 +29,12 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "Score"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "leftSide4"
@@ -32,6 +44,12 @@
           "type": "path",
           "data": {
             "pathName": "leftSide3"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Score"
           }
         }
       ]
