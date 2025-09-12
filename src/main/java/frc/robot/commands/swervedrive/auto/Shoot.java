@@ -36,7 +36,7 @@ public class Shoot extends Command
   @Override
   public void execute()
   {
-    lights.run(Lights.Colors.RED, Lights.Patterns.SOLID);
+    lights.run(Lights.Colors.GREEN, Lights.Patterns.SOLID);
     System.out.println("running lights red");
   }
 

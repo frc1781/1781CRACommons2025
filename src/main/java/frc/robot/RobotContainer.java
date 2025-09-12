@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -87,13 +88,14 @@ public class RobotContainer
   public RobotContainer()
   {
     configureBindings();
-
     DriverStation.silenceJoystickConnectionWarning(true);
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser", autoChooser);
     SmartDashboard.putNumber("Wait Time", wait_seconds);
     NamedCommands.registerCommand("CustomWaitCommand", new WaitCommand(SmartDashboard.getNumber("Wait Time", wait_seconds)));
-    NamedCommands.registerCommand("Shoot", new Shoot(lights));
+    //NamedCommands.registerCommand("Shoot", new Shoot(lights));
+    NamedCommands.registerCommand("Shoot", new PrintCommand("Running shoot command"));
+    
   }
 
   private void configureBindings()
@@ -152,8 +154,10 @@ public class RobotContainer
       driverXbox.rightBumper().onTrue(Commands.none());
      // driverXbox.povUp().whileTrue(climber.ascend());
      // driverXbox.povDown().whileTrue(climber.descend());
-     driverXbox.y().onTrue(lights.set(Lights.Special.RAINBOW));
+     //driverXbox.y().onTrue(lights.set(Lights.Special.RAINBOW));
+     driverXbox.y().onTrue(new Shoot(lights));
      driverXbox.b().onTrue(lights.set(Lights.Colors.WHITE, Lights.Patterns.MARCH));
+     
 
      coralEnter.and(coralExit.negate()).and(coralHopper.negate()).onTrue(lights.set(Lights.Colors.RED, Lights.Patterns.FAST_FLASH));
      coralHopper.and(coralExit.negate()).onTrue(lights.set(Lights.Colors.RED, Lights.Patterns.MARCH));
