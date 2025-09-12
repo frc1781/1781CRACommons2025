@@ -33,7 +33,7 @@ import swervelib.SwerveInputStream;
 public class RobotContainer
 {
   final CommandXboxController driverXbox = new CommandXboxController(0);
-  //private final Sensation sensation = new Sensation();
+  private final Sensation sensation = new Sensation();
   private final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve/ava"));
   // private final TankDriveTrain tankDrive = new TankDriveTrain(driverXbox);
   // private final Conveyor conveyor = new Conveyor();
@@ -42,9 +42,9 @@ public class RobotContainer
   private final SendableChooser<Command> autoChooser;
   private double wait_seconds = 5;
 
-  //Trigger coralEnter = new Trigger(sensation::coralPresent);
- // Trigger coralHopper = new Trigger(sensation::coralInHopper);
- // Trigger coralExit = new Trigger(sensation::coralExitedHopper);
+  Trigger coralEnter = new Trigger(sensation::coralPresent);
+  Trigger coralHopper = new Trigger(sensation::coralInHopper);
+  Trigger coralExit = new Trigger(sensation::coralExitedHopper);
 
   //Driving the robot during teleOp
   SwerveInputStream driveAngularVelocity = SwerveInputStream.of(
@@ -116,7 +116,7 @@ public class RobotContainer
     }
 
     //conveyor.setDefaultCommand(conveyor.clearCoral(coralHopper));
-   // lights.setDefaultCommand(lights.set(Lights.Special.OFF));
+    lights.setDefaultCommand(lights.set(Lights.Special.OFF));
    // climber.setDefaultCommand(climber.idle());
 
     if (Robot.isSimulation())
@@ -152,12 +152,12 @@ public class RobotContainer
       driverXbox.rightBumper().onTrue(Commands.none());
      // driverXbox.povUp().whileTrue(climber.ascend());
      // driverXbox.povDown().whileTrue(climber.descend());
-     // driverXbox.y().onTrue(lights.set(Lights.Special.RAINBOW));
-     // driverXbox.b().onTrue(lights.set(Lights.Colors.WHITE, Lights.Patterns.MARCH));
+     driverXbox.y().onTrue(lights.set(Lights.Special.RAINBOW));
+     driverXbox.b().onTrue(lights.set(Lights.Colors.WHITE, Lights.Patterns.MARCH));
 
-      //coralEnter.and(coralExit.negate()).and(coralHopper.negate()).onTrue(lights.set(Lights.Colors.RED, Lights.Patterns.FAST_FLASH));
-     // coralHopper.and(coralExit.negate()).onTrue(lights.set(Lights.Colors.RED, Lights.Patterns.MARCH));
-     // coralExit.onFalse(lights.set(Lights.Colors.RED, Lights.Patterns.SOLID));
+     coralEnter.and(coralExit.negate()).and(coralHopper.negate()).onTrue(lights.set(Lights.Colors.RED, Lights.Patterns.FAST_FLASH));
+     coralHopper.and(coralExit.negate()).onTrue(lights.set(Lights.Colors.RED, Lights.Patterns.MARCH));
+     coralExit.onFalse(lights.set(Lights.Colors.RED, Lights.Patterns.SOLID));
     }
   }
 
