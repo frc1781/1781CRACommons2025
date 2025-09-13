@@ -34,8 +34,8 @@ import swervelib.SwerveInputStream;
 public class RobotContainer
 {
   final CommandXboxController driverXbox = new CommandXboxController(0);
-  private final Sensation sensation = new Sensation();
-  private final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve/ava"));
+  private Sensation sensation;
+  private SwerveSubsystem drivebase; //im sure this wont cause issues later
   // private final TankDriveTrain tankDrive = new TankDriveTrain(driverXbox);
   // private final Conveyor conveyor = new Conveyor();
   private final Lights lights = new Lights();
@@ -87,15 +87,16 @@ public class RobotContainer
 
   public RobotContainer()
   {
+    sensation = new Sensation();
+    drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve/ava"));
+    NamedCommands.registerCommand("CustomWaitCommand", new WaitCommand(SmartDashboard.getNumber("Wait Time", wait_seconds)));
+    NamedCommands.registerCommand("Shoot", new Shoot(lights));
     configureBindings();
     DriverStation.silenceJoystickConnectionWarning(true);
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser", autoChooser);
     SmartDashboard.putNumber("Wait Time", wait_seconds);
-    NamedCommands.registerCommand("CustomWaitCommand", new WaitCommand(SmartDashboard.getNumber("Wait Time", wait_seconds)));
-    //NamedCommands.registerCommand("Shoot", new Shoot(lights));
-    NamedCommands.registerCommand("Shoot", new PrintCommand("Running shoot command"));
-    
+    //NamedCommands.registerCommand("Shoot", new PrintCommand("Running shoot command"));
   }
 
   private void configureBindings()
