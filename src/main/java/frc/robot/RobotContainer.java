@@ -38,7 +38,7 @@ public class RobotContainer
   private Sensation sensation = new Sensation();;
   private SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve/ava"));; //im sure this wont cause issues later
   // private final TankDriveTrain tankDrive = new TankDriveTrain(driverXbox);
-  // private final Conveyor conveyor = new Conveyor();
+  private final Conveyor conveyor = new Conveyor();
   private final Lights lights = new Lights();
   // private final Climber climber = new Climber();
   private final SendableChooser<Command> autoChooser;
@@ -117,7 +117,7 @@ public class RobotContainer
       drivebase.setDefaultCommand(driveFieldOrientedDirectAngle);
     }
 
-    //conveyor.setDefaultCommand(conveyor.clearCoral(coralHopper));
+    conveyor.setDefaultCommand(conveyor.clearCoral(coralHopper));
     lights.setDefaultCommand(lights.set(Lights.Special.OFF));
     sensation.setDefaultCommand(Commands.idle(sensation));
    // climber.setDefaultCommand(Commands.);

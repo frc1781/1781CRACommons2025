@@ -6,6 +6,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import java.util.function.BooleanSupplier;
 
+import org.littletonrobotics.junction.Logger;
+
 import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig;
@@ -26,6 +28,16 @@ public class Conveyor extends SubsystemBase {
     }
     
     public Command clearCoral(BooleanSupplier hasCoralToClear) {
-        return new RunCommand(() -> {motor.set(hasCoralToClear.getAsBoolean() ? 0.5 : 0);}, this);
+       
+        return new RunCommand(() -> {
+            double dc;
+            if (hasCoralToClear.getAsBoolean()) {
+                dc = 0.5;
+            } else {
+                dc = 0;
+            }
+            Logger.recordOutput("Conveyor/motorOutput", dc);
+            motor.set(dc);
+        }, this);
     }         
 }
