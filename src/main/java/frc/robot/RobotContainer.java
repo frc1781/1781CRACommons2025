@@ -96,7 +96,6 @@ public class RobotContainer
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser", autoChooser);
     SmartDashboard.putNumber("Wait Time", wait_seconds);
-    //NamedCommands.registerCommand("Shoot", new PrintCommand("Running shoot command"));
   }
 
   private void configureBindings()
