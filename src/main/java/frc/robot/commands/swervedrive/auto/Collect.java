@@ -2,6 +2,10 @@ package frc.robot.commands.swervedrive.auto;
 
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+
+import java.util.function.BooleanSupplier;
+
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Lights;
@@ -16,21 +20,24 @@ import frc.robot.subsystems.Lights;
 //   }
 // }
 
-public class Shoot extends Command
+public class Collect extends Command
 {
   Timer t;
   Lights lights;
-  public Shoot(Lights lights)
+  BooleanSupplier coralPresent;
+
+  public Collect(Lights lights, BooleanSupplier coralPresent)
   {
     t = new Timer();
     this.lights = lights;
+    this.coralPresent = coralPresent;
     //addRequirements(lights);
   }
 
   @Override
   public void initialize()
   {
-     t.restart();
+    t.restart();
   }
 
   @Override
@@ -43,7 +50,7 @@ public class Shoot extends Command
   @Override
   public boolean isFinished()
   {
-    return t.get() > 5;
+    return t.get() > 15 || coralPresent.getAsBoolean();
   }
 
   @Override

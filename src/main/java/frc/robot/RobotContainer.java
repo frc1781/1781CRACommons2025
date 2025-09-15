@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.swervedrive.auto.Collect;
 import frc.robot.commands.swervedrive.auto.Shoot;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
@@ -34,8 +35,8 @@ import swervelib.SwerveInputStream;
 public class RobotContainer
 {
   final CommandXboxController driverXbox = new CommandXboxController(0);
-  private Sensation sensation;
-  private SwerveSubsystem drivebase; //im sure this wont cause issues later
+  private Sensation sensation = new Sensation();;
+  private SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve/ava"));; //im sure this wont cause issues later
   // private final TankDriveTrain tankDrive = new TankDriveTrain(driverXbox);
   // private final Conveyor conveyor = new Conveyor();
   private final Lights lights = new Lights();
@@ -43,9 +44,9 @@ public class RobotContainer
   private final SendableChooser<Command> autoChooser;
   private double wait_seconds = 5;
 
-  Trigger coralEnter = new Trigger(sensation::coralPresent);
-  Trigger coralHopper = new Trigger(sensation::coralInHopper);
-  Trigger coralExit = new Trigger(sensation::coralExitedHopper);
+   Trigger coralEnter = new Trigger(sensation::coralPresent);
+   Trigger coralHopper = new Trigger(sensation::coralInHopper);
+   Trigger coralExit = new Trigger(sensation::coralExitedHopper);
 
   //Driving the robot during teleOp
   SwerveInputStream driveAngularVelocity = SwerveInputStream.of(
@@ -87,10 +88,9 @@ public class RobotContainer
 
   public RobotContainer()
   {
-    sensation = new Sensation();
-    drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve/ava"));
     NamedCommands.registerCommand("CustomWaitCommand", new WaitCommand(SmartDashboard.getNumber("Wait Time", wait_seconds)));
     NamedCommands.registerCommand("Shoot", new Shoot(lights));
+    NamedCommands.registerCommand("Collect", new Collect(lights, coralEnter));
     configureBindings();
     DriverStation.silenceJoystickConnectionWarning(true);
     autoChooser = AutoBuilder.buildAutoChooser();
@@ -119,7 +119,8 @@ public class RobotContainer
 
     //conveyor.setDefaultCommand(conveyor.clearCoral(coralHopper));
     lights.setDefaultCommand(lights.set(Lights.Special.OFF));
-   // climber.setDefaultCommand(climber.idle());
+    sensation.setDefaultCommand(Commands.idle(sensation));
+   // climber.setDefaultCommand(Commands.);
 
     if (Robot.isSimulation())
     {
