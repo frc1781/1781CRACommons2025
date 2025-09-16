@@ -44,7 +44,6 @@ public class Collect extends Command
   public void execute()
   {
     lights.run(Lights.Colors.RED, Lights.Patterns.SOLID);
-    System.out.println("running lights red");
   }
 
   @Override
