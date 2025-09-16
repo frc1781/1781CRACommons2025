@@ -20,6 +20,8 @@ import swervelib.math.Matter;
  */
 public final class Constants
 {
+
+
   public static final Vision USING_VISION = Vision.PHOTON_VISION;  //set true if you have working vision
   public static final boolean UPDATE_HEADING_FROM_VISION = false;  //if false heading is only from gyro
   public static final double ROBOT_MASS = (148 - 20.3) * 0.453592; // 32lbs * kg per pound
@@ -63,6 +65,17 @@ public final class Constants
 
   public static class SensationConstants
   {
+    public static double ARM_TOF_DISTANCE = 700;
+    public static double MAX_TIME_LOOKING_FOR_POLE = 0.5;
+
+    public static int ARM_TOF_ID = 51;
+    public static int RIGHT_FRONT_TOF_ID = 52;
+    public static int LEFT_FRONT_TOF_ID = 53;
+
+    public static double TARGET_TOF_PARALLEL_DISTANCE = 280;
+    public static double TARGET_TOF_PARALLEL_DISTANCE_SHORT = 170;
+    public static double TARGET_TOF_CENTERING_PARALLEL_DISTANCE = 250;
+
     public static final int enter = 3;
     public static final int hopperBack = 1;
     public static final int hopperFront = 0;

@@ -47,7 +47,7 @@ public class RobotContainer
    Trigger coralEnter = new Trigger(sensation::coralPresent);
    Trigger coralHopper = new Trigger(sensation::coralInHopper);
    Trigger coralExit = new Trigger(sensation::coralExitedHopper);
-   Trigger robotInPostion = new Trigger(this::inPosition);
+   Trigger robotInPosition = new Trigger(this::inPosition);
 
   //Driving the robot during teleOp
   SwerveInputStream driveAngularVelocity = SwerveInputStream.of(
@@ -160,7 +160,7 @@ public class RobotContainer
      driverXbox.y().onTrue(new Shoot(lights));
      driverXbox.b().onTrue(lights.set(Lights.Colors.WHITE, Lights.Patterns.MARCH));
      
-
+     robotInPosition.onTrue(lights.set(Lights.Colors.RED, Lights.Patterns.SOLID));
      coralEnter.and(coralExit.negate()).and(coralHopper.negate()).onTrue(lights.set(Lights.Colors.RED, Lights.Patterns.FAST_FLASH));
      coralHopper.and(coralExit.negate()).onTrue(lights.set(Lights.Colors.RED, Lights.Patterns.MARCH));
      coralExit.onFalse(lights.set(Lights.Colors.RED, Lights.Patterns.SOLID));
