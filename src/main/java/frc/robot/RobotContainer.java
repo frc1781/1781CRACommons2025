@@ -47,6 +47,7 @@ public class RobotContainer
    Trigger coralEnter = new Trigger(sensation::coralPresent);
    Trigger coralHopper = new Trigger(sensation::coralInHopper);
    Trigger coralExit = new Trigger(sensation::coralExitedHopper);
+   Trigger robotInPostion = new Trigger(this::inPosition);
 
   //Driving the robot during teleOp
   SwerveInputStream driveAngularVelocity = SwerveInputStream.of(
@@ -171,13 +172,24 @@ public class RobotContainer
    *
    * @return the command to run in autonomous
    */
-  public Command getAutonomousCommand()
-  {
-    return autoChooser.getSelected();
-  }
+    public Command getAutonomousCommand()
+    {
+      return autoChooser.getSelected();
+    }
 
-  public void setMotorBrake(boolean brake)
-  {
-    drivebase.setMotorBrake(brake);
+    public void setMotorBrake(boolean brake)
+    {
+      drivebase.setMotorBrake(brake);
+    }
+
+    public boolean inPosition(){
+      /*Triggered by: 
+      wanting to score 
+      coral in claw
+      elevator and arm in pole position
+      TOF left and TOF right are relatively close in value to each other, under a threshold 
+      identified target aprilTag
+      */
+      return false;
+    }
   }
-}

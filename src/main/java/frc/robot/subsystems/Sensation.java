@@ -24,6 +24,8 @@ public class Sensation extends SubsystemBase
 
     public Sensation()
     {
+        
+
         enterBeam = new DigitalInput(Constants.SensationConstants.enter);
         hopperBackBeam = new DigitalInput(Constants.SensationConstants.hopperBack);
         hopperFrontBeam = new DigitalInput(Constants.SensationConstants.hopperFront);
