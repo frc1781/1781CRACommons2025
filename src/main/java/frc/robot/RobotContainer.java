@@ -183,13 +183,13 @@ public class RobotContainer
     }
 
     public boolean inPosition(){
-      /*Triggered by: 
-      wanting to score 
-      coral in claw
-      elevator and arm in pole position
-      TOF left and TOF right are relatively close in value to each other, under a threshold 
-      identified target aprilTag
-      */
-      return false;
+    
+      return 
+         sensation.leftTOFisValid() && 
+         sensation.rightTOFisValid() && 
+         sensation.leftTOF() < 1000 && 
+         sensation.rightTOF() < 1000;
+         //robotController.visionSystem.getDoubleCameraReefApriltag() != -1;
     }
+
   }
