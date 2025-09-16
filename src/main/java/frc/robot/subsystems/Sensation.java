@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import frc.robot.Constants;
+import frc.robot.utils.EEtimeOfFlight;
 
 import java.util.function.BooleanSupplier;
 
@@ -21,11 +22,18 @@ public class Sensation extends SubsystemBase
     DigitalInput hopperBackBeam;
     DigitalInput hopperFrontBeam;
     DigitalInput exitBeam;
+    private final EEtimeOfFlight leftTOF;
+    private final EEtimeOfFlight rightTOF;
+    private final EEtimeOfFlight armTOF;
+    private EEtimeOfFlight coralTimeOfFlight;
 
     public Sensation()
     {
-        
 
+        armTOF = new EEtimeOfFlight(Constants.SensationConstants.ARM_TOF_ID, 20);
+        armTOF.tof.setRangeOfInterest(6, 6, 10, 10);
+        leftTOF = new EEtimeOfFlight(Constants.SensationConstants.LEFT_FRONT_TOF_ID, 20);
+        rightTOF = new EEtimeOfFlight(Constants.SensationConstants.RIGHT_FRONT_TOF_ID, 20);
         enterBeam = new DigitalInput(Constants.SensationConstants.enter);
         hopperBackBeam = new DigitalInput(Constants.SensationConstants.hopperBack);
         hopperFrontBeam = new DigitalInput(Constants.SensationConstants.hopperFront);
@@ -36,6 +44,12 @@ public class Sensation extends SubsystemBase
         Logger.recordOutput("Sensation/coralPresent", coralPresent());
         Logger.recordOutput("Sensation/coralInHopper", coralInHopper());
         Logger.recordOutput("Sensation/coralExitedHopper", coralExitedHopper());
+        Logger.recordOutput("Sensation/armTOF", armTOF.getRange());
+        Logger.recordOutput("Sensation/armTOFVaild", armTOF.isRangeValidRegularCheck());
+        Logger.recordOutput("Sensation/leftTOF", leftTOF.getRange());
+        Logger.recordOutput("Sensation/leftTOFVaild", leftTOF.isRangeValidRegularCheck());
+        Logger.recordOutput("Sensation/rightTOF", rightTOF.getRange());
+        Logger.recordOutput("Sensation/rightTOFVaild", rightTOF.isRangeValidRegularCheck());
     }
 
     public boolean coralPresent() {
@@ -49,4 +63,36 @@ public class Sensation extends SubsystemBase
     public boolean coralExitedHopper() {
         return !exitBeam.get() && hopperBackBeam.get() && hopperFrontBeam.get();
     }
-}
+
+    public double leftTOF(){
+       return leftTOF.getRange();
+    }
+
+    public double rightTOF(){
+        return rightTOF.getRange();
+     }
+
+     public double armTOF(){
+        return armTOF.getRange();
+     }
+
+     public double coralTimeOfFlight(){
+        return coralTimeOfFlight.getRange();
+     }
+
+     public boolean leftTOFisValid(){
+        return leftTOF.isRangeValidRegularCheck();
+     }
+ 
+     public boolean rightTOFisValid(){
+         return rightTOF.isRangeValidRegularCheck();
+      }
+ 
+      public boolean armTOFisValid(){
+         return armTOF.isRangeValidRegularCheck();
+      }
+ 
+      public Boolean  coralTimeOfFlightisValid(){
+         return coralTimeOfFlight.isRangeValidRegularCheck();
+      }
+    } 
