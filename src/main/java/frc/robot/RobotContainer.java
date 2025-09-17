@@ -29,6 +29,7 @@ import frc.robot.commands.swervedrive.auto.Shoot;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import java.io.File;
+import java.util.NoSuchElementException;
 
 import swervelib.SwerveInputStream;
 
@@ -40,6 +41,7 @@ public class RobotContainer
   // private final TankDriveTrain tankDrive = new TankDriveTrain(driverXbox);
   private final Conveyor conveyor = new Conveyor();
   private final Lights lights = new Lights();
+  private final Elevator elevator = new Elevator();
   // private final Climber climber = new Climber();
   private final SendableChooser<Command> autoChooser;
   private double wait_seconds = 5;
@@ -120,6 +122,7 @@ public class RobotContainer
 
     conveyor.setDefaultCommand(conveyor.clearCoral(coralHopper));
     lights.setDefaultCommand(lights.set(Lights.Special.OFF));
+    elevator.setDefaultCommand(elevator.idle());
     sensation.setDefaultCommand(Commands.idle(sensation));
    // climber.setDefaultCommand(Commands.);
 
@@ -165,6 +168,21 @@ public class RobotContainer
      coralHopper.and(coralExit.negate()).onTrue(lights.set(Lights.Colors.RED, Lights.Patterns.MARCH));
      coralExit.onFalse(lights.set(Lights.Colors.RED, Lights.Patterns.SOLID));
     }
+  }
+
+  public static boolean isRed() {
+        try {
+            return DriverStation.getAlliance().get() == DriverStation.Alliance.Red;
+        }
+        catch (NoSuchElementException e) {
+            return false;
+        }
+
+  }
+
+  public boolean isSafeForElevatorStage2toMove() {
+    //THIS IS NOT DONE YET, REQUIRES ARM SUBSYSTEM
+    return false;
   }
 
   /**
