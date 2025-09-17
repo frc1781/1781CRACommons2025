@@ -24,16 +24,10 @@ import frc.robot.Constants;
 import frc.robot.RobotContainer;
 
 public class Elevator extends SubsystemBase{
-
-
     private boolean isIdle = true;
-
     private ElevatorState currentState;
-
     private final SparkMax motorRight;
-
     private SparkMax motorLeft;
-
     private EEtimeOfFlight firstStageTOF;
     private EEtimeOfFlight secondStageTOF;
     // measure the max distance
@@ -46,12 +40,12 @@ public class Elevator extends SubsystemBase{
     private ElevatorState previousSmartState;
 
     private ElevatorFeedforward feedforwardController = new ElevatorFeedforward
-            (
-                Constants.Elevator.ELEVATOR_KS,
-                Constants.Elevator.ELEVATOR_KG,
-                Constants.Elevator.ELEVATOR_KV,
-                Constants.Elevator.ELEVATOR_KA
-            );
+        (
+            Constants.Elevator.ELEVATOR_KS,
+            Constants.Elevator.ELEVATOR_KG,
+            Constants.Elevator.ELEVATOR_KV,
+            Constants.Elevator.ELEVATOR_KA
+        );
 
     private PIDController positionPID = new PIDController(0.001, 0,0);
 
@@ -107,6 +101,7 @@ public class Elevator extends SubsystemBase{
         return secondStageTOF.getRange();
     }
 
+<<<<<<< Updated upstream
     // public ElevatorState getSmartAlgaeState() {
     //     int apriltag = RobotContainer.visionSystem.getDoubleCameraReefApriltag();        //NEED TO INCORPORATE VISION
 
@@ -133,11 +128,14 @@ public class Elevator extends SubsystemBase{
     //     }
     // }
 
+=======
+>>>>>>> Stashed changes
     public void goToPosition() {
         double firstStagePosition = getFirstStagePosition();
         double secondStagePosition = getSecondStagePosition();
         double dutyCycle = 0;
         Double[] desiredPosition = positions.get(getCurrentState());
+<<<<<<< Updated upstream
         // if (getCurrentState() == ElevatorState.SMART_ALGAE) {
         //     ElevatorState smartAlgaeState = getSmartAlgaeState();
         //     if (previousSmartState == null || previousSmartState != smartAlgaeState) {
@@ -147,8 +145,10 @@ public class Elevator extends SubsystemBase{
         //     Logger.recordOutput("Elevator/smartAlgaeState", smartAlgaeState);
         //     desiredPosition = positions.get(smartAlgaeState);
         // }
+=======
+
+>>>>>>> Stashed changes
         double Tolerance = 80;
-        
         if (secondStageTOF.isRangeValidRegularCheck() && Math.abs(desiredPosition[1] - secondStagePosition) >= Tolerance) {
             double ff = -feedforwardController.calculate(desiredPosition[1] - secondStagePosition);
             Logger.recordOutput("Elevator/FFUnClamped", ff);
@@ -181,7 +181,6 @@ public class Elevator extends SubsystemBase{
         motorRight.set(dutyCycle);
     }
 
-
     public ElevatorState getCurrentState() {
         return currentState;
     }
@@ -193,8 +192,6 @@ public class Elevator extends SubsystemBase{
 
         return EEUtil.clamp(0, 0.8, dutyCycle);
     }
-
-   
 
     public enum ElevatorState {
         SAFE,
@@ -214,5 +211,4 @@ public class Elevator extends SubsystemBase{
         SMART_ALGAE,
         BARGE_SCORE
     }
-
 }
