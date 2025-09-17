@@ -33,6 +33,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.Constants;
+import frc.robot.subsystems.Lights;
+import frc.robot.subsystems.Sensation;
 import frc.robot.subsystems.swervedrive.Vision.Cameras;
 import frc.robot.utils.EEUtil;
 
@@ -41,8 +43,12 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
+import org.littletonrobotics.junction.Logger;
+
+
 import org.json.simple.parser.ParseException;
 import org.photonvision.targeting.PhotonPipelineResult;
 import swervelib.SwerveController;
@@ -133,6 +139,9 @@ public class SwerveSubsystem extends SubsystemBase
         vision.updatePoseEstimation(swerveDrive);
       }
     }
+
+    Logger.recordOutput("Swerve Drive/inPosition", inPosition);
+
   }
 
   @Override
@@ -259,29 +268,7 @@ public class SwerveSubsystem extends SubsystemBase
     return AutoBuilder.pathfindToPose(pose, constraints, edu.wpi.first.units.Units.MetersPerSecond.of(0) );
   }
 
-  /**
-   * Use PathPlanner Path finding to go to a point on the field.
-   *
-   * @param pose Target {@link Pose2d} to go to.
-   * @return PathFinding command
-   */
-  public Command position(DoubleSupplier rightTOF, DoubleSupplier leftTOF)
-  {
-    inPosition = false;
-    return run(() -> {
-      ChassisSpeeds inputSpeeds = new ChassisSpeeds(); 
-      inPosition = (Math.abs(rightTOF.getAsDouble() - leftTOF.getAsDouble()) < 250);
-      if(!inPosition){
-        inputSpeeds.vxMetersPerSecond = EEUtil.clamp(-0.5, 0.5, 0.005 * ((leftTOF.getAsDouble() + rightTOF.getAsDouble()) / 2.0 - 280));
-      }
-      swerveDrive.drive(inputSpeeds);
-    }).until(this::inPosition);
-  }
-
-  private boolean inPosition(){
-    return inPosition;
-  }
-
+  
   /**
    * Drive with {@link SwerveSetpointGenerator} from 254, implemented by PathPlanner.
    *
@@ -732,4 +719,75 @@ public class SwerveSubsystem extends SubsystemBase
   {
     return swerveDrive;
   }
+
+  public class Position extends Command {
+    Timer t;
+    BooleanSupplier coralPresent;
+    Sensation tofs;
+
+    public Position(Sensation tofs)
+    {
+      t = new Timer();
+      this.tofs = tofs;
+      addRequirements(SwerveSubsystem.this);
+    }
+
+    @Override
+    public void initialize()
+    {
+      t.restart();
+      inPosition = false;
+    }
+
+    @Override
+    public void execute()
+    {
+      ChassisSpeeds inputSpeeds = new ChassisSpeeds(); 
+      double avgDist = (tofs.leftTOF() + tofs.leftTOF()) / 2.0;
+      inPosition = avgDist < 290;
+      if(!inPosition){
+        inputSpeeds.vxMetersPerSecond = EEUtil.clamp(-0.5, 0.5, 0.005 * (avgDist - 280));
+      }
+      swerveDrive.drive(inputSpeeds);
+      System.out.println(inputSpeeds.vxMetersPerSecond);
+    }
+
+    @Override
+    public boolean isFinished()
+    {
+      return inPosition;
+    }
+
+    @Override
+    public void end(boolean interrupted)
+    {
+    
+    }
+  }
+
+  /**
+   * Use PathPlanner Path finding to go to a point on the field.
+   *
+   * @param pose Target {@link Pose2d} to go to.
+   * @return PathFinding command
+   */
+  // public Command position(DoubleSupplier rightTOF, DoubleSupplier leftTOF)
+  // {
+  //   inPosition = false;
+  //   return run(() -> {
+  //     ChassisSpeeds inputSpeeds = new ChassisSpeeds(); 
+  //     double avgDist = (leftTOF.getAsDouble() + rightTOF.getAsDouble()) / 2.0;
+  //     inPosition = avgDist < 290;
+  //     if(!inPosition){
+  //       inputSpeeds.vxMetersPerSecond = EEUtil.clamp(-0.5, 0.5, 0.005 * (avgDist - 280));
+  //     }
+  //     swerveDrive.drive(inputSpeeds);
+  //     System.out.println(inputSpeeds.vxMetersPerSecond);
+  //   }).until(this::inPosition);
+  // }
+
+  // private boolean inPosition(){
+  //   return inPosition;
+  // }
+
 }
