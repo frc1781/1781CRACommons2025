@@ -265,7 +265,7 @@ public class SwerveSubsystem extends SubsystemBase
    * @param pose Target {@link Pose2d} to go to.
    * @return PathFinding command
    */
-  public Command Position(DoubleSupplier rightTOF, DoubleSupplier leftTOF)
+  public Command position(DoubleSupplier rightTOF, DoubleSupplier leftTOF)
   {
     inPosition = false;
     return run(() -> {
