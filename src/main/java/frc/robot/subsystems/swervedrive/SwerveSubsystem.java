@@ -34,6 +34,8 @@ import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.Constants;
 import frc.robot.subsystems.swervedrive.Vision.Cameras;
+import frc.robot.utils.EEUtil;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -58,7 +60,7 @@ public class SwerveSubsystem extends SubsystemBase
   private final SwerveDrive swerveDrive;
   private final boolean     visionDriveTest = true;
   private       Vision      vision;
-
+  private boolean inPosition = false;
   /**
    * Initialize {@link SwerveDrive} with the directory provided.
    *
@@ -255,6 +257,29 @@ public class SwerveSubsystem extends SubsystemBase
 
 // Since AutoBuilder is configured, we can use it to build pathfinding commands
     return AutoBuilder.pathfindToPose(pose, constraints, edu.wpi.first.units.Units.MetersPerSecond.of(0) );
+  }
+
+  /**
+   * Use PathPlanner Path finding to go to a point on the field.
+   *
+   * @param pose Target {@link Pose2d} to go to.
+   * @return PathFinding command
+   */
+  public Command Position(DoubleSupplier rightTOF, DoubleSupplier leftTOF)
+  {
+    inPosition = false;
+    return run(() -> {
+      ChassisSpeeds inputSpeeds = new ChassisSpeeds(); 
+      inPosition = (Math.abs(rightTOF.getAsDouble() - leftTOF.getAsDouble()) < 250);
+      if(!inPosition){
+        inputSpeeds.vxMetersPerSecond = EEUtil.clamp(-0.5, 0.5, 0.005 * ((leftTOF.getAsDouble() + rightTOF.getAsDouble()) / 2.0 - 280));
+      }
+      swerveDrive.drive(inputSpeeds);
+    }).until(this::inPosition);
+  }
+
+  private boolean inPosition(){
+    return inPosition;
   }
 
   /**
