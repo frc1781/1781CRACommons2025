@@ -2,16 +2,8 @@ package frc.robot.subsystems;
 
 import frc.robot.Constants;
 import frc.robot.utils.EEtimeOfFlight;
-
-import java.util.function.BooleanSupplier;
-
 import org.littletonrobotics.junction.Logger;
-
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Sensation extends SubsystemBase
@@ -29,7 +21,6 @@ public class Sensation extends SubsystemBase
 
     public Sensation()
     {
-
         armTOF = new EEtimeOfFlight(Constants.SensationConstants.ARM_TOF_ID, 20);
         armTOF.tof.setRangeOfInterest(6, 6, 10, 10);
         leftTOF = new EEtimeOfFlight(Constants.SensationConstants.LEFT_FRONT_TOF_ID, 20);
