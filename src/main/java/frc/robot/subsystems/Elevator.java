@@ -101,7 +101,6 @@ public class Elevator extends SubsystemBase{
         return secondStageTOF.getRange();
     }
 
-<<<<<<< Updated upstream
     // public ElevatorState getSmartAlgaeState() {
     //     int apriltag = RobotContainer.visionSystem.getDoubleCameraReefApriltag();        //NEED TO INCORPORATE VISION
 
@@ -128,14 +127,11 @@ public class Elevator extends SubsystemBase{
     //     }
     // }
 
-=======
->>>>>>> Stashed changes
     public void goToPosition() {
         double firstStagePosition = getFirstStagePosition();
         double secondStagePosition = getSecondStagePosition();
         double dutyCycle = 0;
         Double[] desiredPosition = positions.get(getCurrentState());
-<<<<<<< Updated upstream
         // if (getCurrentState() == ElevatorState.SMART_ALGAE) {
         //     ElevatorState smartAlgaeState = getSmartAlgaeState();
         //     if (previousSmartState == null || previousSmartState != smartAlgaeState) {
@@ -145,9 +141,7 @@ public class Elevator extends SubsystemBase{
         //     Logger.recordOutput("Elevator/smartAlgaeState", smartAlgaeState);
         //     desiredPosition = positions.get(smartAlgaeState);
         // }
-=======
 
->>>>>>> Stashed changes
         double Tolerance = 80;
         if (secondStageTOF.isRangeValidRegularCheck() && Math.abs(desiredPosition[1] - secondStagePosition) >= Tolerance) {
             double ff = -feedforwardController.calculate(desiredPosition[1] - secondStagePosition);
