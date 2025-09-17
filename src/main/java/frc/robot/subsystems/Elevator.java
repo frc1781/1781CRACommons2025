@@ -107,46 +107,46 @@ public class Elevator extends SubsystemBase{
         return secondStageTOF.getRange();
     }
 
-    public ElevatorState getSmartAlgaeState() {
-        int apriltag = RobotContainer.visionSystem.getDoubleCameraReefApriltag();        //NEED TO INCORPORATE VISION
+    // public ElevatorState getSmartAlgaeState() {
+    //     int apriltag = RobotContainer.visionSystem.getDoubleCameraReefApriltag();        //NEED TO INCORPORATE VISION
 
-        if (apriltag == -1 && previousSmartState != null) {
-            return previousSmartState;
-        }
+    //     if (apriltag == -1 && previousSmartState != null) {
+    //         return previousSmartState;
+    //     }
 
-        if (apriltag == -1 && previousSmartState == null) {
-            return ElevatorState.LOW_ALGAE;
-        }
+    //     if (apriltag == -1 && previousSmartState == null) {
+    //         return ElevatorState.LOW_ALGAE;
+    //     }
 
-        if (RobotContainer.isRed()) {
-            if (apriltag % 2 != 0) {
-                return ElevatorState.LOW_ALGAE;
-            } else {
-                return ElevatorState.HIGH_ALGAE;
-            }
-        } else {
-            if (apriltag % 2 == 0) {
-                return ElevatorState.LOW_ALGAE;
-            } else {
-                return ElevatorState.HIGH_ALGAE;
-            }
-        }
-    }
+    //     if (RobotContainer.isRed()) {
+    //         if (apriltag % 2 != 0) {
+    //             return ElevatorState.LOW_ALGAE;
+    //         } else {
+    //             return ElevatorState.HIGH_ALGAE;
+    //         }
+    //     } else {
+    //         if (apriltag % 2 == 0) {
+    //             return ElevatorState.LOW_ALGAE;
+    //         } else {
+    //             return ElevatorState.HIGH_ALGAE;
+    //         }
+    //     }
+    // }
 
     public void goToPosition() {
         double firstStagePosition = getFirstStagePosition();
         double secondStagePosition = getSecondStagePosition();
         double dutyCycle = 0;
         Double[] desiredPosition = positions.get(getCurrentState());
-        if (getCurrentState() == ElevatorState.SMART_ALGAE) {
-            ElevatorState smartAlgaeState = getSmartAlgaeState();
-            if (previousSmartState == null || previousSmartState != smartAlgaeState) {
-                previousSmartState = smartAlgaeState;
-            }
+        // if (getCurrentState() == ElevatorState.SMART_ALGAE) {
+        //     ElevatorState smartAlgaeState = getSmartAlgaeState();
+        //     if (previousSmartState == null || previousSmartState != smartAlgaeState) {
+        //         previousSmartState = smartAlgaeState;
+        //     }
 
-            Logger.recordOutput("Elevator/smartAlgaeState", smartAlgaeState);
-            desiredPosition = positions.get(smartAlgaeState);
-        }
+        //     Logger.recordOutput("Elevator/smartAlgaeState", smartAlgaeState);
+        //     desiredPosition = positions.get(smartAlgaeState);
+        // }
         double Tolerance = 80;
         
         if (secondStageTOF.isRangeValidRegularCheck() && Math.abs(desiredPosition[1] - secondStagePosition) >= Tolerance) {
@@ -173,7 +173,7 @@ public class Elevator extends SubsystemBase{
         //It really only starts low at the beginning when it is not safe to move the second stage until the arm is moved
         //out.  But once it is up at the top of the second stage it can move into positions that make it dangerous
         //to leave it's spot on the second stage until it is back in a safe position.
-        if (((!RobotContainer.isSafeForElevatorStage2toMove()) && Math.abs(secondStagePosition - desiredPosition[1]) > 100)) { //|| !robotController.driveController.isSafeForElevatorStage2toMove()) && Math.abs(secondStagePosition - desiredPosition[1]) > 100) {
+        if ((/*(!RobotContainer.isSafeForElevatorStage2toMove()) && */ Math.abs(secondStagePosition - desiredPosition[1]) > 100)) { //|| !robotController.driveController.isSafeForElevatorStage2toMove()) && Math.abs(secondStagePosition - desiredPosition[1]) > 100) {
             dutyCycle = 0.02;
         }
 
