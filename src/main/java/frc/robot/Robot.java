@@ -22,7 +22,15 @@ public class Robot extends LoggedRobot {
   private Command exampleAuto;
   private RobotContainer theRobotContainer;
   private Timer disabledTimer;
- 
+
+  public RobotContainer robotContainer() {
+    return theRobotContainer;
+  }
+  
+  public Robot getInstance() {
+    return this;
+  }
+
   public void robotInit() {
     theRobotContainer = new RobotContainer();
     disabledTimer = new Timer(); //for turning off breaking when disabled

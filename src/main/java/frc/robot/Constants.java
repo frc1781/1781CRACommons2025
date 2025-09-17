@@ -87,7 +87,7 @@ public final class Constants
     public static final int CURRENT_LIMIT = 30;
   }
 
-  public class Climber {
+  public static class Climber {
         public static final int MOTOR = 14;
 
         public static final double RADIANS_PER_REVOLUTION = (Math.PI * 2) / 125;
@@ -107,7 +107,7 @@ public final class Constants
                 .d(D);
   }
 
-  public class Elevator {
+  public static class Elevator {
         public static final int RIGHT_ELEVATOR_MOTOR = 12;
         public static final int LEFT_ELEVATOR_MOTOR = 11;
         public static final int FIRST_STAGE_TOF = 58;
@@ -121,6 +121,11 @@ public final class Constants
         public static final double ELEVATOR_KG = 0.07;
         public static final double ELEVATOR_KV = 4.60;
         public static final double ELEVATOR_KA = 0.01;
+  }
+
+  public static class Arm {
+        public static final int ARM_MOTOR_ID = 13;
+        public static final int CLAW_CORAL_SENSOR_ID = 54;
   }
   
   public enum Vision {

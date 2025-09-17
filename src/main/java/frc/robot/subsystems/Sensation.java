@@ -36,11 +36,11 @@ public class Sensation extends SubsystemBase
         Logger.recordOutput("Sensation/coralInHopper", coralInHopper());
         Logger.recordOutput("Sensation/coralExitedHopper", coralExitedHopper());
         Logger.recordOutput("Sensation/armTOF", armTOF.getRange());
-        Logger.recordOutput("Sensation/armTOFVaild", armTOF.isRangeValidRegularCheck());
+        Logger.recordOutput("Sensation/armTOFValid", armTOF.isRangeValidRegularCheck());
         Logger.recordOutput("Sensation/leftTOF", leftTOF.getRange());
-        Logger.recordOutput("Sensation/leftTOFVaild", leftTOF.isRangeValidRegularCheck());
+        Logger.recordOutput("Sensation/leftTOFValid", leftTOF.isRangeValidRegularCheck());
         Logger.recordOutput("Sensation/rightTOF", rightTOF.getRange());
-        Logger.recordOutput("Sensation/rightTOFVaild", rightTOF.isRangeValidRegularCheck());
+        Logger.recordOutput("Sensation/rightTOFValid", rightTOF.isRangeValidRegularCheck());
     }
 
     public boolean coralPresent() {

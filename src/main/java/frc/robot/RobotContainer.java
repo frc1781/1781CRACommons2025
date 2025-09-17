@@ -33,8 +33,7 @@ import java.util.NoSuchElementException;
 
 import swervelib.SwerveInputStream;
 
-public class RobotContainer
-{
+public class RobotContainer {
   final CommandXboxController driverXbox = new CommandXboxController(0);
   private Sensation sensation = new Sensation();;
   private SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve/ava"));; //im sure this wont cause issues later
@@ -42,6 +41,7 @@ public class RobotContainer
   private final Conveyor conveyor = new Conveyor();
   private final Lights lights = new Lights();
   private final Elevator elevator = new Elevator();
+  private final Arm arm = new Arm();
   // private final Climber climber = new Climber();
   private final SendableChooser<Command> autoChooser;
   private double wait_seconds = 5;
@@ -88,6 +88,8 @@ public class RobotContainer
         .headingWhile(true)
         .translationHeadingOffset(true)
         .translationHeadingOffset(Rotation2d.fromDegrees( 0));
+
+  private boolean isManualControlMode;
 
   public RobotContainer()
   {
@@ -180,9 +182,13 @@ public class RobotContainer
 
   }
 
-  public boolean isSafeForElevatorStage2toMove() {
+  public static boolean isSafeForElevatorStage2toMove() {
     //THIS IS NOT DONE YET, REQUIRES ARM SUBSYSTEM
     return false;
+  }
+
+  public static boolean isManualControlMode() {
+    return isManualControlMode();
   }
 
   /**

@@ -13,7 +13,7 @@ public class SafeConfig extends Command {
 
     @Override
     public void initialize() {
-
+        
     }
 
     @Override
