@@ -720,12 +720,12 @@ public class SwerveSubsystem extends SubsystemBase
     return swerveDrive;
   }
 
-  public class Position extends Command {
+  public class MoveToPositionToScore extends Command {
     Timer t;
     BooleanSupplier coralPresent;
     Sensation tofs;
 
-    public Position(Sensation tofs)
+    public MoveToPositionToScore(Sensation tofs)
     {
       t = new Timer();
       this.tofs = tofs;
@@ -749,7 +749,6 @@ public class SwerveSubsystem extends SubsystemBase
         inputSpeeds.vxMetersPerSecond = EEUtil.clamp(-0.5, 0.5, 0.005 * (avgDist - 280));
       }
       swerveDrive.drive(inputSpeeds);
-      System.out.println(inputSpeeds.vxMetersPerSecond);
     }
 
     @Override
