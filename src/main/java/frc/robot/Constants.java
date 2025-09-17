@@ -87,7 +87,7 @@ public final class Constants
     public static final int CURRENT_LIMIT = 30;
   }
 
-  public class Climber {
+  public static class Climber {
         public static final int MOTOR = 14;
 
         public static final double RADIANS_PER_REVOLUTION = (Math.PI * 2) / 125;
@@ -107,11 +107,11 @@ public final class Constants
                 .d(D);
   }
 
-  public class Elevator {
+  public static class Elevator {
         public static final int RIGHT_ELEVATOR_MOTOR = 12;
         public static final int LEFT_ELEVATOR_MOTOR = 11;
-        public static final int FIRST_STAGE_TOF = 58;
-        public static final int SECOND_STAGE_TOF = 57;
+        public static final int FRAME_TOF = 58;
+        public static final int CARRIAGE_TOF = 57;
         // https://www.reca.lc/linear?angle=%7B%22s%22%3A90%2C%22u%22%3A%22deg%22%7D&currentLimit=%7B%22s%22%3A30%2C%22u%22%3A%22A%22%7D&efficiency=100&limitAcceleration=0&limitDeceleration=0&limitVelocity=0&limitedAcceleration=%7B%22s%22%3A400%2C%22u%22%3A%22in%2Fs2%22%7D&limitedDeceleration=%7B%22s%22%3A50%2C%22u%22%3A%22in%2Fs2%22%7D&limitedVelocity=%7B%22s%22%3A10%2C%22u%22%3A%22in%2Fs%22%7D&load=%7B%22s%22%3A5.93175%2C%22u%22%3A%22lbs%22%7D&motor=%7B%22quantity%22%3A2%2C%22name%22%3A%22NEO%22%7D&ratio=%7B%22magnitude%22%3A9%2C%22ratioType%22%3A%22Reduction%22%7D&spoolDiameter=%7B%22s%22%3A1%2C%22u%22%3A%22in%22%7D&travelDistance=%7B%22s%22%3A35%2C%22u%22%3A%22in%22%7D
         public static final double MAX_ELEVATION_MPS = 0.87;
         public static final double ELEVATOR_KS = 0.02; // KS cannot be modeled and needs to be measured
@@ -121,6 +121,11 @@ public final class Constants
         public static final double ELEVATOR_KG = 0.07;
         public static final double ELEVATOR_KV = 4.60;
         public static final double ELEVATOR_KA = 0.01;
+  }
+
+  public static class Arm {
+        public static final int ARM_MOTOR_ID = 13;
+        public static final int CLAW_CORAL_SENSOR_ID = 54;
   }
   
   public enum Vision {
