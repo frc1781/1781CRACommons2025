@@ -1,4 +1,4 @@
-package frc.robot.subsystems.swervedrive;
+package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Microseconds;
 import static edu.wpi.first.units.Units.Milliseconds;
@@ -351,7 +351,7 @@ public class Vision
   /**
    * Camera Enum to select each camera
    */
-  enum Cameras
+  public enum Cameras
   {
 
     LEFT_CAM("LeftApriltag",

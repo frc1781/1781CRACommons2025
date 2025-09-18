@@ -33,9 +33,10 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.Constants;
+import frc.robot.subsystems.Vision;
 import frc.robot.subsystems.Lights;
 import frc.robot.subsystems.Sensation;
-import frc.robot.subsystems.swervedrive.Vision.Cameras;
+import frc.robot.subsystems.Vision.Cameras;
 import frc.robot.utils.EEUtil;
 
 import java.io.File;
@@ -743,7 +744,7 @@ public class SwerveSubsystem extends SubsystemBase
     public void execute()
     {
       ChassisSpeeds inputSpeeds = new ChassisSpeeds(); 
-      double avgDist = (tofs.leftTOF() + tofs.leftTOF()) / 2.0;
+      double avgDist = (tofs.rightTOF() + tofs.leftTOF()) / 2.0;
       inPosition = avgDist < 290;
       if(!inPosition){
         inputSpeeds.vxMetersPerSecond = EEUtil.clamp(-0.5, 0.5, 0.005 * (avgDist - 280));

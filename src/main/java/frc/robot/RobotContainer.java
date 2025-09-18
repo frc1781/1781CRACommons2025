@@ -163,7 +163,7 @@ public class RobotContainer {
      // driverXbox.povUp().whileTrue(climber.ascend());
      // driverXbox.povDown().whileTrue(climber.descend());
      //driverXbox.y().onTrue(lights.set(Lights.Special.RAINBOW));
-     driverXbox.y().onTrue(drivebase.new MoveToPositionToScore(sensation));
+     driverXbox.y().onTrue(drivebase.new MoveToPositionToScore(sensation).onlyWhile(driverXbox.y()));
      driverXbox.b().onTrue(lights.set(Lights.Colors.WHITE, Lights.Patterns.MARCH));
      
      robotInPosition.whileTrue(lights.set(Lights.Colors.GREEN, Lights.Patterns.SOLID));

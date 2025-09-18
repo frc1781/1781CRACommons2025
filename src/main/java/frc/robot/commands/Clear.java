@@ -13,7 +13,6 @@ import frc.robot.subsystems.Elevator;
 
 public class Clear extends Command {
 
-
     boolean isArmClear;
     Arm arm;
     Elevator elevator;
@@ -33,17 +32,14 @@ public class Clear extends Command {
 
     @Override
     public void execute() {
-        if(arm.getPosition() > armMinDegrees) {    //greater than the minimum value to consider the arm cleared
+        if(arm.getPosition() > armMinDegrees) {                     //greater than the minimum value to consider the arm cleared
             isArmClear = true;
         }
-
-        if(!isArmClear) {
-            arm.setArmPosition(requiredArmPositionDegrees);
-        }
+        arm.setArmPosition(requiredArmPositionDegrees);
     }
 
     @Override
-     public boolean isFinished() {
+    public boolean isFinished() {
         return isArmClear;
     }
     
