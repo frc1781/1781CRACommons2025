@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems.swervedrive;
+package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Meter;
 
@@ -30,14 +30,10 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.Constants;
-import frc.robot.subsystems.Lights;
-import frc.robot.subsystems.Sensation;
-import frc.robot.subsystems.swervedrive.Vision.Cameras;
+import frc.robot.subsystems.Vision.Cameras;
 import frc.robot.utils.EEUtil;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -47,8 +43,6 @@ import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
-
-
 import org.json.simple.parser.ParseException;
 import org.photonvision.targeting.PhotonPipelineResult;
 import swervelib.SwerveController;
@@ -64,17 +58,19 @@ import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 public class SwerveSubsystem extends SubsystemBase
 {
   private final SwerveDrive swerveDrive;
-  private final boolean     visionDriveTest = true;
-  private       Vision      vision;
   private boolean inPosition = false;
+  private Vision vision;
   /**
    * Initialize {@link SwerveDrive} with the directory provided.
    *
    * @param directory Directory of swerve drive config files.
    */
-  public SwerveSubsystem(File directory)
+  public SwerveSubsystem(File directory, Vision vision)
   {
+    this.vision = vision;
     boolean blueAlliance = true;
+
+    //Temporary, will come from first autonomous routine
     Pose2d startingPose = 
       blueAlliance ? 
         //new Pose2d(new Translation2d(Meter.of(7.2), Meter.of(7.5)), Rotation2d.fromDegrees(270.0))
@@ -95,12 +91,7 @@ public class SwerveSubsystem extends SubsystemBase
     swerveDrive.setAngularVelocityCompensation(true, true, 0.1); //Correct for skew that gets worse as angular velocity increases. Start with a coefficient of 0.1.
     swerveDrive.setModuleEncoderAutoSynchronize(false, 1); // Enable if you want to resynchronize your absolute encoders and motor encoders periodically when they are not moving.
     // swerveDrive.pushOffsetsToEncoders(); // Set the absolute encoder to be used over the internal encoder and push the offsets onto it. Throws warning if not possible
-    if (visionDriveTest)
-    {
-      setupVision();
-      // Stop the odometry thread if we are using vision that way we can synchronize updates better.
-      swerveDrive.stopOdometryThread();
-    }
+    swerveDrive.stopOdometryThread();
     setupPathPlanner();
     //RobotModeTriggers.autonomous().onTrue(Commands.runOnce(this::zeroGyroWithAlliance));
   }
@@ -111,28 +102,19 @@ public class SwerveSubsystem extends SubsystemBase
    * @param driveCfg      SwerveDriveConfiguration for the swerve.
    * @param controllerCfg Swerve Controller.
    */
-  public SwerveSubsystem(SwerveDriveConfiguration driveCfg, SwerveControllerConfiguration controllerCfg)
+  public SwerveSubsystem(SwerveDriveConfiguration driveCfg, SwerveControllerConfiguration controllerCfg, Vision vision)
   {
+    this.vision = vision;
     swerveDrive = new 
       SwerveDrive(driveCfg, controllerCfg, Constants.MAX_SPEED,
         new Pose2d(new Translation2d(Meter.of(2), Meter.of(0)), Rotation2d.fromDegrees(0)));
-  }
-
-  public void setupVision()
-  {
-    if (Constants.USING_VISION == Constants.Vision.PHOTON_VISION) {
-      vision = new Vision(swerveDrive::getPose, swerveDrive.field);
-    }
-    if (Constants.USING_VISION == Constants.Vision.LIMELIGHT_VISION) {
-      // WIP Limelight
-    }
   }
 
   @Override
   public void periodic()
   {
     // When vision is enabled we must manually update odometry in SwerveDrive
-    if (visionDriveTest)
+    if (Constants.USING_VISION != Constants.Vision.NO_VISION)
     {
       swerveDrive.updateOdometry();
       if (Constants.USING_VISION == Constants.Vision.PHOTON_VISION) {

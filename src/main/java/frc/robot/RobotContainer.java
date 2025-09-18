@@ -26,7 +26,7 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.swervedrive.auto.Collect;
 import frc.robot.commands.swervedrive.auto.Shoot;
 import frc.robot.subsystems.*;
-import frc.robot.subsystems.swervedrive.SwerveSubsystem;
+
 import java.io.File;
 import java.util.NoSuchElementException;
 
@@ -34,7 +34,8 @@ import swervelib.SwerveInputStream;
 
 public class RobotContainer {
   final CommandXboxController driverXbox = new CommandXboxController(0);
-  private Sensation sensation = new Sensation();;
+  private Sensation sensation = new Sensation();
+  private Vision vision;
   private SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve/ava"));; //im sure this wont cause issues later
   // private final TankDriveTrain tankDrive = new TankDriveTrain(driverXbox);
   private final Conveyor conveyor = new Conveyor();
@@ -89,12 +90,23 @@ public class RobotContainer {
 
   public RobotContainer()
   {
+    setupVision();
     NamedCommands.registerCommand("Shoot", new Shoot(lights));
     NamedCommands.registerCommand("Collect", new Collect(lights, coralEnter));
     configureBindings();
     DriverStation.silenceJoystickConnectionWarning(true);
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser", autoChooser);
+  }
+
+  public void setupVision()
+  {
+    if (Constants.USING_VISION == Constants.Vision.PHOTON_VISION) {
+      vision = new Vision(drivebase.getSwerveDrive()::getPose, drivebase.getSwerveDrive().field);
+    }
+    if (Constants.USING_VISION == Constants.Vision.LIMELIGHT_VISION) {
+      // WIP Limelight
+    }
   }
 
   private void configureBindings()
