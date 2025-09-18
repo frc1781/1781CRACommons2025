@@ -67,13 +67,13 @@ public class Arm extends SubsystemBase {
 
         double FF = -0.095 * Math.sin(Rotation2d.fromDegrees(getPosition()).getRadians());
 
-        armMotor.getClosedLoopController().setReference(
-                    position,
-                    ControlType.kPosition,
-                    ClosedLoopSlot.kSlot0,
-                    FF,
-                    SparkClosedLoopController.ArbFFUnits.kPercentOut
-                );
+        // armMotor.getClosedLoopController().setReference(
+        //             position,
+        //             ControlType.kPosition,
+        //             ClosedLoopSlot.kSlot0,
+        //             FF,
+        //             SparkClosedLoopController.ArbFFUnits.kPercentOut
+        //         );
 
         Logger.recordOutput("Arm/DutyCycle", armMotor.getAppliedOutput());
     }

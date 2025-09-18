@@ -24,8 +24,9 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.swervedrive.auto.Collect;
-import frc.robot.commands.swervedrive.auto.Shoot;
+import frc.robot.commands.Collect;
+import frc.robot.commands.Shoot;
+import frc.robot.commands.StrafeCommand;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import java.io.File;
@@ -163,7 +164,11 @@ public class RobotContainer {
      // driverXbox.povUp().whileTrue(climber.ascend());
      // driverXbox.povDown().whileTrue(climber.descend());
      //driverXbox.y().onTrue(lights.set(Lights.Special.RAINBOW));
-     driverXbox.y().onTrue(drivebase.new MoveToPositionToScore(sensation).onlyWhile(driverXbox.y()));
+     
+     driverXbox.y().whileTrue(drivebase.new MoveToPositionToScore(sensation)
+        .andThen(new StrafeCommand(drivebase, elevator, arm, sensation, true))
+     );
+     
      driverXbox.b().onTrue(lights.set(Lights.Colors.WHITE, Lights.Patterns.MARCH));
      
      robotInPosition.whileTrue(lights.set(Lights.Colors.GREEN, Lights.Patterns.SOLID));
