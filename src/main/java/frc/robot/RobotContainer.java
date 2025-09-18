@@ -19,7 +19,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -42,9 +41,8 @@ public class RobotContainer {
   private final Lights lights = new Lights();
   private final Elevator elevator = new Elevator();
   private final Arm arm = new Arm();
-  // private final Climber climber = new Climber();
+  //private final Climber climber = new Climber();
   private final SendableChooser<Command> autoChooser;
-  private double wait_seconds = 5;
 
    Trigger coralEnter = new Trigger(sensation::coralPresent);
    Trigger coralHopper = new Trigger(sensation::coralInHopper);
@@ -89,30 +87,21 @@ public class RobotContainer {
         .translationHeadingOffset(true)
         .translationHeadingOffset(Rotation2d.fromDegrees( 0));
 
-  private boolean isManualControlMode;
-
   public RobotContainer()
   {
-    NamedCommands.registerCommand("CustomWaitCommand", new WaitCommand(SmartDashboard.getNumber("Wait Time", wait_seconds)));
     NamedCommands.registerCommand("Shoot", new Shoot(lights));
     NamedCommands.registerCommand("Collect", new Collect(lights, coralEnter));
     configureBindings();
     DriverStation.silenceJoystickConnectionWarning(true);
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser", autoChooser);
-    SmartDashboard.putNumber("Wait Time", wait_seconds);
   }
 
   private void configureBindings()
   {
     Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveDirectAngle);
-    //Command driveFieldOrientedAnglularVelocity = drivebase.driveFieldOriented(driveAngularVelocity);
-    //Command driveRobotOrientedAngularVelocity = drivebase.driveFieldOriented(driveRobotOriented);
-    //Command driveSetpointGen = drivebase.driveWithSetpointGeneratorFieldRelative(driveDirectAngle);
     Command driveFieldOrientedDirectAngleKeyboard = drivebase.driveFieldOriented(driveDirectAngleKeyboard);
-    //Command driveFieldOrientedAnglularVelocityKeyboard = drivebase.driveFieldOriented(driveAngularVelocityKeyboard);
-    //Command driveSetpointGenKeyboard = drivebase.driveWithSetpointGeneratorFieldRelative(driveDirectAngleKeyboard);
-
+   
     if (RobotBase.isSimulation())
     {
       drivebase.setDefaultCommand(driveFieldOrientedDirectAngleKeyboard);
@@ -143,7 +132,6 @@ public class RobotContainer {
 
     if (DriverStation.isTest())
     {
-      //drivebase.setDefaultCommand(driveFieldOrienteAnglularVelocity); // Overrides drive command above!d
       driverXbox.x().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
       driverXbox.y().whileTrue(drivebase.driveToDistanceCommand(1.0, 0.2));
       driverXbox.start().onTrue((Commands.runOnce(drivebase::zeroGyro)));
@@ -173,22 +161,17 @@ public class RobotContainer {
   }
 
   public static boolean isRed() {
-        try {
-            return DriverStation.getAlliance().get() == DriverStation.Alliance.Red;
-        }
-        catch (NoSuchElementException e) {
-            return false;
-        }
-
+    try {
+        return DriverStation.getAlliance().get() == DriverStation.Alliance.Red;
+    }
+    catch (NoSuchElementException e) {
+        return false;
+    }
   }
 
   public static boolean isSafeForElevatorStage2toMove() {
     //THIS IS NOT DONE YET, REQUIRES ARM SUBSYSTEM
     return false;
-  }
-
-  public static boolean isManualControlMode() {
-    return isManualControlMode();
   }
 
   /**
@@ -207,7 +190,6 @@ public class RobotContainer {
     }
 
     public boolean inPosition(){
-    
       return 
          sensation.leftTOFisValid() && 
          sensation.rightTOFisValid() && 
@@ -215,5 +197,4 @@ public class RobotContainer {
          sensation.rightTOF() < 1000;
          //robotController.visionSystem.getDoubleCameraReefApriltag() != -1;
     }
-
   }
