@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.RobotContainer;
 import frc.robot.utils.EEtimeOfFlight;
 
 public class Arm extends SubsystemBase {
@@ -31,7 +32,6 @@ public class Arm extends SubsystemBase {
     // Slot 0 P is 0.004 was 0.008
 
     public Arm() {
-        performedSafeStates = false;
         armMotor = new SparkMax(Constants.Arm.ARM_MOTOR_ID, SparkLowLevel.MotorType.kBrushless);
         armMotor.setControlFramePeriodMs(20);
         armMotorConfig = new SparkMaxConfig();
@@ -47,7 +47,7 @@ public class Arm extends SubsystemBase {
         armMotorConfig.softLimit.reverseSoftLimit(0);
         armMotorConfig.closedLoop.feedbackSensor(ClosedLoopConfig.FeedbackSensor.kAbsoluteEncoder);
         armMotor.configure(armMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-        currentState = ArmState.START;
+        currentState = ArmState.IDLE;
     }
 
     @Override
@@ -56,31 +56,35 @@ public class Arm extends SubsystemBase {
         Logger.recordOutput("Arm/currentPosition", getPosition());
         Logger.recordOutput("Arm/targetPosition", targetPosition);
         Logger.recordOutput("Arm/currentState", currentState.toString());
-        double gravityFeedForward = -0.095 * Math.sin(Rotation2d.fromDegrees(getPosition()).getRadians());
-
-        if (!RobotContainer.isSafeForArmToMove()) {
-            targetPosition = getPosition(); //will not move
+        
+        if (currentState == ArmState.MANUAL_UP) {
+            targetPosition = getPosition() - 0.2;
+            currentState = ArmState.IDLE;
+        }
+        else if (currentState == ArmState.MANUAL_DOWN) {
+            targetPosition = getPosition() + 0.2;
+            currentState = ArmState.IDLE;
+        }
+        else if (!RobotContainer.isSafeForArmToMove() || currentState == ArmState.IDLE) {
+            targetPosition = getPosition(); //will not move unless manually controlled
+        }
+        else {
+            targetPosition = currentState.getPosition();
         }
 
-        armMotor.getClosedLoopController().setReference(
-            targetPosition,
-            ControlType.kPosition,
-            ClosedLoopSlot.kSlot0,
-            gravityFeedForward,
-            SparkClosedLoopController.ArbFFUnits.kPercentOut
-        );     
+        double gravityFeedForward = -0.095 * Math.sin(Rotation2d.fromDegrees(getPosition()).getRadians());
+
+        // armMotor.getClosedLoopController().setReference(
+        //     targetPosition,
+        //     ControlType.kPosition,
+        //     ClosedLoopSlot.kSlot0,
+        //     gravityFeedForward,
+        //     SparkClosedLoopController.ArbFFUnits.kPercentOut
+        // );     
     }
 
-    public void manualUp() {
-        targetPosition -= 0.2;
-        //consider
-        //targetPosition = getPosition() - 0.2;
-    }
-
-    public void manualDown() {
-        targetPosition += 0.2;
-        //consider
-        //targetPosition = getPosition() + 0.2;
+    public void setState(ArmState newState) {
+        currentState = newState;
     }
 
     public double getPosition() {
@@ -96,14 +100,13 @@ public class Arm extends SubsystemBase {
     }
 
     public enum ArmState  {
-        START(2.0), //starts the match with arm straight up
-        IDLE(2.0),
+        IDLE(Double.NaN),
+        MANUAL_UP(Double.NaN),      // No fixed position, or use a special value
+        MANUAL_DOWN(Double.NaN),
         L1(45.0),
         L2(0.0),
         L3(28.0),
         L4(65.0),
-        MANUAL_UP(Double.NaN),      // No fixed position, or use a special value
-        MANUAL_DOWN(Double.NaN),
         COLLECT(179.0),
         WAIT(25.0),
         POLE(25.0),
