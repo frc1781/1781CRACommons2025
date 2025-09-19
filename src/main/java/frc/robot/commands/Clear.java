@@ -18,13 +18,15 @@ public class Clear extends Command {
     boolean isArmClear;
     Arm arm;
     Elevator elevator;
+    RobotContainer robotContainer;
 
     double armMinDegrees;
     double requiredArmPositionDegrees;
 
-    public Clear(Arm arm, Elevator elevator) {
+    public Clear(Arm arm, Elevator elevator, RobotContainer robotContainer) {
         this.arm = arm;
         this.elevator = elevator;
+        this.robotContainer = robotContainer;
     }
 
     @Override
@@ -34,7 +36,7 @@ public class Clear extends Command {
 
     @Override
     public void execute() {
-        if (RobotContainer.isArmInsideElevator()) {
+        if (robotContainer.isArmInsideElevator()) {
             arm.setState(ArmState.START_MID);
         }
     }

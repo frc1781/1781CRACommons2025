@@ -32,15 +32,16 @@ public class Elevator extends SubsystemBase{
     private SparkMax motorRight;
     private SparkMax motorLeft;
     private double elevatorDutyCycle;
+    private RobotContainer robotContainer;
 
     private EEtimeOfFlight frameTOF;
     private EEtimeOfFlight carriageTOF;
 
-    private double minCarriageDistance = 0;
-    private double maxCarriageDistance = 680;
+    public double minCarriageDistance = 0;
+    public double maxCarriageDistance = 680;
 
-    private double minFrameDistance = 0;
-    private double maxFrameDistance = 810; 
+    public double minFrameDistance = 0;
+    public double maxFrameDistance = 810; 
 
     private ElevatorFeedforward feedforwardController = new ElevatorFeedforward
             (
@@ -53,7 +54,8 @@ public class Elevator extends SubsystemBase{
 
     private final HashMap<ElevatorState, Double[]> positions = new HashMap<>();
     
-    public Elevator() {
+    public Elevator(RobotContainer robotContainer) {
+        this.robotContainer = robotContainer;
         elevatorDutyCycle = clampDutyCycle(feedforwardController.calculate(0));
 
         frameTOF = new EEtimeOfFlight(Constants.Elevator.FRAME_TOF, 20);
@@ -74,19 +76,19 @@ public class Elevator extends SubsystemBase{
         leftMotorConfig.smartCurrentLimit(30);
         motorLeft.configure(leftMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-        // positions.put(ElevatorState.POLE, new Double[]{750.0, minSecondStageDistance});
-        // positions.put(ElevatorState.SAFE, new Double[]{minFirstStageDistance, 80.0});
-        // positions.put(ElevatorState.L1, new Double[]{0.0, 0.0});
-        // positions.put(ElevatorState.L2, new Double[]{minFirstStageDistance, 80.0});
-        // positions.put(ElevatorState.L3, new Double[]{minFirstStageDistance, 165.0});
-        // positions.put(ElevatorState.L3_LOW, new Double[]{minFirstStageDistance, 350.0});
-        // positions.put(ElevatorState.L4, new Double[]{maxFirstStageDistance, minSecondStageDistance});
-        // positions.put(ElevatorState.BARGE_SCORE, new Double[]{maxFirstStageDistance, minSecondStageDistance});
-        // positions.put(ElevatorState.COLLECT_LOW, new Double[]{minFirstStageDistance, 400.0});
-        // positions.put(ElevatorState.GROUND_COLLECT, new Double[]{0.0, 290.0});
-        // positions.put(ElevatorState.HIGH_ALGAE, new Double[]{minFirstStageDistance, minSecondStageDistance});
-        // positions.put(ElevatorState.LOW_ALGAE, new Double[]{maxFirstStageDistance, 350.0});
-        // positions.put(ElevatorState.SMART_ALGAE, new Double[]{minFirstStageDistance, 50.0});
+        positions.put(ElevatorState.POLE, new Double[]{750.0, minCarriageDistance});
+        positions.put(ElevatorState.SAFE, new Double[]{minFrameDistance, 80.0});
+        positions.put(ElevatorState.L1, new Double[]{0.0, 0.0});
+        positions.put(ElevatorState.L2, new Double[]{minFrameDistance, 80.0});
+        positions.put(ElevatorState.L3, new Double[]{minFrameDistance, 165.0});
+        positions.put(ElevatorState.L3_LOW, new Double[]{minFrameDistance, 350.0});
+        positions.put(ElevatorState.L4, new Double[]{maxFrameDistance, minCarriageDistance});
+        positions.put(ElevatorState.BARGE_SCORE, new Double[]{maxFrameDistance, minCarriageDistance});
+        positions.put(ElevatorState.COLLECT_LOW, new Double[]{minFrameDistance, 400.0});
+        positions.put(ElevatorState.GROUND_COLLECT, new Double[]{0.0, 290.0});
+        positions.put(ElevatorState.HIGH_ALGAE, new Double[]{minFrameDistance, minCarriageDistance});
+        positions.put(ElevatorState.LOW_ALGAE, new Double[]{maxFrameDistance, 350.0});
+        positions.put(ElevatorState.SMART_ALGAE, new Double[]{minFrameDistance, 50.0});
     }
 
     public Command idle() {
@@ -123,6 +125,18 @@ public class Elevator extends SubsystemBase{
         double tolerance = 80; // obviously subject to change
         if (Math.abs(desiredPosition - ((maxCarriageDistance - getCarriagePosition()) + getFramePosition())) >= tolerance) {
             elevatorDutyCycle = clampDutyCycle(feedforwardController.calculate(desiredPosition - ((maxCarriageDistance - getCarriagePosition()) + getFramePosition())));
+        }
+    }
+
+    public void setElevatorPosition(ElevatorState desiredState) {
+        double tolerance = 80; //subject to change
+        if (
+            Math.abs((positions.get(desiredState)[0] + positions.get(desiredState)[1]) - ((maxCarriageDistance - getCarriagePosition()) + getFramePosition())) >= tolerance && 
+            robotContainer.isSafeForElevatortoMoveDown() ||
+            robotContainer.isSafeForArmToMoveUp()
+           ) 
+        {
+            elevatorDutyCycle = clampDutyCycle(feedforwardController.calculate((positions.get(desiredState)[0] + positions.get(desiredState)[1]) - ((maxCarriageDistance - getCarriagePosition()) + getFramePosition())));
         }
     }
 

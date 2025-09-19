@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Robot;
 import frc.robot.RobotContainer;
 import frc.robot.utils.EEtimeOfFlight;
 
@@ -26,13 +27,15 @@ public class Arm extends SubsystemBase {
     private SparkMax armMotor;
     private ArmState currentState;
     private SparkMaxConfig armMotorConfig;
+    private RobotContainer robotContainer;
 
     // No Coral Cycle 0.095 @ 12 volts
     // With Coral 0.105
     // With Algae 0.15
     // Slot 0 P is 0.004 was 0.008
 
-    public Arm() {
+    public Arm(RobotContainer robotContainer) {
+        this.robotContainer = robotContainer;
         armMotor = new SparkMax(Constants.Arm.ARM_MOTOR_ID, SparkLowLevel.MotorType.kBrushless);
         armMotor.setControlFramePeriodMs(20);
         armMotorConfig = new SparkMaxConfig();
@@ -70,7 +73,7 @@ public class Arm extends SubsystemBase {
             targetPosition = getPosition() + 0.2;
             currentState = ArmState.IDLE;
         }
-        else if (!RobotContainer.isSafeForArmToMove() || currentState == ArmState.IDLE) {
+        else if (!robotContainer.isSafeForArmToMoveUp() || !robotContainer.isSafeForArmToMoveDown() || currentState == ArmState.IDLE) {
             targetPosition = getPosition(); //will not move unless manually controlled
         }
         else {

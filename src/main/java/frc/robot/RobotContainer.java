@@ -35,15 +35,15 @@ import org.littletonrobotics.junction.Logger;
 import swervelib.SwerveInputStream;
 
 public class RobotContainer {
-  private static RobotContainer instance;
+
   final CommandXboxController driverXbox = new CommandXboxController(0);
   private Sensation sensation = new Sensation();;
   private SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve/ava"));; //im sure this wont cause issues later
   // private final TankDriveTrain tankDrive = new TankDriveTrain(driverXbox);
   private final Conveyor conveyor = new Conveyor();
   private final Lights lights = new Lights();
-  private final Elevator elevator = new Elevator();
-  private final Arm arm = new Arm();
+  private final Elevator elevator = new Elevator(this);
+  private final Arm arm = new Arm(this);
   // private final Climber climber = new Climber();
   private final SendableChooser<Command> autoChooser;
   private double wait_seconds = 5;
@@ -95,7 +95,6 @@ public class RobotContainer {
 
   public RobotContainer()
   {
-    instance = this;
     NamedCommands.registerCommand("CustomWaitCommand", new WaitCommand(SmartDashboard.getNumber("Wait Time", wait_seconds)));
     NamedCommands.registerCommand("Shoot", new Shoot(lights));
     NamedCommands.registerCommand("Collect", new Collect(lights, coralEnter));
@@ -108,9 +107,11 @@ public class RobotContainer {
   }
 
   public void periodic() {
-    Logger.recordOutput("Robot/isSafeForElevatorStage2toMove", isSafeForElevatorStage2toMove());
-    Logger.recordOutput("Robot/isSafeForArmToMove", isSafeForArmToMove());
-    Logger.recordOutput("Robot/isArmInsideElevator", isArmInsideElevator());
+    Logger.recordOutput("RobotContainer/isSafeForElevatortoMoveUp", isSafeForElevatortoMoveUp());
+    Logger.recordOutput("RobotContainer/isSafeForElevatortoMoveDown", isSafeForElevatortoMoveDown());
+    Logger.recordOutput("RobotContainer/isSafeForArmToMoveUp", isSafeForArmToMoveUp());
+    Logger.recordOutput("RobotContainer/isSafeForArmToMoveDown", isSafeForArmToMoveDown());
+    Logger.recordOutput("RobotContainer/isArmInsideElevator", isArmInsideElevator());
   }
 
   private void configureBindings()
@@ -196,20 +197,30 @@ public class RobotContainer {
         }
   }
 
-  public static boolean isSafeForElevatorStage2toMove() {
-    //THIS IS NOT DONE YET, REQUIRES ARM SUBSYSTEM
+  public boolean isSafeForElevatortoMoveUp() {
     return false;
   }
 
-  public static boolean isSafeForArmToMove() {
+  public boolean isSafeForElevatortoMoveDown() {
     return false;
   }
 
-  public static boolean isArmInsideElevator() {
-    return true;
+  public boolean isSafeForArmToMoveUp() {
+    double maxUnsafeDistance = 100;  //THESE ARE JUST PLACEHOLDER VALUES CHANGE THEM ASAP
+    double minUnsafeDistance = 200;  //THESE ARE JUST PLACEHOLDER VALUES CHANGE THEM ASAP
+    return elevator.getCarriagePosition() < minUnsafeDistance || elevator.getCarriagePosition() > maxUnsafeDistance;
   }
 
-  public static boolean isManualControlMode() {
+  public boolean isSafeForArmToMoveDown() {
+    double maxUnsafeDistance = elevator.maxCarriageDistance;
+    return elevator.getCarriagePosition() > maxUnsafeDistance;
+  }
+
+  public boolean isArmInsideElevator() {
+    return elevator.getCarriagePosition() < 50 && arm.getPosition() < 30;
+  }
+
+  public boolean isManualControlMode() {
     return isManualControlMode();
   }
 
@@ -228,7 +239,7 @@ public class RobotContainer {
       drivebase.setMotorBrake(brake);
     }
 
-    public boolean inPosition(){
+    public boolean inPosition() {
       return 
          sensation.leftTOFisValid() && 
          sensation.rightTOFisValid() && 
