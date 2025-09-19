@@ -193,6 +193,10 @@ public class RobotContainer {
     return false;
   }
 
+  public static boolean isSafeForArmToMove() {
+    return false;
+  }
+
   public static boolean isManualControlMode() {
     return isManualControlMode();
   }
