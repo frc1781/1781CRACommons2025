@@ -8,8 +8,10 @@ import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Robot;
+import frc.robot.RobotContainer;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.Arm.ArmState;
 
 public class Clear extends Command {
 
@@ -32,15 +34,14 @@ public class Clear extends Command {
 
     @Override
     public void execute() {
-        if(arm.getPosition() > armMinDegrees) {                     //greater than the minimum value to consider the arm cleared
-            isArmClear = true;
+        if (RobotContainer.isArmInsideElevator()) {
+            arm.setState(ArmState.START_MID);
         }
-        arm.setArmPosition(requiredArmPositionDegrees);
     }
 
     @Override
     public boolean isFinished() {
-        return isArmClear;
+        return arm.matchesState();
     }
     
 }

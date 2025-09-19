@@ -31,10 +31,11 @@ import frc.robot.subsystems.*;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import java.io.File;
 import java.util.NoSuchElementException;
-
+import org.littletonrobotics.junction.Logger;
 import swervelib.SwerveInputStream;
 
 public class RobotContainer {
+  private static RobotContainer instance;
   final CommandXboxController driverXbox = new CommandXboxController(0);
   private Sensation sensation = new Sensation();;
   private SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve/ava"));; //im sure this wont cause issues later
@@ -94,6 +95,7 @@ public class RobotContainer {
 
   public RobotContainer()
   {
+    instance = this;
     NamedCommands.registerCommand("CustomWaitCommand", new WaitCommand(SmartDashboard.getNumber("Wait Time", wait_seconds)));
     NamedCommands.registerCommand("Shoot", new Shoot(lights));
     NamedCommands.registerCommand("Collect", new Collect(lights, coralEnter));
@@ -103,6 +105,12 @@ public class RobotContainer {
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser", autoChooser);
     SmartDashboard.putNumber("Wait Time", wait_seconds);
+  }
+
+  public void periodic() {
+    Logger.recordOutput("Robot/isSafeForElevatorStage2toMove", isSafeForElevatorStage2toMove());
+    Logger.recordOutput("Robot/isSafeForArmToMove", isSafeForArmToMove());
+    Logger.recordOutput("Robot/isArmInsideElevator", isArmInsideElevator());
   }
 
   private void configureBindings()
@@ -128,6 +136,7 @@ public class RobotContainer {
     lights.setDefaultCommand(lights.set(Lights.Special.OFF));
     elevator.setDefaultCommand(elevator.idle());
     sensation.setDefaultCommand(Commands.idle(sensation));
+    arm.setDefaultCommand(arm.idle());
    // climber.setDefaultCommand(Commands.);
 
     if (Robot.isSimulation())
@@ -185,7 +194,6 @@ public class RobotContainer {
         catch (NoSuchElementException e) {
             return false;
         }
-
   }
 
   public static boolean isSafeForElevatorStage2toMove() {
@@ -195,6 +203,10 @@ public class RobotContainer {
 
   public static boolean isSafeForArmToMove() {
     return false;
+  }
+
+  public static boolean isArmInsideElevator() {
+    return true;
   }
 
   public static boolean isManualControlMode() {
@@ -217,7 +229,6 @@ public class RobotContainer {
     }
 
     public boolean inPosition(){
-    
       return 
          sensation.leftTOFisValid() && 
          sensation.rightTOFisValid() && 
