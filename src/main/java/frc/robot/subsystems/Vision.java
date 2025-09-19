@@ -49,7 +49,6 @@ import org.photonvision.targeting.proto.PhotonTrackedTargetProto;
 import swervelib.SwerveDrive;
 import swervelib.telemetry.SwerveDriveTelemetry;
 
-
 /**
  * Example PhotonVision class to aid in the pursuit of accurate odometry. Taken from
  * https://gitlab.com/ironclad_code/ironclad-2024/-/blob/master/src/main/java/frc/robot/vision/Vision.java?ref_type=heads
@@ -68,7 +67,6 @@ public class Vision
    * Field from {@link swervelib.SwerveDrive#field}
    */
   private Field2d field2d;
-
 
   /**
    * Constructor for the Vision class.
@@ -348,12 +346,8 @@ public class Vision
     field2d.getObject("tracked targets").setPoses(poses);
   }
 
-  /**
-   * Camera Enum to select each camera
-   */
   public enum Cameras
   {
-
     LEFT_CAM("LeftApriltag",
           new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(0), Units.degreesToRadians(0)),
           new Translation3d(Units.inchesToMeters(6.75), Units.inchesToMeters(7.75), Units.inchesToMeters(11.5)),
@@ -362,60 +356,24 @@ public class Vision
     RIGHT_CAM("RightApriltag",
               new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(0), Units.degreesToRadians(0)),
               new Translation3d(Units.inchesToMeters(9.5), Units.inchesToMeters(-9), Units.inchesToMeters(10.5)),
-              VecBuilder.fill(4, 4, 8), VecBuilder.fill(0.5, 0.5, 1))
+              VecBuilder.fill(4, 4, 8), VecBuilder.fill(0.5, 0.5, 1)),
 
-    //, LEFT_SIDE_CAM("LeftSide",
-    //           new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(0), Units.degreesToRadians(90)),
-    //            new Translation3d(Units.inchesToMeters(-15.5), Units.inchesToMeters(0), Units.inchesToMeters(26.5)),
-    //            VecBuilder.fill(4, 4, 8), VecBuilder.fill(0.5, 0.5, 1))
-               
-    ;
+    LEFT_SIDE_CAM("LeftSide",
+               new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(0), Units.degreesToRadians(90)),
+                new Translation3d(Units.inchesToMeters(-15.5), Units.inchesToMeters(0), Units.inchesToMeters(26.5)),
+                VecBuilder.fill(4, 4, 8), VecBuilder.fill(0.5, 0.5, 1));
 
-    /**
-     * Latency alert to use when high latency is detected.
-     */
-    public final  Alert                        latencyAlert;
-    /**
-     * Camera instance for comms.
-     */
-    public final  PhotonCamera                 camera;
-    /**
-     * Pose estimator for camera.
-     */
-    public final  PhotonPoseEstimator          poseEstimator;
-    /**
-     * Standard Deviation for single tag readings for pose estimation.
-     */
-    private final Matrix<N3, N1>               singleTagStdDevs;
-    /**
-     * Standard deviation for multi-tag readings for pose estimation.
-     */
-    private final Matrix<N3, N1>               multiTagStdDevs;
-    /**
-     * Transform of the camera rotation and translation relative to the center of the robot
-     */
-    private final Transform3d                  robotToCamTransform;
-    /**
-     * Current standard deviations used.
-     */
-    public        Matrix<N3, N1>               curStdDevs;
-    /**
-     * Estimated robot pose.
-     */
+    public final Alert latencyAlert;
+    public final PhotonCamera camera;
+    public final PhotonPoseEstimator poseEstimator;
+    private final Matrix<N3, N1> singleTagStdDevs;
+    private final Matrix<N3, N1> multiTagStdDevs;
+    private final Transform3d robotToCamTransform;
+    public Matrix<N3, N1> curStdDevs;
     public Optional<EstimatedRobotPose> estimatedRobotPose = Optional.empty();
-
-    /**
-     * Simulated camera instance which only exists during simulations.
-     */
-    public        PhotonCameraSim              cameraSim;
-    /**
-     * Results list to be updated periodically and cached to avoid unnecessary queries.
-     */
-    public        List<PhotonPipelineResult>   resultsList       = new ArrayList<>();
-    /**
-     * Last read from the camera timestamp to prevent lag due to slow data fetches.
-     */
-    private       double                       lastReadTimestamp = Microseconds.of(NetworkTablesJNI.now()).in(Seconds);
+    public PhotonCameraSim cameraSim;
+    public List<PhotonPipelineResult> resultsList = new ArrayList<>();
+    private double lastReadTimestamp = Microseconds.of(NetworkTablesJNI.now()).in(Seconds);
 
     /**
      * Construct a Photon Camera class with help. Standard deviations are fake values, experiment and determine
@@ -585,8 +543,7 @@ public class Vision
      * @param estimatedPose The estimated pose to guess standard deviations for.
      * @param targets       All targets in this camera frame
      */
-    private void updateEstimationStdDevs(
-        Optional<EstimatedRobotPose> estimatedPose, List<PhotonTrackedTarget> targets)
+    private void updateEstimationStdDevs(Optional<EstimatedRobotPose> estimatedPose, List<PhotonTrackedTarget> targets)
     {
       if (estimatedPose.isEmpty())
       {
@@ -642,8 +599,5 @@ public class Vision
         }
       }
     }
-
-
   }
-
 }
