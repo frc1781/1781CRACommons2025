@@ -13,17 +13,13 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj.DutyCycle;
-import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.utils.EEUtil;
 import frc.robot.utils.EEtimeOfFlight;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
-import frc.robot.Robot;
 
 public class Elevator extends SubsystemBase{
 
@@ -129,7 +125,7 @@ public class Elevator extends SubsystemBase{
         }
     }
 
-    public void setElevatorPosition(ElevatorState desiredState) {
+    public void setState(ElevatorState desiredState) {
         double tolerance = 80; //subject to change
         if (
             Math.abs((positions.get(desiredState)[0] + positions.get(desiredState)[1]) - ((maxCarriageDistance - getCarriagePosition()) + getFramePosition())) >= tolerance && 
