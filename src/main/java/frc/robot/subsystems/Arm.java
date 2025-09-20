@@ -80,8 +80,8 @@ public class Arm extends SubsystemBase {
             System.out.println("incrementing target " + targetPosition);
         }
         
-        double gravityFeedForward = -0.095 * Math.sin(Rotation2d.fromDegrees(getPosition()).getRadians());
-
+        double gravityFeedForward = -0.11  * Math.sin(Rotation2d.fromDegrees(getPosition()).getRadians());
+        Logger.recordOutput("Arm/FFValue", gravityFeedForward);
         //if (/*RobotContainer.isSafeForArmToMoveUp() ||*/ currentState == ArmState.MANUAL_UP || currentState == ArmState.MANUAL_DOWN){
            // target = targetPosition;
         //}
@@ -98,8 +98,6 @@ public class Arm extends SubsystemBase {
             gravityFeedForward,
             SparkClosedLoopController.ArbFFUnits.kPercentOut
         );  
-        
-
     }
 
     public void setState(ArmState newState) {
@@ -154,7 +152,7 @@ public class Arm extends SubsystemBase {
         MANUAL_UP(Double.NaN),      // No fixed position, or use a special value
         MANUAL_DOWN(Double.NaN),
         L1(45.0),
-        L2(0.0),
+        L2(90.0), // why was this 0.0
         L3(28.0),
         L4(65.0),
         COLLECT(179.0),
