@@ -80,7 +80,7 @@ public class Arm extends SubsystemBase {
             System.out.println("incrementing target " + targetPosition);
         }
         
-        double gravityFeedForward = -0.11  * Math.sin(Rotation2d.fromDegrees(getPosition()).getRadians());
+        double gravityFeedForward = -0.105  * Math.sin(Rotation2d.fromDegrees(getPosition()).getRadians());
         Logger.recordOutput("Arm/FFValue", gravityFeedForward);
         //if (/*RobotContainer.isSafeForArmToMoveUp() ||*/ currentState == ArmState.MANUAL_UP || currentState == ArmState.MANUAL_DOWN){
            // target = targetPosition;

@@ -51,7 +51,7 @@ public class Elevator extends SubsystemBase{
     
     public Elevator(RobotContainer robotContainer) {
         this.robotContainer = robotContainer;
-        elevatorDutyCycle = clampDutyCycle(feedforwardController.calculate(0));
+        elevatorDutyCycle = clampDutyCycle(0);
 
         frameTOF = new EEtimeOfFlight(Constants.Elevator.FRAME_TOF, 20);
         carriageTOF = new EEtimeOfFlight(Constants.Elevator.CARRIAGE_TOF, 20);
@@ -101,7 +101,7 @@ public class Elevator extends SubsystemBase{
         Logger.recordOutput("Elevator/ElevatorMotorEncoderCounts", motorRight.getEncoder().getPosition());
         Logger.recordOutput("Elevator/DutyCycle", elevatorDutyCycle);
         
-        motorRight.set(0/*elevatorDutyCycle*/);
+        motorRight.set(elevatorDutyCycle);
     }
 
     public double getFramePosition() {
@@ -118,11 +118,8 @@ public class Elevator extends SubsystemBase{
 
     public void setElevatorPosition(double desiredPosition) {
         double tolerance = 80; // obviously subject to change
-        if (
-                Math.abs(desiredPosition - ((maxCarriageDistance - getCarriagePosition()) + getFramePosition())) >= tolerance &&
-                robotContainer.isSafeForElevatortoMoveDown() ||
-                robotContainer.isSafeForArmToMoveUp()
-        ) {
+        double distanceFromSetPoint = Math.abs(desiredPosition - ((maxCarriageDistance - getCarriagePosition()) + getFramePosition()));
+        if (distanceFromSetPoint >= tolerance && (robotContainer.isSafeForElevatortoMoveDown() || robotContainer.isSafeForArmToMoveUp())) { // why is there a safe to move down and move up?) {
             elevatorDutyCycle = clampDutyCycle(feedforwardController.calculate(desiredPosition - ((maxCarriageDistance - getCarriagePosition()) + getFramePosition())));
         }
     }
