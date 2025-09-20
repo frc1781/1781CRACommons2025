@@ -166,8 +166,7 @@ public class Arm extends SubsystemBase {
         GROUND_ALGAE(159.0),
         REEF_ALGAE(60.0),
         READY_ALGAE(25.0),
-        SLIGHT_TOSS(21.0),
-        SCORE(90);
+        SLIGHT_TOSS(21.0);
     
         private final double position;
     

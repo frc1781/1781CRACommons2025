@@ -76,6 +76,7 @@ public class Elevator extends SubsystemBase{
 
         positions.put(ElevatorState.POLE, new Double[]{750.0, minCarriageDistance});
         positions.put(ElevatorState.SAFE, new Double[]{minFrameDistance, 80.0});
+        positions.put(ElevatorState.SAFE_CORAL, new Double[]{minFrameDistance, 40.0});
         positions.put(ElevatorState.L1, new Double[]{0.0, 0.0});
         positions.put(ElevatorState.L2, new Double[]{minFrameDistance, 80.0});
         positions.put(ElevatorState.L3, new Double[]{minFrameDistance, 165.0});
@@ -161,6 +162,7 @@ public class Elevator extends SubsystemBase{
 
     public enum ElevatorState {
         SAFE,
+        SAFE_CORAL,
         L1,
         L2,
         L3,

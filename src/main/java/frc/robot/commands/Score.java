@@ -12,7 +12,7 @@ public class Score extends SequentialCommandGroup {
         this.arm = arm;
         addRequirements(arm);
         addCommands(
-            new SetArm(arm, Arm.ArmState.SCORE)
+            new SetArm(arm, Arm.ArmState.L4)
         );
     }
     

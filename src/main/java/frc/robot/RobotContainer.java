@@ -184,9 +184,9 @@ public class RobotContainer {
       // driverXbox.b().whileTrue(Commands.run(() -> arm.setState(ArmState.L1)));
       driverXbox.x().onTrue(new SafeConfig(elevator, arm));
       driverXbox.povUp().onTrue(new PreCollect(elevator, arm));
-      driverXbox.povRight().whileTrue(new PostCollect(elevator, arm));
-      driverXbox.povDown().whileTrue(new L4(elevator, arm));
-      driverXbox.povLeft().whileTrue(new Score(arm));
+      driverXbox.povRight().onTrue(new PostCollect(elevator, arm));
+      driverXbox.povDown().onTrue(new L4(elevator, arm));
+      driverXbox.povLeft().onTrue(new Score(arm));
       //driverXbox.x().whileTrue(Commands.run(() -> arm.setState(ArmState.REEF_ALGAE)));
       //driverXbox.x().whileTrue(Commands.run(() -> elevator.setState(Elevator.ElevatorState.L4)));
       driverXbox.rightBumper().onTrue(Commands.none());
