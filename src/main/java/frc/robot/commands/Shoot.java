@@ -6,16 +6,6 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Lights;
 
-// public class Shoot extends ParallelDeadlineGroup
-// {
-//   public Shoot(Lights leds) {
-//     super(
-//       new WaitCommand(5.0),
-//       leds.set(Lights.Colors.RED, Lights.Patterns.SOLID)
-//     );
-//   }
-// }
-
 public class Shoot extends Command
 {
   Timer t;

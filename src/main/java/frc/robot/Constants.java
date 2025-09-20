@@ -71,6 +71,7 @@ public final class Constants
     public static int ARM_TOF_ID = 51;
     public static int RIGHT_FRONT_TOF_ID = 52;
     public static int LEFT_FRONT_TOF_ID = 53;
+    public static final int CLAW_CORAL_TOF_ID = 54;
 
     public static double TARGET_TOF_PARALLEL_DISTANCE = 280;
     public static double TARGET_TOF_PARALLEL_DISTANCE_SHORT = 170;
@@ -125,7 +126,6 @@ public final class Constants
 
   public static class Arm {
         public static final int ARM_MOTOR_ID = 13;
-        public static final int CLAW_CORAL_SENSOR_ID = 54;
   }
   
   public enum Vision {

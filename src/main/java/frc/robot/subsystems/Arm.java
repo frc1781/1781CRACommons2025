@@ -90,7 +90,6 @@ public class Arm extends SubsystemBase {
             return;
         }
         
-        System.out.println("target pos: " + targetPosition);
         armMotor.getClosedLoopController().setReference(
             targetPosition,
             ControlType.kPosition,
@@ -143,7 +142,11 @@ public class Arm extends SubsystemBase {
             return true;
         }
 
-        return Math.abs(targetPosition - getPosition()) <= 8; //tollorence
+        return Math.abs(targetPosition - getPosition()) <= 8; //tolerance
+    }
+
+    public boolean matchesState(ArmState state) {
+        return Math.abs(state.getPosition() - getPosition()) <= 8; //tolerance
     }
 
     public enum ArmState  {
@@ -163,7 +166,8 @@ public class Arm extends SubsystemBase {
         GROUND_ALGAE(159.0),
         REEF_ALGAE(60.0),
         READY_ALGAE(25.0),
-        SLIGHT_TOSS(21.0);
+        SLIGHT_TOSS(21.0),
+        SCORE(90);
     
         private final double position;
     

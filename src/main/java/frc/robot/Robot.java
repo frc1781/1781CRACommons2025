@@ -88,7 +88,7 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void teleopInit() {
-    theRobotContainer.setMotorBrake(true);
+    theRobotContainer.teleopInit();
     if (exampleAuto != null) {
       exampleAuto.cancel();
     } 

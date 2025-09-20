@@ -14,10 +14,11 @@ public class Sensation extends SubsystemBase
     DigitalInput hopperBackBeam;
     DigitalInput hopperFrontBeam;
     DigitalInput exitBeam;
-    private final EEtimeOfFlight leftTOF;
-    private final EEtimeOfFlight rightTOF;
-    private final EEtimeOfFlight armTOF;
+    private EEtimeOfFlight leftTOF;
+    private EEtimeOfFlight rightTOF;
+    private EEtimeOfFlight armTOF;
     private EEtimeOfFlight coralTimeOfFlight;
+    private EEtimeOfFlight clawCoralTOF;
 
     public Sensation()
     {
@@ -25,6 +26,7 @@ public class Sensation extends SubsystemBase
         armTOF.tof.setRangeOfInterest(6, 6, 10, 10);
         leftTOF = new EEtimeOfFlight(Constants.SensationConstants.LEFT_FRONT_TOF_ID, 20);
         rightTOF = new EEtimeOfFlight(Constants.SensationConstants.RIGHT_FRONT_TOF_ID, 20);
+        clawCoralTOF = new EEtimeOfFlight(Constants.SensationConstants.CLAW_CORAL_TOF_ID, 80);
         enterBeam = new DigitalInput(Constants.SensationConstants.enter);
         hopperBackBeam = new DigitalInput(Constants.SensationConstants.hopperBack);
         hopperFrontBeam = new DigitalInput(Constants.SensationConstants.hopperFront);
@@ -41,6 +43,7 @@ public class Sensation extends SubsystemBase
         Logger.recordOutput("Sensation/leftTOFValid", leftTOF.isRangeValidRegularCheck());
         Logger.recordOutput("Sensation/rightTOF", rightTOF.getRange());
         Logger.recordOutput("Sensation/rightTOFValid", rightTOF.isRangeValidRegularCheck());
+        Logger.recordOutput("Sensation/clawCoralTOF", clawCoralTOF.getRange());
     }
 
     public boolean coralPresent() {
@@ -70,6 +73,11 @@ public class Sensation extends SubsystemBase
      public double coralTimeOfFlight(){
         return coralTimeOfFlight.getRange();
      }
+
+     public boolean clawCoralPresent() {
+         return clawCoralTOF.getRange() < 50 && clawCoralTOF.isRangeValidRegularCheck();
+      }
+
 
      public boolean leftTOFisValid(){
         return leftTOF.isRangeValidRegularCheck();
