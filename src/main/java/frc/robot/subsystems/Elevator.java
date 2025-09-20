@@ -47,8 +47,6 @@ public class Elevator extends SubsystemBase{
         Constants.Elevator.ELEVATOR_KA
     );
     
-    private PIDController positionPID = new PIDController(0.001, 0,0);
-
     private final HashMap<ElevatorState, Double[]> positions = new HashMap<>();
     
     public Elevator(RobotContainer robotContainer) {
@@ -126,7 +124,7 @@ public class Elevator extends SubsystemBase{
     }
 
     public void setState(ElevatorState desiredState) {
-        double tolerance = 80; //subject to change
+        double tolerance = 80; //subject to change this is in mm
         if (
             Math.abs((positions.get(desiredState)[0] + positions.get(desiredState)[1]) - ((maxCarriageDistance - getCarriagePosition()) + getFramePosition())) >= tolerance && 
             robotContainer.isSafeForElevatortoMoveDown() ||
