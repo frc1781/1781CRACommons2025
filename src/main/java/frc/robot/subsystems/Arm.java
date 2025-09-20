@@ -16,6 +16,8 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Robot;
@@ -24,10 +26,13 @@ import frc.robot.utils.EEtimeOfFlight;
 
 public class Arm extends SubsystemBase {
     private double targetPosition;
+    private double currentPosition;
     private SparkMax armMotor;
-    private ArmState currentState;
+    private ArmState currentState = ArmState.START;
+
     private SparkMaxConfig armMotorConfig;
     private RobotContainer robotContainer;
+
 
     // No Coral Cycle 0.095 @ 12 volts
     // With Coral 0.105
@@ -36,6 +41,7 @@ public class Arm extends SubsystemBase {
 
     public Arm(RobotContainer robotContainer) {
         this.robotContainer = robotContainer;
+        currentState = ArmState.START;
         armMotor = new SparkMax(Constants.Arm.ARM_MOTOR_ID, SparkLowLevel.MotorType.kBrushless);
         armMotor.setControlFramePeriodMs(20);
         armMotorConfig = new SparkMaxConfig();
@@ -43,7 +49,7 @@ public class Arm extends SubsystemBase {
         armMotorConfig.smartCurrentLimit(40);
         armMotorConfig.absoluteEncoder.positionConversionFactor(360);
         armMotorConfig.absoluteEncoder.zeroOffset(0.4868528);
-        armMotorConfig.closedLoop.pid(0.004, 0,0.001);
+        armMotorConfig.closedLoop.pid(0.008, 0,0.001);
         armMotorConfig.closedLoop.velocityFF((double) 1 /565); // https://docs.revrobotics.com/brushless/neo/vortex#motor-specifications
         armMotorConfig.closedLoop.outputRange(-.55, .55); //(-.55, .55);
         armMotorConfig.closedLoop.positionWrappingEnabled(true);
@@ -51,11 +57,10 @@ public class Arm extends SubsystemBase {
         armMotorConfig.softLimit.reverseSoftLimit(0);
         armMotorConfig.closedLoop.feedbackSensor(ClosedLoopConfig.FeedbackSensor.kAbsoluteEncoder);
         armMotor.configure(armMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-        currentState = ArmState.IDLE;
     }
 
     public Command idle() {
-        return this.runOnce(() -> {currentState = ArmState.IDLE;});
+        return new InstantCommand(() -> {setState(ArmState.IDLE);}, this);
     }
 
     @Override
@@ -66,33 +71,69 @@ public class Arm extends SubsystemBase {
         Logger.recordOutput("Arm/currentState", currentState.toString());
         
         if (currentState == ArmState.MANUAL_UP) {
-            targetPosition = getPosition() - 0.2;
-            currentState = ArmState.IDLE;
-        }
-        else if (currentState == ArmState.MANUAL_DOWN) {
-            targetPosition = getPosition() + 0.2;
-            currentState = ArmState.IDLE;
-        }
-        else if (!robotContainer.isSafeForArmToMoveUp() || !robotContainer.isSafeForArmToMoveDown() || currentState == ArmState.IDLE) {
-            targetPosition = getPosition(); //will not move unless manually controlled
-        }
-        else {
-            targetPosition = currentState.getPosition();
+            targetPosition += -0.2;
+            System.out.println("decrementing target " + targetPosition);
         }
 
+        if (currentState == ArmState.MANUAL_DOWN) {
+            targetPosition += 0.2;
+            System.out.println("incrementing target " + targetPosition);
+        }
+        
         double gravityFeedForward = -0.095 * Math.sin(Rotation2d.fromDegrees(getPosition()).getRadians());
 
-        // armMotor.getClosedLoopController().setReference(
-        //     targetPosition,
-        //     ControlType.kPosition,
-        //     ClosedLoopSlot.kSlot0,
-        //     gravityFeedForward,
-        //     SparkClosedLoopController.ArbFFUnits.kPercentOut
-        // );     
+        //if (/*RobotContainer.isSafeForArmToMoveUp() ||*/ currentState == ArmState.MANUAL_UP || currentState == ArmState.MANUAL_DOWN){
+           // target = targetPosition;
+        //}
+        
+        if (currentState == ArmState.START) {
+            return;
+        }
+        
+        System.out.println("target pos: " + targetPosition);
+        armMotor.getClosedLoopController().setReference(
+            targetPosition,
+            ControlType.kPosition,
+            ClosedLoopSlot.kSlot0,
+            gravityFeedForward,
+            SparkClosedLoopController.ArbFFUnits.kPercentOut
+        );  
+        
+
     }
 
     public void setState(ArmState newState) {
+        if (currentState == newState) {
+            return; //do nothing
+        }
+
+        //don't go idle unless manual or starting
+        if (newState == ArmState.IDLE && currentState != ArmState.MANUAL_UP && currentState != ArmState.MANUAL_DOWN && currentState != ArmState.START) {
+            return;
+        }
+
         currentState = newState;
+        currentPosition = getPosition();
+        if (newState == ArmState.IDLE  || newState == ArmState.MANUAL_UP || newState == ArmState.MANUAL_DOWN) {
+            targetPosition = currentPosition;
+            System.out.println("get target from currentPosition: " + targetPosition);
+        }
+        else {
+            targetPosition = newState.getPosition();  
+            System.out.println("get target from table: " + targetPosition);
+        }
+    }
+    
+    public Command manualDown(){
+        return new InstantCommand(() -> {
+            setState(ArmState.MANUAL_DOWN);
+        }, this);
+    }
+    
+    public Command manualUp(){
+        return new InstantCommand(() -> {
+            setState(ArmState.MANUAL_UP);
+        }, this);
     }
 
     public double getPosition() {
@@ -108,6 +149,7 @@ public class Arm extends SubsystemBase {
     }
 
     public enum ArmState  {
+        START(Double.NaN),
         IDLE(Double.NaN),
         MANUAL_UP(Double.NaN),      // No fixed position, or use a special value
         MANUAL_DOWN(Double.NaN),

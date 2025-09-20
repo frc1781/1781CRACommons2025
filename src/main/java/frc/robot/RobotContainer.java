@@ -28,6 +28,7 @@ import frc.robot.commands.Collect;
 import frc.robot.commands.Shoot;
 import frc.robot.commands.StrafeCommand;
 import frc.robot.subsystems.*;
+import frc.robot.subsystems.Arm.ArmState;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import java.io.File;
 import java.util.NoSuchElementException;
@@ -166,10 +167,13 @@ public class RobotContainer {
     else
     {
       driverXbox.a().onTrue((Commands.runOnce(drivebase::zeroGyro)));
-      driverXbox.x().onTrue(Commands.runOnce(drivebase::addFakeVisionReading));
+      //driverXbox.x().onTrue(Commands.runOnce(drivebase::addFakeVisionReading));
       driverXbox.start().whileTrue(Commands.none());
       driverXbox.back().whileTrue(Commands.none());
       driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
+      driverXbox.povLeft().whileTrue(arm.manualUp().repeatedly());
+      driverXbox.povRight().whileTrue(arm.manualDown().repeatedly());
+      driverXbox.b().whileTrue(Commands.run(() -> arm.setState(ArmState.L1)));
       driverXbox.rightBumper().onTrue(Commands.none());
      // driverXbox.povUp().whileTrue(climber.ascend());
      // driverXbox.povDown().whileTrue(climber.descend());
@@ -179,7 +183,7 @@ public class RobotContainer {
         .andThen(new StrafeCommand(drivebase, elevator, arm, sensation, true))
      );
      
-     driverXbox.b().onTrue(lights.set(Lights.Colors.WHITE, Lights.Patterns.MARCH));
+     //driverXbox.b().onTrue(lights.set(Lights.Colors.WHITE, Lights.Patterns.MARCH));
      
      robotInPosition.whileTrue(lights.set(Lights.Colors.GREEN, Lights.Patterns.SOLID));
      coralEnter.and(coralExit.negate()).and(coralHopper.negate()).onTrue(lights.set(Lights.Colors.RED, Lights.Patterns.FAST_FLASH));
