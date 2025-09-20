@@ -44,12 +44,13 @@ public class Elevator extends SubsystemBase{
     public double maxFrameDistance = 810; 
 
     private ElevatorFeedforward feedforwardController = new ElevatorFeedforward
-            (
-                Constants.Elevator.ELEVATOR_KS,
-                Constants.Elevator.ELEVATOR_KG,
-                Constants.Elevator.ELEVATOR_KV,
-                Constants.Elevator.ELEVATOR_KA
-            );
+    (
+        Constants.Elevator.ELEVATOR_KS,
+        Constants.Elevator.ELEVATOR_KG,
+        Constants.Elevator.ELEVATOR_KV,
+        Constants.Elevator.ELEVATOR_KA
+    );
+    
     private PIDController positionPID = new PIDController(0.001, 0,0);
 
     private final HashMap<ElevatorState, Double[]> positions = new HashMap<>();
