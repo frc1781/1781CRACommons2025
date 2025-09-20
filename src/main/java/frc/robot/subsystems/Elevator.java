@@ -118,21 +118,17 @@ public class Elevator extends SubsystemBase{
 
     public void setElevatorPosition(double desiredPosition) {
         double tolerance = 80; // obviously subject to change
-        if (Math.abs(desiredPosition - ((maxCarriageDistance - getCarriagePosition()) + getFramePosition())) >= tolerance) {
+        if (
+                Math.abs(desiredPosition - ((maxCarriageDistance - getCarriagePosition()) + getFramePosition())) >= tolerance &&
+                robotContainer.isSafeForElevatortoMoveDown() ||
+                robotContainer.isSafeForArmToMoveUp()
+        ) {
             elevatorDutyCycle = clampDutyCycle(feedforwardController.calculate(desiredPosition - ((maxCarriageDistance - getCarriagePosition()) + getFramePosition())));
         }
     }
 
-    public void setState(ElevatorState desiredState) {
-        double tolerance = 80; //subject to change this is in mm
-        if (
-            Math.abs((positions.get(desiredState)[0] + positions.get(desiredState)[1]) - ((maxCarriageDistance - getCarriagePosition()) + getFramePosition())) >= tolerance && 
-            robotContainer.isSafeForElevatortoMoveDown() ||
-            robotContainer.isSafeForArmToMoveUp()
-           ) 
-        {
-            elevatorDutyCycle = clampDutyCycle(feedforwardController.calculate((positions.get(desiredState)[0] + positions.get(desiredState)[1]) - ((maxCarriageDistance - getCarriagePosition()) + getFramePosition())));
-        }
+    public void setElevatorPosition(ElevatorState desiredState) {
+        setElevatorPosition(positions.get(desiredState)[0] + positions.get(desiredState)[1]);
     }
 
     public double clampDutyCycle(double dutyCycle) {

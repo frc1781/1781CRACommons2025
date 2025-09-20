@@ -174,7 +174,7 @@ public class RobotContainer {
       driverXbox.povLeft().whileTrue(arm.manualUp().repeatedly());
       driverXbox.povRight().whileTrue(arm.manualDown().repeatedly());
       driverXbox.b().whileTrue(Commands.run(() -> arm.setState(ArmState.L1)));
-      driverXbox.a().whileTrue(Commands.run(() -> elevator.setState(Elevator.ElevatorState.L4)));
+      driverXbox.a().whileTrue(Commands.run(() -> elevator.setElevatorPosition(Elevator.ElevatorState.L4)));
       //driverXbox.x().whileTrue(Commands.run(() -> arm.setState(ArmState.REEF_ALGAE)));
       //driverXbox.x().whileTrue(Commands.run(() -> elevator.setState(Elevator.ElevatorState.L4)));
       driverXbox.rightBumper().onTrue(Commands.none());
