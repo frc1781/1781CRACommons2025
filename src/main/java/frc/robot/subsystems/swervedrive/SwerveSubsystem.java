@@ -19,6 +19,7 @@ import com.pathplanner.lib.util.swerve.SwerveSetpoint;
 import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -67,7 +68,6 @@ public class SwerveSubsystem extends SubsystemBase
   private final SwerveDrive swerveDrive;
   private final boolean     visionDriveTest = true;
   private       Vision      vision;
-  private int targetAprilTag;
   /**
    * Initialize {@link SwerveDrive} with the directory provided.
    *
@@ -75,7 +75,6 @@ public class SwerveSubsystem extends SubsystemBase
    */
   public SwerveSubsystem(File directory)
   {
-    targetAprilTag = 0;
     boolean blueAlliance = true;
     Pose2d startingPose = 
       blueAlliance ? 
@@ -260,7 +259,7 @@ public class SwerveSubsystem extends SubsystemBase
   {
 // Create the constraints to use while pathfinding
     PathConstraints constraints = new PathConstraints(
-        swerveDrive.getMaximumChassisVelocity(), 4.0,
+        swerveDrive.getMaximumChassisVelocity(), 1.0,
         swerveDrive.getMaximumChassisAngularVelocity(), Units.degreesToRadians(720));
 
 // Since AutoBuilder is configured, we can use it to build pathfinding commands
@@ -719,41 +718,38 @@ public class SwerveSubsystem extends SubsystemBase
     return swerveDrive;
   }
 
-  public int findTargetAprilTag() {
-    return 18;
-  }
-
+  //Might do away with this is driveToPose() works
   public class MoveToPositionToScore extends Command {
     Sensation tofs;
+    int centeringOnAprilTag;
 
-    public MoveToPositionToScore(Sensation tofs)
+    public MoveToPositionToScore(Sensation tofs, int aprilTagNum)
     {
       this.tofs = tofs;
+      centeringOnAprilTag = aprilTagNum;
       addRequirements(SwerveSubsystem.this);
     }
 
     @Override
     public void initialize()
     {
-      targetAprilTag = 0; //none found
     }
 
     @Override
     public void execute()
     {
-      if (targetAprilTag == 0) {
-        targetAprilTag = findTargetAprilTag();
-      }
-
       double avgDist = (tofs.rightTOF() + tofs.leftTOF()) / 2.0;
       ChassisSpeeds inputSpeeds = new ChassisSpeeds(); //(0, 0, 0)
       inputSpeeds.vxMetersPerSecond = EEUtil.clamp(-0.5, 0.5, 0.005 * (avgDist - 280));
-      inputSpeeds.vyMetersPerSecond = getYtoCenterOnAprilTag(targetAprilTag); //if 0 returns 0);
-      inputSpeeds.omegaRadiansPerSecond = getRotToOrientToAprilTag(targetAprilTag);
+      inputSpeeds.vyMetersPerSecond = getYtoCenterOnAprilTag(centeringOnAprilTag); //if 0 returns 0);
+      inputSpeeds.omegaRadiansPerSecond = getRotToOrientToAprilTag(centeringOnAprilTag);
       swerveDrive.drive(inputSpeeds);
+      Logger.recordOutput("Drive System/centeringOnAprilTag", centeringOnAprilTag);
     }
 
     private double getYtoCenterOnAprilTag(int targetAprilTag) {
+      Optional<Pose3d> p = Vision.fieldLayout.getTagPose(targetAprilTag);
+
       return 0.0;
     }
 
@@ -770,7 +766,7 @@ public class SwerveSubsystem extends SubsystemBase
     @Override
     public void end(boolean interrupted)
     {
-    
+      Logger.recordOutput("Drive System/centeringOnAprilTag", 0);
     }
   }
 }

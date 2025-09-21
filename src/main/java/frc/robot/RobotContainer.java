@@ -56,6 +56,7 @@ public class RobotContainer {
   // private final Climber climber = new Climber();
   private final SendableChooser<Command> autoChooser;
   private double wait_seconds = 5;
+  public int targetAprilTag = 0;
 
    Trigger coralEnter = new Trigger(sensation::coralPresent);
    Trigger coralHopper = new Trigger(sensation::coralInHopper);
@@ -108,7 +109,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("CustomWaitCommand", new WaitCommand(SmartDashboard.getNumber("Wait Time", wait_seconds)));
     NamedCommands.registerCommand("Shoot", new Shoot(lights));
     NamedCommands.registerCommand("Collect", new Collect(elevator, coralEnter));
-    NamedCommands.registerCommand("MoveToPositionToScore", drivebase.new MoveToPositionToScore(sensation));
+    NamedCommands.registerCommand("MoveToPositionToScore", drivebase.new MoveToPositionToScore(sensation, targetAprilTag()));
     configureBindings();
     DriverStation.silenceJoystickConnectionWarning(true);
     autoChooser = AutoBuilder.buildAutoChooser();
@@ -194,7 +195,7 @@ public class RobotContainer {
      // driverXbox.povDown().whileTrue(climber.descend());
      //driverXbox.y().onTrue(lights.set(Lights.Special.RAINBOW));
      
-     driverXbox.y().whileTrue(drivebase.new MoveToPositionToScore(sensation)
+     driverXbox.y().whileTrue(drivebase.new MoveToPositionToScore(sensation, targetAprilTag())
         .andThen(new StrafeCommand(drivebase, elevator, arm, sensation, true))
      );
      
@@ -266,12 +267,17 @@ public class RobotContainer {
       drivebase.setMotorBrake(brake);
     }
 
+    public int targetAprilTag() {
+      return 18;
+    }
+
     public boolean inPosition() {
       return 
          sensation.leftTOFisValid() && 
          sensation.rightTOFisValid() && 
          sensation.leftTOF() < 1000 && 
          sensation.rightTOF() < 1000;
-         vision.getTargetAprilTag() != 0;
+         // &&
+         //targetAprilTag;
     }
   }
