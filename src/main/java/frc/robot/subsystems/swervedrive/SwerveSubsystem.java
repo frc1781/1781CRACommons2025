@@ -67,7 +67,7 @@ public class SwerveSubsystem extends SubsystemBase
   private final SwerveDrive swerveDrive;
   private final boolean     visionDriveTest = true;
   private       Vision      vision;
-  private boolean inPosition = false;
+  private int targetAprilTag;
   /**
    * Initialize {@link SwerveDrive} with the directory provided.
    *
@@ -75,6 +75,7 @@ public class SwerveSubsystem extends SubsystemBase
    */
   public SwerveSubsystem(File directory)
   {
+    targetAprilTag = 0;
     boolean blueAlliance = true;
     Pose2d startingPose = 
       blueAlliance ? 
@@ -140,9 +141,6 @@ public class SwerveSubsystem extends SubsystemBase
         vision.updatePoseEstimation(swerveDrive);
       }
     }
-
-    Logger.recordOutput("Swerve Drive/inPosition", inPosition);
-
   }
 
   @Override
@@ -721,14 +719,15 @@ public class SwerveSubsystem extends SubsystemBase
     return swerveDrive;
   }
 
+  public int findTargetAprilTag() {
+    return 18;
+  }
+
   public class MoveToPositionToScore extends Command {
-    Timer t;
-    BooleanSupplier coralPresent;
     Sensation tofs;
 
     public MoveToPositionToScore(Sensation tofs)
     {
-      t = new Timer();
       this.tofs = tofs;
       addRequirements(SwerveSubsystem.this);
     }
@@ -736,26 +735,36 @@ public class SwerveSubsystem extends SubsystemBase
     @Override
     public void initialize()
     {
-      t.restart();
-      inPosition = false;
+      targetAprilTag = 0; //none found
     }
 
     @Override
     public void execute()
     {
-      ChassisSpeeds inputSpeeds = new ChassisSpeeds(); 
-      double avgDist = (tofs.rightTOF() + tofs.leftTOF()) / 2.0;
-      inPosition = avgDist < 290;
-      if(!inPosition){
-        inputSpeeds.vxMetersPerSecond = EEUtil.clamp(-0.5, 0.5, 0.005 * (avgDist - 280));
+      if (targetAprilTag == 0) {
+        targetAprilTag = findTargetAprilTag();
       }
+
+      double avgDist = (tofs.rightTOF() + tofs.leftTOF()) / 2.0;
+      ChassisSpeeds inputSpeeds = new ChassisSpeeds(); //(0, 0, 0)
+      inputSpeeds.vxMetersPerSecond = EEUtil.clamp(-0.5, 0.5, 0.005 * (avgDist - 280));
+      inputSpeeds.vyMetersPerSecond = getYtoCenterOnAprilTag(targetAprilTag); //if 0 returns 0);
+      inputSpeeds.omegaRadiansPerSecond = getRotToOrientToAprilTag(targetAprilTag);
       swerveDrive.drive(inputSpeeds);
+    }
+
+    private double getYtoCenterOnAprilTag(int targetAprilTag) {
+      return 0.0;
+    }
+
+    private double getRotToOrientToAprilTag(int targetAprilTag) {
+      return 0.0;
     }
 
     @Override
     public boolean isFinished()
     {
-      return inPosition;
+      return (tofs.rightTOF() + tofs.leftTOF()) / 2.0 < 290;
     }
 
     @Override
@@ -764,30 +773,4 @@ public class SwerveSubsystem extends SubsystemBase
     
     }
   }
-
-  /**
-   * Use PathPlanner Path finding to go to a point on the field.
-   *
-   * @param pose Target {@link Pose2d} to go to.
-   * @return PathFinding command
-   */
-  // public Command position(DoubleSupplier rightTOF, DoubleSupplier leftTOF)
-  // {
-  //   inPosition = false;
-  //   return run(() -> {
-  //     ChassisSpeeds inputSpeeds = new ChassisSpeeds(); 
-  //     double avgDist = (leftTOF.getAsDouble() + rightTOF.getAsDouble()) / 2.0;
-  //     inPosition = avgDist < 290;
-  //     if(!inPosition){
-  //       inputSpeeds.vxMetersPerSecond = EEUtil.clamp(-0.5, 0.5, 0.005 * (avgDist - 280));
-  //     }
-  //     swerveDrive.drive(inputSpeeds);
-  //     System.out.println(inputSpeeds.vxMetersPerSecond);
-  //   }).until(this::inPosition);
-  // }
-
-  // private boolean inPosition(){
-  //   return inPosition;
-  // }
-
 }

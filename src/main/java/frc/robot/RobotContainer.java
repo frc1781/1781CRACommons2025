@@ -272,7 +272,6 @@ public class RobotContainer {
          sensation.rightTOFisValid() && 
          sensation.leftTOF() < 1000 && 
          sensation.rightTOF() < 1000;
-         //robotController.visionSystem.getDoubleCameraReefApriltag() != -1;
+         vision.getTargetAprilTag() != 0;
     }
-
   }

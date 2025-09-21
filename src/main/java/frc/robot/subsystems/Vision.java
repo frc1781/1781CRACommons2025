@@ -67,7 +67,7 @@ public class Vision
    * Field from {@link swervelib.SwerveDrive#field}
    */
   private Field2d field2d;
-
+  private List<Pose3d> seenAprilTags = new ArrayList<>();  
   /**
    * Constructor for the Vision class.
    *
@@ -114,6 +114,10 @@ public class Vision
 
   }
 
+  public List<Pose3d> getSeenAprilTags() {
+    return seenAprilTags;
+  }
+
   /**
    * Update the pose estimation inside of {@link SwerveDrive} with all of the given poses.
    *
@@ -132,7 +136,8 @@ public class Vision
        */
       visionSim.update(swerveDrive.getSimulationDriveTrainPose().get());
     }
-    List<Pose3d> seenAprilTags = new ArrayList<>();
+    
+    seenAprilTags = new ArrayList<>();
     
     for (Cameras camera : Cameras.values())
     {
