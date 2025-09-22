@@ -27,11 +27,11 @@ public class StrafeCommand extends Command {
     }
 
     public void execute() {
-        if (sensations.armTOFisValid() && sensations.armTOF() < 80) {
+        if (sensations.armTOFisValid() && sensations.armTOF() < 800) {
             isFinished = true;
         }
         ChassisSpeeds requiredSpeeds = new ChassisSpeeds();
-        requiredSpeeds.vyMetersPerSecond = isLeft? -0.2 : 0.2;
+        requiredSpeeds.vyMetersPerSecond = isLeft? 0.2 : -0.2;
         driveSystem.drive(requiredSpeeds);
     }
 

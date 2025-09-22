@@ -111,6 +111,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("Collect", new Collect(elevator, coralEnter));
     NamedCommands.registerCommand("MoveToPositionToScore", drivebase.new MoveToPositionToScore(sensation));
     NamedCommands.registerCommand("Clear", new Clear(arm));
+    NamedCommands.registerCommand("StrafeCommand", new StrafeCommand(drivebase, elevator, arm, sensation, true));
     NamedCommands.registerCommand("L4", new L4(elevator, arm));
     configureBindings();
     DriverStation.silenceJoystickConnectionWarning(true);
