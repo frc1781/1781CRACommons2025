@@ -722,13 +722,11 @@ public class SwerveSubsystem extends SubsystemBase
   }
 
   public class MoveToPositionToScore extends Command {
-    Timer t;
     BooleanSupplier coralPresent;
     Sensation tofs;
 
     public MoveToPositionToScore(Sensation tofs)
     {
-      t = new Timer();
       this.tofs = tofs;
       addRequirements(SwerveSubsystem.this);
     }
@@ -736,7 +734,6 @@ public class SwerveSubsystem extends SubsystemBase
     @Override
     public void initialize()
     {
-      t.restart();
       inPosition = false;
     }
 
@@ -764,30 +761,4 @@ public class SwerveSubsystem extends SubsystemBase
     
     }
   }
-
-  /**
-   * Use PathPlanner Path finding to go to a point on the field.
-   *
-   * @param pose Target {@link Pose2d} to go to.
-   * @return PathFinding command
-   */
-  // public Command position(DoubleSupplier rightTOF, DoubleSupplier leftTOF)
-  // {
-  //   inPosition = false;
-  //   return run(() -> {
-  //     ChassisSpeeds inputSpeeds = new ChassisSpeeds(); 
-  //     double avgDist = (leftTOF.getAsDouble() + rightTOF.getAsDouble()) / 2.0;
-  //     inPosition = avgDist < 290;
-  //     if(!inPosition){
-  //       inputSpeeds.vxMetersPerSecond = EEUtil.clamp(-0.5, 0.5, 0.005 * (avgDist - 280));
-  //     }
-  //     swerveDrive.drive(inputSpeeds);
-  //     System.out.println(inputSpeeds.vxMetersPerSecond);
-  //   }).until(this::inPosition);
-  // }
-
-  // private boolean inPosition(){
-  //   return inPosition;
-  // }
-
 }
