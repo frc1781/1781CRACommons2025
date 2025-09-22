@@ -30,7 +30,7 @@ public class MoveBack extends Command{
 
     @Override
     public boolean isFinished() {
-        return t.get() > 0.5;
+        return t.get() > 1;
     }
 
     @Override

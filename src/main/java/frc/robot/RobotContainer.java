@@ -28,6 +28,7 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Clear;
 import frc.robot.commands.Collect;
 import frc.robot.commands.L4;
+import frc.robot.commands.MoveBack;
 import frc.robot.commands.PostCollect;
 import frc.robot.commands.PreCollect;
 import frc.robot.commands.SafeConfig;
@@ -107,7 +108,7 @@ public class RobotContainer {
   public RobotContainer()
   {
     NamedCommands.registerCommand("CustomWaitCommand", new WaitCommand(SmartDashboard.getNumber("Wait Time", wait_seconds)));
-    NamedCommands.registerCommand("Score", new Score(arm));
+    NamedCommands.registerCommand("Score", new Score(arm, drivebase));
     NamedCommands.registerCommand("Collect", new Collect(elevator, coralEnter));
     NamedCommands.registerCommand("MoveToPositionToScore", drivebase.new MoveToPositionToScore(sensation));
     NamedCommands.registerCommand("Clear", new Clear(arm));
@@ -119,6 +120,8 @@ public class RobotContainer {
     NamedCommands.registerCommand("SetArm", new SetArm(arm, ArmState.START));
     NamedCommands.registerCommand("StrafeCommand", new StrafeCommand(drivebase, elevator, arm, sensation, true));
     NamedCommands.registerCommand("SafeConfig", new SafeConfig(elevator, arm));
+    NamedCommands.registerCommand("MoveBack", new MoveBack(drivebase));
+
     configureBindings();
     DriverStation.silenceJoystickConnectionWarning(true);
     autoChooser = AutoBuilder.buildAutoChooser();
@@ -196,7 +199,7 @@ public class RobotContainer {
       driverXbox.povUp().onTrue(new PreCollect(elevator, arm));
       driverXbox.povRight().onTrue(new PostCollect(elevator, arm));
       driverXbox.povDown().onTrue(new L4(elevator, arm));
-      driverXbox.povLeft().onTrue(new Score(arm));
+      driverXbox.povLeft().onTrue(new Score(arm, drivebase));
       //driverXbox.x().whileTrue(Commands.run(() -> arm.setState(ArmState.REEF_ALGAE)));
       //driverXbox.x().whileTrue(Commands.run(() -> elevator.setState(Elevator.ElevatorState.L4)));
       driverXbox.rightBumper().onTrue(Commands.none());
