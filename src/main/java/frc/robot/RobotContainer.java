@@ -32,6 +32,7 @@ import frc.robot.commands.PostCollect;
 import frc.robot.commands.PreCollect;
 import frc.robot.commands.SafeConfig;
 import frc.robot.commands.Score;
+import frc.robot.commands.SetArm;
 import frc.robot.commands.SetElevator;
 import frc.robot.commands.Shoot;
 import frc.robot.commands.StrafeCommand;
@@ -49,7 +50,6 @@ public class RobotContainer {
   final CommandXboxController driverXbox = new CommandXboxController(0);
   private Sensation sensation = new Sensation();;
   private SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve/ava"));; //im sure this wont cause issues later
-  // private final TankDriveTrain tankDrive = new TankDriveTrain(driverXbox);
   private final Conveyor conveyor = new Conveyor();
   private final Lights lights = new Lights();
   private final Elevator elevator = new Elevator(this);
@@ -58,11 +58,11 @@ public class RobotContainer {
   private final SendableChooser<Command> autoChooser;
   private double wait_seconds = 5;
 
-   Trigger coralEnter = new Trigger(sensation::coralPresent);
-   Trigger coralHopper = new Trigger(sensation::coralInHopper);
-   Trigger coralExit = new Trigger(sensation::coralExitedHopper);
-   Trigger robotInPosition = new Trigger(this::inPosition);
-   Trigger readyToCollectTrigger = new Trigger(this::readyToCollect);
+  Trigger coralEnter = new Trigger(sensation::coralPresent);
+  Trigger coralHopper = new Trigger(sensation::coralInHopper);
+  Trigger coralExit = new Trigger(sensation::coralExitedHopper);
+  Trigger robotInPosition = new Trigger(this::inPosition);
+  Trigger readyToCollectTrigger = new Trigger(this::readyToCollect);
 
   //Driving the robot during teleOp
   SwerveInputStream driveAngularVelocity = SwerveInputStream.of(
@@ -113,6 +113,12 @@ public class RobotContainer {
     NamedCommands.registerCommand("Clear", new Clear(arm));
     NamedCommands.registerCommand("StrafeCommand", new StrafeCommand(drivebase, elevator, arm, sensation, true));
     NamedCommands.registerCommand("L4", new L4(elevator, arm));
+    NamedCommands.registerCommand("PreCollect", new PreCollect(elevator, arm));
+    NamedCommands.registerCommand("PostCollect", new PostCollect(elevator, arm));
+    NamedCommands.registerCommand("SetElevator", new SetElevator(elevator, ElevatorState.SAFE));
+    NamedCommands.registerCommand("SetArm", new SetArm(arm, ArmState.START));
+    NamedCommands.registerCommand("StrafeCommand", new StrafeCommand(drivebase, elevator, arm, sensation, true));
+    NamedCommands.registerCommand("SafeConfig", new SafeConfig(elevator, arm));
     configureBindings();
     DriverStation.silenceJoystickConnectionWarning(true);
     autoChooser = AutoBuilder.buildAutoChooser();

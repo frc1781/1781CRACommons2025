@@ -104,7 +104,7 @@ public class Elevator extends SubsystemBase{
         Logger.recordOutput("Elevator/CarriageTOFvalid", carriageTOF.isRangeValidRegularCheck());
         Logger.recordOutput("Elevator/ElevatorMotorEncoderCounts", motorRight.getEncoder().getPosition());
         Logger.recordOutput("Elevator/DutyCycle", elevatorDutyCycle);
-
+        Logger.recordOutput("Elevator/CurrentState", currentState);
        
         motorRight.set(elevatorDutyCycle);
     }
