@@ -8,6 +8,7 @@ public class SafeConfig extends SequentialCommandGroup {
 
     Elevator elevator;
     Arm arm;
+    
 
     public SafeConfig(Elevator elevator, Arm arm) {
         this.elevator = elevator;

@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.Clear;
 import frc.robot.commands.Collect;
 import frc.robot.commands.L4;
 import frc.robot.commands.PostCollect;
@@ -106,9 +107,11 @@ public class RobotContainer {
   public RobotContainer()
   {
     NamedCommands.registerCommand("CustomWaitCommand", new WaitCommand(SmartDashboard.getNumber("Wait Time", wait_seconds)));
-    NamedCommands.registerCommand("Shoot", new Shoot(lights));
+    NamedCommands.registerCommand("Score", new Score(arm));
     NamedCommands.registerCommand("Collect", new Collect(elevator, coralEnter));
     NamedCommands.registerCommand("MoveToPositionToScore", drivebase.new MoveToPositionToScore(sensation));
+    NamedCommands.registerCommand("Clear", new Clear(arm));
+    NamedCommands.registerCommand("L4", new L4(elevator, arm));
     configureBindings();
     DriverStation.silenceJoystickConnectionWarning(true);
     autoChooser = AutoBuilder.buildAutoChooser();

@@ -2,6 +2,8 @@ package frc.robot.commands;
 
 import java.util.function.BooleanSupplier;
 
+import org.littletonrobotics.junction.Logger;
+
 import com.revrobotics.spark.SparkMax;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
@@ -15,30 +17,22 @@ import frc.robot.subsystems.Arm.ArmState;
 
 public class Clear extends Command {
 
-    boolean isArmClear;
     Arm arm;
-    Elevator elevator;
-    RobotContainer robotContainer;
 
-    double armMinDegrees;
-    double requiredArmPositionDegrees;
-
-    public Clear(Arm arm, Elevator elevator, RobotContainer robotContainer) {
+    public Clear(Arm arm) {
         this.arm = arm;
-        this.elevator = elevator;
-        this.robotContainer = robotContainer;
+        addRequirements(arm);
     }
 
     @Override
     public void initialize() {
-        isArmClear = false;
+
     }
 
     @Override
     public void execute() {
-        if (robotContainer.isArmInsideElevator()) {
-            arm.setState(ArmState.START_MID);
-        }
+        Logger.recordOutput("Arm/CurrentCommand", "Clear");
+        arm.setState(ArmState.START_MID);
     }
 
     @Override
