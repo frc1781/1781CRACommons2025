@@ -1,5 +1,7 @@
 package frc.robot.commands;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -26,6 +28,7 @@ public class MoveBack extends Command{
     @Override
     public void execute() {
         swervedrive.drive(requiredSpeeds);
+        Logger.recordOutput("Drive/CurrentCommand", "MoveBack");
     }
 
     @Override

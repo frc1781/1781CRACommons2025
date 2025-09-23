@@ -1,27 +1,19 @@
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
-
-import java.util.function.BooleanSupplier;
-
 import org.littletonrobotics.junction.Logger;
 
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Elevator;
-import frc.robot.subsystems.Lights;
+import frc.robot.subsystems.Sensation;
 
-public class Collect extends Command
-{
-  BooleanSupplier coralPresentInArm;
+public class Collect extends Command {
+  Sensation sensation;
   Elevator elevator;
   Elevator.ElevatorState collectLow = Elevator.ElevatorState.COLLECT_LOW;
 
-  public Collect(Elevator elevator, BooleanSupplier coralPresentInArm)  {
+  public Collect(Elevator elevator, Sensation sensation) {
     this.elevator = elevator;
-    this.coralPresentInArm = coralPresentInArm;
+    this.sensation = sensation;
     addRequirements(elevator);
   }
 
@@ -32,21 +24,19 @@ public class Collect extends Command
 
   @Override
   public void execute() {
-    elevator.setElevatorPosition(collectLow);
-    Logger.recordOutput("Elevator/currentCommand", "Collect: " + collectLow.name());
+    Logger.recordOutput("Elevator/CurrentCommand", "Collect: " + collectLow.name());
+    if (sensation.coralExitedHopper()) {
+      elevator.setElevatorPosition(collectLow);
+    }
   }
 
   @Override
-  public boolean isFinished()
-  {
-    return coralPresentInArm.getAsBoolean() || elevator.hasReachedPosition(collectLow);
+  public boolean isFinished() {
+    return sensation.clawCoralPresent() && elevator.hasReachedPosition(collectLow);
   }
 
   @Override
-  public void end(boolean interrupted)
-  {
-    // if (interrupted) System.out.println("Collect interrupted");
-    // else System.out.println("Collect finished");
+  public void end(boolean interrupted) {
+
   }
 }
-

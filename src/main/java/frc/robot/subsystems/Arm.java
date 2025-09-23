@@ -60,7 +60,10 @@ public class Arm extends SubsystemBase {
     }
 
     public Command idle() {
-        return new InstantCommand(() -> {setState(ArmState.IDLE);}, this);
+        return new InstantCommand(() -> {
+            setState(ArmState.IDLE);
+            Logger.recordOutput("Arm/CurrentCommand", "Idle");
+        }, this);
     }
 
     @Override
@@ -157,7 +160,7 @@ public class Arm extends SubsystemBase {
         L1(45.0),
         L2(90.0), // why was this 0.0
         L3(28.0),
-        L4(45.0),
+        L4(75.0),
         COLLECT(179.0),
         WAIT(25.0),
         POLE(25.0),

@@ -1,5 +1,7 @@
 package frc.robot.commands;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -7,7 +9,6 @@ import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Sensation;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
-import swervelib.SwerveDrive;
 
 public class StrafeCommand extends Command {
     SwerveSubsystem driveSystem;
@@ -26,6 +27,10 @@ public class StrafeCommand extends Command {
         addRequirements(driveSystem);
     }
 
+    public void initialize() {
+        isFinished = false;
+    }
+
     public void execute() {
         if (sensations.armTOFisValid() && sensations.armTOF() < 800) {
             isFinished = true;
@@ -33,6 +38,7 @@ public class StrafeCommand extends Command {
         ChassisSpeeds requiredSpeeds = new ChassisSpeeds();
         requiredSpeeds.vyMetersPerSecond = isLeft? 0.2 : -0.2;
         driveSystem.drive(requiredSpeeds);
+        Logger.recordOutput("Drive/CurrentCommand", "Strafe");
     }
 
     public boolean isFinished() {

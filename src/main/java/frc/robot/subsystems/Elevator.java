@@ -93,6 +93,7 @@ public class Elevator extends SubsystemBase{
     public Command idle() {
         return new InstantCommand(() -> {
             elevatorDutyCycle = IDLE_DUTY_CYCLE;
+            Logger.recordOutput("Elevator/CurrentCommand", "Idle");
         }, this);
     }
 

@@ -747,6 +747,7 @@ public class SwerveSubsystem extends SubsystemBase
         inputSpeeds.vxMetersPerSecond = EEUtil.clamp(-0.5, 0.5, 0.005 * (avgDist - 280));
       }
       swerveDrive.drive(inputSpeeds);
+      Logger.recordOutput("Drive/CurrentCommand", "MoveToPositionToScore");
     }
 
     @Override

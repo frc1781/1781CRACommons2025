@@ -24,7 +24,7 @@ public class SetArm extends Command {
     @Override
     public void execute() {
         arm.setState(desiredState);
-        Logger.recordOutput("Arm/currentCommand", "SetArm: " + desiredState.name());
+        Logger.recordOutput("Arm/CurrentCommand", "SetArm: " + desiredState.name());
     }
 
     @Override

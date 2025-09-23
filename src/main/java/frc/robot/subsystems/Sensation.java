@@ -44,6 +44,7 @@ public class Sensation extends SubsystemBase
         Logger.recordOutput("Sensation/rightTOF", rightTOF.getRange());
         Logger.recordOutput("Sensation/rightTOFValid", rightTOF.isRangeValidRegularCheck());
         Logger.recordOutput("Sensation/clawCoralTOF", clawCoralTOF.getRange());
+        Logger.recordOutput("Sensation/clawCoralTOFValid", clawCoralTOF.isRangeValidRegularCheck());
     }
 
     public boolean coralPresent() {

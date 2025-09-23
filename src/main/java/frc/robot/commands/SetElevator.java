@@ -45,7 +45,7 @@ public class SetElevator extends Command
   public void execute()
   {
     elevator.setElevatorPosition(desiredState);
-    Logger.recordOutput("Elevator/currentCommand", "SetElevator: " + desiredState.name());
+    Logger.recordOutput("Elevator/CurrentCommand", "SetElevator: " + desiredState.name());
   }
 
   @Override
