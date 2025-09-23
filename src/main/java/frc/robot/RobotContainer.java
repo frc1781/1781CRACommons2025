@@ -35,7 +35,6 @@ import frc.robot.commands.SafeConfig;
 import frc.robot.commands.Score;
 import frc.robot.commands.SetArm;
 import frc.robot.commands.SetElevator;
-import frc.robot.commands.Shoot;
 import frc.robot.commands.StrafeCommand;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.Arm.ArmState;

@@ -12,7 +12,7 @@ public class Score extends SequentialCommandGroup {
     public Score(Arm arm, SwerveSubsystem swervedrive) {
         this.arm = arm;
         this.swervedrive = swervedrive;
-        addRequirements(arm);
+        addRequirements(arm, swervedrive);
         addCommands(
             new SetArm(arm, Arm.ArmState.L4),
             new MoveBack(swervedrive)
