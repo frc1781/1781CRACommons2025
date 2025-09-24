@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Clear;
 import frc.robot.commands.Collect;
+import frc.robot.commands.CollectAndClear;
 import frc.robot.commands.L4;
 import frc.robot.commands.MoveBack;
 import frc.robot.commands.PostCollect;
@@ -118,7 +119,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("CustomWaitCommand",
         new WaitCommand(SmartDashboard.getNumber("Wait Time", wait_seconds)));
     NamedCommands.registerCommand("Score", new Score(arm, drivebase));
-    NamedCommands.registerCommand("Collect", new Collect(elevator, sensation));
+    NamedCommands.registerCommand("Collect", new CollectAndClear(elevator, arm, sensation));
     NamedCommands.registerCommand("MoveToPositionToScore", drivebase.new MoveToPositionToScore(sensation));
     NamedCommands.registerCommand("Clear", new Clear(arm));
     NamedCommands.registerCommand("StrafeCommand", new StrafeCommand(drivebase, elevator, arm, sensation, true));
@@ -246,7 +247,7 @@ public class RobotContainer {
           .onTrue(lights.set(Lights.Colors.RED, Lights.Patterns.FAST_FLASH));
       coralHopper.and(coralExit.negate()).onTrue(lights.set(Lights.Colors.RED, Lights.Patterns.MARCH));
       coralExit.onFalse(lights.set(Lights.Colors.RED, Lights.Patterns.SOLID));
-      coralExit.and(readyToCollectTrigger).onTrue(new Collect(elevator, sensation));
+      //coralExit.and(readyToCollectTrigger).onTrue(new Collect(elevator, sensation));
     }
   }
 

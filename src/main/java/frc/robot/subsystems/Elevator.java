@@ -136,7 +136,6 @@ public class Elevator extends SubsystemBase{
         double framePosition = getFramePosition();
         double tolerance = 80; // obviously subject to change
         Double[] desiredPosition = positions.get(desiredState);
-        System.out.println("hello " + desiredPosition[0] + desiredPosition[1]);
         if (carriageTOF.isRangeValidRegularCheck() && Math.abs(desiredPosition[1] - carriagePosition) >= tolerance) {
             double ff = -feedforwardController.calculate(desiredPosition[1] - carriagePosition);
             Logger.recordOutput("Elevator/FFUnClamped", ff);

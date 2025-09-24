@@ -37,6 +37,13 @@ public class Collect extends Command {
 
   @Override
   public void end(boolean interrupted) {
-
+    if (interrupted) {
+      System.out.println("Collect command was interrupted");
+      Logger.recordOutput("Elevator/CurrentCommand", "CollectInterrupted");
+    }
+    else {
+      System.out.println("Collect command completed successfully");
+      Logger.recordOutput("Elevator/CurrentCommand", "CollectComplete");
+    }
   }
 }

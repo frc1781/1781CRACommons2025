@@ -87,7 +87,7 @@
           }
         },
         {
-          "type": "sequential",
+          "type": "parallel",
           "data": {
             "commands": [
               {
@@ -104,6 +104,12 @@
                       "type": "named",
                       "data": {
                         "name": "Collect"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "PostCollect"
                       }
                     },
                     {
