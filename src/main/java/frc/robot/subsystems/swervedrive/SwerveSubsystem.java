@@ -141,8 +141,7 @@ public class SwerveSubsystem extends SubsystemBase
       }
     }
 
-    Logger.recordOutput("Swerve Drive/inPosition", inPosition);
-
+    Logger.recordOutput("Drive/robotPose", getPose());
   }
 
   @Override

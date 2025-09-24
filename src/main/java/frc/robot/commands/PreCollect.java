@@ -15,7 +15,8 @@ public class PreCollect extends SequentialCommandGroup {
         addRequirements(elevator, arm);
         addCommands(
             new SetElevator(elevator, Elevator.ElevatorState.SAFE_CORAL),
-            new SetArm(arm, Arm.ArmState.COLLECT)
+            new SetArm(arm, Arm.ArmState.COLLECT),
+            new SetArm(arm, Arm.ArmState.COLLECT) // run twice to ensure we hit the position
         );
     }
     

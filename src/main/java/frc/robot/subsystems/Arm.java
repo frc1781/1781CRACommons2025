@@ -161,7 +161,7 @@ public class Arm extends SubsystemBase {
         L2(90.0), // why was this 0.0
         L3(28.0),
         L4(75.0),
-        COLLECT(179.0),
+        COLLECT(145.0),
         WAIT(25.0),
         POLE(25.0),
         START_MID(40.0),

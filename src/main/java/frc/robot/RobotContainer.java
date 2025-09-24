@@ -37,6 +37,7 @@ import frc.robot.commands.Score;
 import frc.robot.commands.SetArm;
 import frc.robot.commands.SetElevator;
 import frc.robot.commands.StrafeCommand;
+import frc.robot.commands.WaitForCoral;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.Arm.ArmState;
 import frc.robot.subsystems.Elevator.ElevatorState;
@@ -129,6 +130,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("StrafeCommand", new StrafeCommand(drivebase, elevator, arm, sensation, true));
     NamedCommands.registerCommand("SafeConfig", new SafeConfig(elevator, arm));
     NamedCommands.registerCommand("MoveBack", new MoveBack(drivebase));
+    NamedCommands.registerCommand("WaitForCoral", new WaitForCoral(sensation, drivebase));
 
     configureBindings();
     DriverStation.silenceJoystickConnectionWarning(true);

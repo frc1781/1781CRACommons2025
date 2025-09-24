@@ -32,7 +32,7 @@ public class Collect extends Command {
 
   @Override
   public boolean isFinished() {
-    return sensation.clawCoralPresent() && elevator.hasReachedPosition(collectLow);
+    return sensation.clawCoralPresent();
   }
 
   @Override
