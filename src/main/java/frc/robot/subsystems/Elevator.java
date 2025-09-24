@@ -83,7 +83,7 @@ public class Elevator extends SubsystemBase{
         positions.put(ElevatorState.L3_LOW, new Double[]{minFrameDistance, 350.0});
         positions.put(ElevatorState.L4, new Double[]{maxFrameDistance, minCarriageDistance});
         positions.put(ElevatorState.BARGE_SCORE, new Double[]{maxFrameDistance, minCarriageDistance});
-        positions.put(ElevatorState.COLLECT_LOW, new Double[]{minFrameDistance, 260.0});
+        positions.put(ElevatorState.COLLECT_LOW, new Double[]{minFrameDistance, 340.0});
         positions.put(ElevatorState.GROUND_COLLECT, new Double[]{0.0, 290.0});
         positions.put(ElevatorState.HIGH_ALGAE, new Double[]{minFrameDistance, minCarriageDistance});
         positions.put(ElevatorState.LOW_ALGAE, new Double[]{maxFrameDistance, 350.0});
@@ -106,6 +106,7 @@ public class Elevator extends SubsystemBase{
         Logger.recordOutput("Elevator/ElevatorMotorEncoderCounts", motorRight.getEncoder().getPosition());
         Logger.recordOutput("Elevator/DutyCycle", elevatorDutyCycle);
         Logger.recordOutput("Elevator/CurrentState", currentState);
+        Logger.recordOutput("Elevator/hasReachedSafePosition", hasReachedPosition(ElevatorState.SAFE));
        
         motorRight.set(elevatorDutyCycle);
     }

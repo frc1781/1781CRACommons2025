@@ -158,6 +158,7 @@ public class RobotContainer {
     Logger.recordOutput("RobotContainer/isSafeForArmToMoveUp", isSafeForArmToMoveUp());
     Logger.recordOutput("RobotContainer/isSafeForArmToMoveDown", isSafeForArmToMoveDown());
     Logger.recordOutput("RobotContainer/isArmInsideElevator", isArmInsideElevator());
+    Logger.recordOutput("RobotContainer/readyToCollect", readyToCollect());
   }
 
   private void configureBindings() {
