@@ -26,11 +26,13 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.CenterAndScore;
 import frc.robot.commands.Clear;
 import frc.robot.commands.Collect;
 import frc.robot.commands.CollectAndClear;
 import frc.robot.commands.L4;
 import frc.robot.commands.MoveBack;
+import frc.robot.commands.MoveToTarget;
 import frc.robot.commands.PostCollect;
 import frc.robot.commands.PreCollect;
 import frc.robot.commands.SafeConfig;
@@ -70,8 +72,10 @@ public class RobotContainer {
   Trigger coralEnter = new Trigger(sensation::coralPresent);
   Trigger coralHopper = new Trigger(sensation::coralInHopper);
   Trigger coralExit = new Trigger(sensation::coralExitedHopper);
+  Trigger armHasCoral = new Trigger(sensation::clawCoralPresent);
   Trigger robotInPosition = new Trigger(this::inPosition);
   Trigger readyToCollectTrigger = new Trigger(this::readyToCollect);
+  Trigger isTeleopTrigger = new Trigger(DriverStation::isTeleop);
 
   // Driving the robot during teleOp
   SwerveInputStream driveAngularVelocity = SwerveInputStream.of(
@@ -221,22 +225,17 @@ public class RobotContainer {
       // driverXbox.povRight().whileTrue(arm.manualDown().repeatedly());
       // driverXbox.b().whileTrue(Commands.run(() -> arm.setState(ArmState.L1)));
       driverXbox.x().onTrue(new SafeConfig(elevator, arm));
-      driverXbox.povUp().onTrue(new PreCollect(elevator, arm));
-      driverXbox.povRight().onTrue(new PostCollect(elevator, arm));
+      driverXbox.b().onTrue(new PreCollect(elevator, arm));
+      driverXbox.povRight().whileTrue(new CenterAndScore(this, false));
       driverXbox.povDown().onTrue(new L4(elevator, arm));
-      driverXbox.povLeft().onTrue(new Score(arm, drivebase));
+      driverXbox.povLeft().whileTrue(new CenterAndScore(this, true));
       // driverXbox.x().whileTrue(Commands.run(() ->
       // arm.setState(ArmState.REEF_ALGAE)));
       // driverXbox.x().whileTrue(Commands.run(() ->
       // elevator.setState(Elevator.ElevatorState.L4)));
-      driverXbox.rightBumper().onTrue(Commands.none());
+      driverXbox.rightBumper().whileTrue(new MoveToTarget(drivebase, 19));
       // driverXbox.povUp().whileTrue(climber.ascend());
       // driverXbox.povDown().whileTrue(climber.descend());
-      // driverXbox.y().onTrue(lights.set(Lights.Special.RAINBOW));
-
-      driverXbox.y().whileTrue(drivebase.new MoveToPositionToScore(sensation)
-          .andThen(new StrafeCommand(drivebase, elevator, arm, sensation, true)));
-
       // driverXbox.b().onTrue(lights.set(Lights.Colors.WHITE,
       // Lights.Patterns.MARCH));
 
@@ -247,7 +246,7 @@ public class RobotContainer {
           .onTrue(lights.set(Lights.Colors.RED, Lights.Patterns.FAST_FLASH));
       coralHopper.and(coralExit.negate()).onTrue(lights.set(Lights.Colors.RED, Lights.Patterns.MARCH));
       coralExit.onFalse(lights.set(Lights.Colors.RED, Lights.Patterns.SOLID));
-      //coralExit.and(readyToCollectTrigger).onTrue(new Collect(elevator, sensation));
+      isTeleopTrigger.and(coralExit).and(readyToCollectTrigger).onTrue(new Collect(elevator, sensation));
     }
   }
 
@@ -290,6 +289,30 @@ public class RobotContainer {
   public void teleopInit() {
     drivebase.setMotorBrake(true);
     arm.setState(ArmState.START);
+  }
+
+  public SwerveSubsystem getDrivebase() {
+    return drivebase;
+  }
+
+  public Arm getArm() {
+    return arm;
+  }
+
+  public Elevator getElevator() {
+    return elevator;
+  }
+
+  public Conveyor getConveyor() {
+    return conveyor;
+  }
+
+  public Lights getLights() {
+    return lights;
+  }
+
+  public Sensation getSensation() {
+    return sensation;
   }
 
   /**

@@ -722,11 +722,12 @@ public class SwerveSubsystem extends SubsystemBase
 
   public class MoveToPositionToScore extends Command {
     BooleanSupplier coralPresent;
-    Sensation tofs;
+    Sensation sensation;
+    int aprilTagID = 19;
 
-    public MoveToPositionToScore(Sensation tofs)
+    public MoveToPositionToScore(Sensation sensation)
     {
-      this.tofs = tofs;
+      this.sensation = sensation;
       addRequirements(SwerveSubsystem.this);
     }
 
@@ -740,7 +741,7 @@ public class SwerveSubsystem extends SubsystemBase
     public void execute()
     {
       ChassisSpeeds inputSpeeds = new ChassisSpeeds(); 
-      double avgDist = (tofs.rightTOF() + tofs.leftTOF()) / 2.0;
+      double avgDist = (sensation.rightTOF() + sensation.leftTOF()) / 2.0;
       inPosition = avgDist < 290;
       if(!inPosition){
         inputSpeeds.vxMetersPerSecond = EEUtil.clamp(-0.5, 0.5, 0.005 * (avgDist - 280));
