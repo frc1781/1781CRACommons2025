@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.CenterAndScore;
@@ -40,7 +41,7 @@ import frc.robot.commands.Score;
 import frc.robot.commands.SetArm;
 import frc.robot.commands.SetElevator;
 import frc.robot.commands.SetTargetPose;
-import frc.robot.commands.StopMovingToTarget;
+//import frc.robot.commands.StopMovingToTarget;
 import frc.robot.commands.StrafeCommand;
 import frc.robot.commands.WaitForCoral;
 import frc.robot.subsystems.*;
@@ -55,7 +56,8 @@ import swervelib.SwerveInputStream;
 public class RobotContainer {
 
   final CommandXboxController driverXbox = new CommandXboxController(0);
-  private Sensation sensation = new Sensation();;
+  final CommandJoystick copilotButtons = new CommandJoystick(1);
+  private Sensation sensation = new Sensation();
   private SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve/ava"));; // im
                                                                                                                      // sure
                                                                                                                      // this
@@ -168,6 +170,7 @@ public class RobotContainer {
     Logger.recordOutput("RobotContainer/isSafeForArmToMoveDown", isSafeForArmToMoveDown());
     Logger.recordOutput("RobotContainer/isArmInsideElevator", isArmInsideElevator());
     Logger.recordOutput("RobotContainer/readyToCollect", readyToCollect());
+    Logger.recordOutput("RobotContainer/targetAprilTagID", targetAprilTagID);
   }
 
   private void configureBindings() {
@@ -225,7 +228,7 @@ public class RobotContainer {
       driverXbox.back().whileTrue(Commands.none());
       driverXbox.x().onTrue(new SafeConfig(elevator, arm));
       driverXbox.b().onTrue(new PreCollect(elevator, arm));
-      driverXbox.leftBumper().whileTrue(new StopMovingToTarget(drivebase));
+     // driverXbox.leftBumper().whileTrue(new StopMovingToTarget(drivebase));
       driverXbox.rightBumper().whileTrue(new MoveToTarget(drivebase, targetAprilTagID));
       driverXbox.leftTrigger().whileTrue(new CenterAndScore(this, true));
       driverXbox.rightTrigger().whileTrue(new CenterAndScore(this, false));
@@ -238,6 +241,14 @@ public class RobotContainer {
       driverXbox.povUp().and(isRedAllianceTrigger.negate()).onTrue(new SetTargetPose(this, 21));
       driverXbox.povUpRight().and(isRedAllianceTrigger.negate()).onTrue(new SetTargetPose(this, 22));
 
+      // driver poses blue
+      copilotButtons.button(6).and(isRedAllianceTrigger.negate()).onTrue(new SetTargetPose(this, 17));
+      copilotButtons.button(1).and(isRedAllianceTrigger.negate()).onTrue(new SetTargetPose(this, 18));
+      copilotButtons.button(2).and(isRedAllianceTrigger.negate()).onTrue(new SetTargetPose(this, 19));
+      copilotButtons.button(3).and(isRedAllianceTrigger.negate()).onTrue(new SetTargetPose(this, 20));
+      copilotButtons.button(4).and(isRedAllianceTrigger.negate()).onTrue(new SetTargetPose(this, 21));
+      copilotButtons.button(5).and(isRedAllianceTrigger.negate()).onTrue(new SetTargetPose(this, 22));
+
       // driver poses red
       driverXbox.povLeft().and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 6));
       driverXbox.povDown().and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 7));
@@ -245,6 +256,14 @@ public class RobotContainer {
       driverXbox.povUpRight().and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 9));
       driverXbox.povUp().and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 10));
       driverXbox.povUpLeft().and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 11));
+      
+      // driver poses red
+      copilotButtons.povLeft().and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 6));
+      copilotButtons.povDown().and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 7));
+      copilotButtons.povRight().and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 8));
+      copilotButtons.povUpRight().and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 9));
+      copilotButtons.povUp().and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 10));
+      copilotButtons.povUpLeft().and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 11));
 
       // TRIGGERS
 
