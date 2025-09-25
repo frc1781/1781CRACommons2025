@@ -161,7 +161,7 @@ public class RobotContainer {
       if (path != null) {
         Logger.recordOutput("Drive/CurrentCommand/", "RunningPath");
       }
-  });
+    });
   }
 
   public void periodic() {
@@ -229,7 +229,7 @@ public class RobotContainer {
       driverXbox.back().whileTrue(Commands.none());
       driverXbox.x().onTrue(new SafeConfig(elevator, arm));
       driverXbox.b().onTrue(new PreCollect(elevator, arm));
-     // driverXbox.leftBumper().whileTrue(new StopMovingToTarget(drivebase));
+      // driverXbox.leftBumper().whileTrue(new StopMovingToTarget(drivebase));
       driverXbox.rightBumper().whileTrue(new MoveToTarget(this, this::getTargetAprilTagID));
       driverXbox.leftTrigger().whileTrue(new CenterAndScore(this, true));
       driverXbox.rightTrigger().whileTrue(new CenterAndScore(this, false));
@@ -257,7 +257,7 @@ public class RobotContainer {
       driverXbox.povUpRight().and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 9));
       driverXbox.povUp().and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 10));
       driverXbox.povUpLeft().and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 11));
-      
+
       // copilot poses red
       copilotButtons.button(1).and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 7));
       copilotButtons.button(2).and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 8));
