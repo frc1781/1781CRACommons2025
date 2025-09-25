@@ -14,7 +14,7 @@ public class L2 extends ParallelCommandGroup {
         this.arm = arm;
         addCommands(
             new SetElevator(elevator, Elevator.ElevatorState.L2),
-            new SetArm(arm, Arm.ArmState.L2)
+            new SetArm(arm, Arm.ArmState.POLE)
         );
     }
     

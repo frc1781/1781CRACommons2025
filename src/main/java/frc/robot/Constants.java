@@ -121,6 +121,10 @@ public final class Constants
         static {
             positionForRobot = new HashMap<Integer, Pose2d>();
             //  BLUE ALLIANCE
+
+              //Starting Positions
+
+              positionForRobot.put(201, new Pose2d(7.2, 7.5, Rotation2d.fromDegrees(-90)));   // StandardLeft
         
               positionForRobot.put(17, new Pose2d(3.570, 2.332, Rotation2d.fromDegrees(60)));
               positionForRobot.put(18, new Pose2d(2.55,4, Rotation2d.fromDegrees(0))); 
@@ -130,6 +134,9 @@ public final class Constants
               positionForRobot.put(22, new Pose2d(5.436,2.370, Rotation2d.fromDegrees(120)));
 
             // RED ALLIANCE
+
+              positionForRobot.put(101, new Pose2d(10.31, 0.554, Rotation2d.fromDegrees(90))); // StandardLeft
+              positionForRobot.put(102, new Pose2d(10.31, 7.81, Rotation2d.fromDegrees(-90))); // StandardRight
 
               positionForRobot.put(6, new Pose2d(17 - 3.570, 2.332, Rotation2d.fromDegrees(120)));
               positionForRobot.put(7, new Pose2d(17 - 2.55,4, Rotation2d.fromDegrees(-180)));
@@ -141,8 +148,7 @@ public final class Constants
 
         public static Pose2d getPositionForRobot(int aprilTagID) {
             return positionForRobot.get(aprilTagID);
-        }
-       
+        }       
   }
 
   public static class Elevator {

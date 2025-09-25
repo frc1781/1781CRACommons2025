@@ -11,6 +11,9 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj.PowerDistribution;
+
+import java.sql.Driver;
+
 import org.littletonrobotics.junction.LoggedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -76,6 +79,24 @@ public class Robot extends LoggedRobot {
   public void autonomousInit() {
     theRobotContainer.setMotorBrake(true);
     exampleAuto = theRobotContainer.getAutonomousCommand();
+
+    if(exampleAuto.getName().equals("StandardLeft")) {
+      if (RobotContainer.isRed()) {
+        theRobotContainer.getDrivebase().resetOdometry(Constants.Positions.getPositionForRobot(101));
+      } 
+      else {
+        theRobotContainer.getDrivebase().resetOdometry(Constants.Positions.getPositionForRobot(201));
+      }
+    }
+
+    if(exampleAuto.getName().equals("StandardRight")) {
+      if (RobotContainer.isRed()) {
+        theRobotContainer.getDrivebase().resetOdometry(Constants.Positions.getPositionForRobot(102));
+      } 
+      else {
+      }
+    }
+    
 
     if (exampleAuto != null) {
       exampleAuto.schedule();

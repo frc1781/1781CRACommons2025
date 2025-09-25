@@ -138,7 +138,6 @@ public class RobotContainer {
     NamedCommands.registerCommand("PostCollect", new PostCollect(elevator, arm));
     NamedCommands.registerCommand("SetElevator", new SetElevator(elevator, ElevatorState.SAFE));
     NamedCommands.registerCommand("SetArm", new SetArm(arm, ArmState.START));
-    NamedCommands.registerCommand("StrafeCommand", new StrafeCommand(drivebase, elevator, arm, sensation, true));
     NamedCommands.registerCommand("SafeConfig", new SafeConfig(elevator, arm));
     NamedCommands.registerCommand("MoveBack", new MoveBack(drivebase));
     NamedCommands.registerCommand("WaitForCoral", new WaitForCoral(sensation, drivebase));
