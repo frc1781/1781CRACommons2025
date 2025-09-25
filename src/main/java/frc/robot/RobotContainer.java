@@ -40,6 +40,7 @@ import frc.robot.commands.Score;
 import frc.robot.commands.SetArm;
 import frc.robot.commands.SetElevator;
 import frc.robot.commands.SetTargetPose;
+import frc.robot.commands.StopMovingToTarget;
 import frc.robot.commands.StrafeCommand;
 import frc.robot.commands.WaitForCoral;
 import frc.robot.subsystems.*;
@@ -222,10 +223,12 @@ public class RobotContainer {
       driverXbox.a().onTrue((Commands.runOnce(drivebase::zeroGyro)));
       driverXbox.start().whileTrue(Commands.none());
       driverXbox.back().whileTrue(Commands.none());
-      driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
       driverXbox.x().onTrue(new SafeConfig(elevator, arm));
       driverXbox.b().onTrue(new PreCollect(elevator, arm));
+      driverXbox.leftBumper().whileTrue(new StopMovingToTarget(drivebase));
       driverXbox.rightBumper().whileTrue(new MoveToTarget(drivebase, targetAprilTagID));
+      driverXbox.leftTrigger().whileTrue(new CenterAndScore(this, true));
+      driverXbox.rightTrigger().whileTrue(new CenterAndScore(this, false));
 
       // driver poses blue
       driverXbox.povRight().and(isRedAllianceTrigger.negate()).onTrue(new SetTargetPose(this, 17));
