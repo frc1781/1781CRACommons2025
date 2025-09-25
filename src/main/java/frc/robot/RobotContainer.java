@@ -171,6 +171,7 @@ public class RobotContainer {
     Logger.recordOutput("RobotContainer/isArmInsideElevator", isArmInsideElevator());
     Logger.recordOutput("RobotContainer/readyToCollect", readyToCollect());
     Logger.recordOutput("RobotContainer/targetAprilTagID", targetAprilTagID);
+    Logger.recordOutput("RobotContainer/targetPose", Constants.Positions.getPositionForRobot(targetAprilTagID));
   }
 
   private void configureBindings() {
@@ -229,7 +230,7 @@ public class RobotContainer {
       driverXbox.x().onTrue(new SafeConfig(elevator, arm));
       driverXbox.b().onTrue(new PreCollect(elevator, arm));
      // driverXbox.leftBumper().whileTrue(new StopMovingToTarget(drivebase));
-      driverXbox.rightBumper().whileTrue(new MoveToTarget(drivebase, targetAprilTagID));
+      driverXbox.rightBumper().whileTrue(new MoveToTarget(this, this::getTargetAprilTagID));
       driverXbox.leftTrigger().whileTrue(new CenterAndScore(this, true));
       driverXbox.rightTrigger().whileTrue(new CenterAndScore(this, false));
 
@@ -241,13 +242,13 @@ public class RobotContainer {
       driverXbox.povUp().and(isRedAllianceTrigger.negate()).onTrue(new SetTargetPose(this, 21));
       driverXbox.povUpRight().and(isRedAllianceTrigger.negate()).onTrue(new SetTargetPose(this, 22));
 
-      // driver poses blue
-      copilotButtons.button(6).and(isRedAllianceTrigger.negate()).onTrue(new SetTargetPose(this, 17));
+      // copilot poses blue
       copilotButtons.button(1).and(isRedAllianceTrigger.negate()).onTrue(new SetTargetPose(this, 18));
-      copilotButtons.button(2).and(isRedAllianceTrigger.negate()).onTrue(new SetTargetPose(this, 19));
-      copilotButtons.button(3).and(isRedAllianceTrigger.negate()).onTrue(new SetTargetPose(this, 20));
+      copilotButtons.button(2).and(isRedAllianceTrigger.negate()).onTrue(new SetTargetPose(this, 17));
+      copilotButtons.button(3).and(isRedAllianceTrigger.negate()).onTrue(new SetTargetPose(this, 22));
       copilotButtons.button(4).and(isRedAllianceTrigger.negate()).onTrue(new SetTargetPose(this, 21));
-      copilotButtons.button(5).and(isRedAllianceTrigger.negate()).onTrue(new SetTargetPose(this, 22));
+      copilotButtons.button(5).and(isRedAllianceTrigger.negate()).onTrue(new SetTargetPose(this, 20));
+      copilotButtons.button(6).and(isRedAllianceTrigger.negate()).onTrue(new SetTargetPose(this, 19));
 
       // driver poses red
       driverXbox.povLeft().and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 6));
@@ -257,14 +258,13 @@ public class RobotContainer {
       driverXbox.povUp().and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 10));
       driverXbox.povUpLeft().and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 11));
       
-      // driver poses red
-      copilotButtons.povLeft().and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 6));
-      copilotButtons.povDown().and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 7));
-      copilotButtons.povRight().and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 8));
-      copilotButtons.povUpRight().and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 9));
-      copilotButtons.povUp().and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 10));
-      copilotButtons.povUpLeft().and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 11));
-
+      // copilot poses red
+      copilotButtons.button(1).and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 7));
+      copilotButtons.button(2).and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 8));
+      copilotButtons.button(3).and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 9));
+      copilotButtons.button(4).and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 10));
+      copilotButtons.button(5).and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 11));
+      copilotButtons.button(6).and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 6));
       // TRIGGERS
 
       robotInPosition.whileTrue(lights.set(Lights.Colors.GREEN, Lights.Patterns.SOLID));
@@ -286,6 +286,10 @@ public class RobotContainer {
 
   public void setTargetPose(int targetAprilTagID) {
     this.targetAprilTagID = targetAprilTagID;
+  }
+
+  public int getTargetAprilTagID() {
+    return targetAprilTagID;
   }
 
   public boolean isSafeForElevatorCarriagetoMove() {

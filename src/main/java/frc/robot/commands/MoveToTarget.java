@@ -1,26 +1,44 @@
 package frc.robot.commands;
 
+import java.util.function.IntSupplier;
+import org.littletonrobotics.junction.Logger;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.Constants;
+import frc.robot.RobotContainer;
 
-public class MoveToTarget extends SequentialCommandGroup {
+public class MoveToTarget extends Command {
     
-    int aprilTagID;
+    IntSupplier aprilTagID;
     Pose2d targetPose;
+    RobotContainer robotContainer;
     SwerveSubsystem swerveSubsystem;
 
-    public MoveToTarget(SwerveSubsystem swerveSubsystem, int aprilTagID) {  
+    public MoveToTarget(RobotContainer robotContainer, IntSupplier aprilTagID) {  
+        this.robotContainer = robotContainer;
+        this.swerveSubsystem = robotContainer.getDrivebase();
         this.aprilTagID = aprilTagID;
-        this.swerveSubsystem = swerveSubsystem;
-        targetPose = Constants.Positions.getPositionForRobot(aprilTagID);
-        
-        addCommands(
-            swerveSubsystem.driveToPose(targetPose)
-        );
+        addRequirements(swerveSubsystem);
     }
 
+    @Override
+    public void initialize() {
+        Logger.recordOutput("Drive/CurrentCommand", "RunningDriveToAprilTag");
+        targetPose = Constants.Positions.getPositionForRobot(aprilTagID.getAsInt());
+        System.out.println("x of target pose is " + targetPose.getX());
+        swerveSubsystem.driveToPose(targetPose).schedule();
+    }
+
+    @Override
+    public boolean isFinished() {
+        return 
+            swerveSubsystem.getPose().getTranslation().getDistance(targetPose.getTranslation()) < 0.1 && 
+            Math.abs(swerveSubsystem.getPose().getRotation().getDegrees() - targetPose.getRotation().getDegrees()) < 5;
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+        Logger.recordOutput("Drive/CurrentCommand", "FinishedDriveToAprilTag");
+    }
 }

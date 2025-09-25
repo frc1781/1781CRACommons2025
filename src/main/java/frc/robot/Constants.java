@@ -125,7 +125,7 @@ public final class Constants
               positionForRobot.put(17, new Pose2d(3.570, 2.332, Rotation2d.fromDegrees(60)));
               positionForRobot.put(18, new Pose2d(2.55,4, Rotation2d.fromDegrees(0))); 
               positionForRobot.put(19, new Pose2d(3.417,5.813, Rotation2d.fromDegrees(-60)));
-              positionForRobot.put(20, new Pose2d(5.369, 5.670, Rotation2d.fromDegrees(-120)));
+              positionForRobot.put(20, new Pose2d(5.3, 5.4, Rotation2d.fromDegrees(-120)));
               positionForRobot.put(21, new Pose2d(6.4,4, Rotation2d.fromDegrees(-180)));
               positionForRobot.put(22, new Pose2d(5.436,2.370, Rotation2d.fromDegrees(120)));
 
@@ -140,7 +140,7 @@ public final class Constants
         }
 
         public static Pose2d getPositionForRobot(int aprilTagID) {
-            return positionForRobot.getOrDefault(aprilTagID, new Pose2d());
+            return positionForRobot.get(aprilTagID);
         }
        
   }
