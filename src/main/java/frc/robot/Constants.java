@@ -4,8 +4,13 @@
 
 package frc.robot;
 
+import java.util.HashMap;
+import java.lang.Integer;
+
 import com.revrobotics.spark.config.ClosedLoopConfig;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import swervelib.math.Matter;
@@ -106,6 +111,38 @@ public final class Constants
                 .p(P)
                 .i(I)
                 .d(D);
+  }
+
+  public static class Positions {
+
+
+        private static final HashMap<Integer, Pose2d> positionForRobot;
+
+        static {
+            positionForRobot = new HashMap<Integer, Pose2d>();
+            //  BLUE ALLIANCE
+        
+              positionForRobot.put(17, new Pose2d(3.570, 2.332, Rotation2d.fromDegrees(60)));
+              positionForRobot.put(18, new Pose2d(2.55,4, Rotation2d.fromDegrees(0))); 
+              positionForRobot.put(19, new Pose2d(3.417,5.813, Rotation2d.fromDegrees(-60)));
+              positionForRobot.put(20, new Pose2d(5.369, 5.670, Rotation2d.fromDegrees(-120)));
+              positionForRobot.put(21, new Pose2d(6.4,4, Rotation2d.fromDegrees(-180)));
+              positionForRobot.put(22, new Pose2d(5.436,2.370, Rotation2d.fromDegrees(120)));
+
+            // RED ALLIANCE
+
+              positionForRobot.put(6, new Pose2d(17 - 3.570, 2.332, Rotation2d.fromDegrees(120)));
+              positionForRobot.put(7, new Pose2d(17 - 2.55,4, Rotation2d.fromDegrees(-180)));
+              positionForRobot.put(8, new Pose2d(17 - 3.417,5.813, Rotation2d.fromDegrees(-120)));
+              positionForRobot.put(9, new Pose2d(17 - 5.369, 5.670, Rotation2d.fromDegrees(-60)));
+              positionForRobot.put(10, new Pose2d(17 - 6.4,4, Rotation2d.fromDegrees(0)));
+              positionForRobot.put(11, new Pose2d(17 - 5.436,2.370, Rotation2d.fromDegrees(60)));
+        }
+
+        public static Pose2d getPositionForRobot(int aprilTagID) {
+            return positionForRobot.getOrDefault(aprilTagID, new Pose2d());
+        }
+       
   }
 
   public static class Elevator {

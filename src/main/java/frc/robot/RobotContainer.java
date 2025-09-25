@@ -39,6 +39,7 @@ import frc.robot.commands.SafeConfig;
 import frc.robot.commands.Score;
 import frc.robot.commands.SetArm;
 import frc.robot.commands.SetElevator;
+import frc.robot.commands.SetTargetPose;
 import frc.robot.commands.StrafeCommand;
 import frc.robot.commands.WaitForCoral;
 import frc.robot.subsystems.*;
@@ -68,6 +69,7 @@ public class RobotContainer {
   // private final Climber climber = new Climber();
   private final SendableChooser<Command> autoChooser;
   private double wait_seconds = 5;
+  private int targetAprilTagID = -1;
 
   Trigger coralEnter = new Trigger(sensation::coralPresent);
   Trigger coralHopper = new Trigger(sensation::coralInHopper);
@@ -76,6 +78,7 @@ public class RobotContainer {
   Trigger robotInPosition = new Trigger(this::inPosition);
   Trigger readyToCollectTrigger = new Trigger(this::readyToCollect);
   Trigger isTeleopTrigger = new Trigger(DriverStation::isTeleop);
+  Trigger isRedAllianceTrigger = new Trigger(RobotContainer::isRed);
 
   // Driving the robot during teleOp
   SwerveInputStream driveAngularVelocity = SwerveInputStream.of(
@@ -217,27 +220,28 @@ public class RobotContainer {
       driverXbox.rightBumper().onTrue(Commands.none());
     } else {
       driverXbox.a().onTrue((Commands.runOnce(drivebase::zeroGyro)));
-      // driverXbox.x().onTrue(Commands.runOnce(drivebase::addFakeVisionReading));
       driverXbox.start().whileTrue(Commands.none());
       driverXbox.back().whileTrue(Commands.none());
       driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
-      // driverXbox.povLeft().whileTrue(arm.manualUp().repeatedly());
-      // driverXbox.povRight().whileTrue(arm.manualDown().repeatedly());
-      // driverXbox.b().whileTrue(Commands.run(() -> arm.setState(ArmState.L1)));
       driverXbox.x().onTrue(new SafeConfig(elevator, arm));
       driverXbox.b().onTrue(new PreCollect(elevator, arm));
-      driverXbox.povRight().whileTrue(new CenterAndScore(this, false));
-      driverXbox.povDown().onTrue(new L4(elevator, arm));
-      driverXbox.povLeft().whileTrue(new CenterAndScore(this, true));
-      // driverXbox.x().whileTrue(Commands.run(() ->
-      // arm.setState(ArmState.REEF_ALGAE)));
-      // driverXbox.x().whileTrue(Commands.run(() ->
-      // elevator.setState(Elevator.ElevatorState.L4)));
-      driverXbox.rightBumper().whileTrue(new MoveToTarget(drivebase, 19));
-      // driverXbox.povUp().whileTrue(climber.ascend());
-      // driverXbox.povDown().whileTrue(climber.descend());
-      // driverXbox.b().onTrue(lights.set(Lights.Colors.WHITE,
-      // Lights.Patterns.MARCH));
+      driverXbox.rightBumper().whileTrue(new MoveToTarget(drivebase, targetAprilTagID));
+
+      // driver poses blue
+      driverXbox.povRight().and(isRedAllianceTrigger.negate()).onTrue(new SetTargetPose(this, 17));
+      driverXbox.povDown().and(isRedAllianceTrigger.negate()).onTrue(new SetTargetPose(this, 18));
+      driverXbox.povLeft().and(isRedAllianceTrigger.negate()).onTrue(new SetTargetPose(this, 19));
+      driverXbox.povUpLeft().and(isRedAllianceTrigger.negate()).onTrue(new SetTargetPose(this, 20));
+      driverXbox.povUp().and(isRedAllianceTrigger.negate()).onTrue(new SetTargetPose(this, 21));
+      driverXbox.povUpRight().and(isRedAllianceTrigger.negate()).onTrue(new SetTargetPose(this, 22));
+
+      // driver poses red
+      driverXbox.povLeft().and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 6));
+      driverXbox.povDown().and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 7));
+      driverXbox.povRight().and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 8));
+      driverXbox.povUpRight().and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 9));
+      driverXbox.povUp().and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 10));
+      driverXbox.povUpLeft().and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 11));
 
       // TRIGGERS
 
@@ -256,6 +260,10 @@ public class RobotContainer {
     } catch (NoSuchElementException e) {
       return false;
     }
+  }
+
+  public void setTargetPose(int targetAprilTagID) {
+    this.targetAprilTagID = targetAprilTagID;
   }
 
   public boolean isSafeForElevatorCarriagetoMove() {
