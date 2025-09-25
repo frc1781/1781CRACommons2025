@@ -24,7 +24,7 @@ public class MoveToTarget extends Command {
 
     @Override
     public void initialize() {
-        Logger.recordOutput("Drive/CurrentCommand", "RunningDriveToAprilTag");
+        Logger.recordOutput("Drive/CurrentCommand", "RunningDriveToAprilTag:" + aprilTagID.getAsInt());
         targetPose = Constants.Positions.getPositionForRobot(aprilTagID.getAsInt());
         System.out.println("x of target pose is " + targetPose.getX());
         swerveSubsystem.driveToPose(targetPose).schedule();

@@ -234,7 +234,6 @@ public class SwerveSubsystem extends SubsystemBase
         {
           // Not sure if this will work, more math may be required.
           drive(getTargetSpeeds(0,0, Rotation2d.fromDegrees(result.getBestTarget().getYaw()))); 
-          
         }
       }
     });
@@ -261,8 +260,8 @@ public class SwerveSubsystem extends SubsystemBase
   public Command driveToPose(Pose2d pose)
   {
 // Create the constraints to use while pathfinding
-    PathConstraints constraints = new PathConstraints(
-        swerveDrive.getMaximumChassisVelocity(), 4.0,
+    PathConstraints constraints = new PathConstraints(2.5
+        /*swerveDrive.getMaximumChassisVelocity()*/, 2.5,
         swerveDrive.getMaximumChassisAngularVelocity(), Units.degreesToRadians(720));
 
     Logger.recordOutput("Drive/CurrentCommand", "RunningDriveToPose");
