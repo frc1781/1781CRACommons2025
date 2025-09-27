@@ -25,12 +25,18 @@ public class MoveToTarget extends Command {
     @Override
     public void initialize() {
         Logger.recordOutput("Drive/CurrentCommand", "RunningDriveToAprilTag:" + aprilTagID.getAsInt());
+        if(aprilTagID.getAsInt() == -1) {
+            return;
+        } 
         targetPose = Constants.Positions.getPositionForRobot(aprilTagID.getAsInt());
         swerveSubsystem.driveToPose(targetPose).schedule();
     }
 
     @Override
     public boolean isFinished() {
+        if(aprilTagID.getAsInt() == -1) {
+            return true;
+        } 
         return 
             swerveSubsystem.getPose().getTranslation().getDistance(targetPose.getTranslation()) < 0.1 && 
             Math.abs(swerveSubsystem.getPose().getRotation().getDegrees() - targetPose.getRotation().getDegrees()) < 5;

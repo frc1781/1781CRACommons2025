@@ -93,6 +93,11 @@ public class Arm extends SubsystemBase {
         if (currentState == ArmState.START) {
             return;
         }
+
+        if (currentState == ArmState.STOP) {
+            armMotor.set(0.0);
+            return;
+        }
         
         armMotor.getClosedLoopController().setReference(
             targetPosition,
@@ -106,6 +111,11 @@ public class Arm extends SubsystemBase {
     public void setState(ArmState newState) {
         if (currentState == newState) {
             return; //do nothing
+        }
+
+        if (newState == ArmState.STOP) {
+            currentState = ArmState.STOP;
+            return;
         }
 
         //don't go idle unless manual or starting
@@ -162,14 +172,16 @@ public class Arm extends SubsystemBase {
         IDLE(Double.NaN),
         MANUAL_UP(Double.NaN),      // No fixed position, or use a special value
         MANUAL_DOWN(Double.NaN),
+        STOP(Double.NaN),
         L1(45.0),
         L2(90.0), // why was this 0.0
         L3(28.0),
-        L4(75.0),
+        SCORE_L4(75.0),
         COLLECT(149.0),
         WAIT(25.0),
         POLE(25.0),
-        START_MID(40.0),
+        SCORE_MID(60.0),
+        START_MID(45.0),
         START_HIGH(5.0),
         GROUND_ALGAE(159.0),
         REEF_ALGAE(60.0),

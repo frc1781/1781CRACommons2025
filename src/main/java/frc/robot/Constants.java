@@ -120,12 +120,11 @@ public final class Constants
 
         static {
             positionForRobot = new HashMap<Integer, Pose2d>();
-            //  BLUE ALLIANCE
 
-              //Starting Positions
-
-              positionForRobot.put(201, new Pose2d(7.2, 7.5, Rotation2d.fromDegrees(-90)));   // StandardLeft
-        
+            // STARTING POSITIONS FOR PATHS
+              positionForRobot.put(101, new Pose2d(7.2, 7.5, Rotation2d.fromDegrees(-90)));   // StandardLeft
+              positionForRobot.put(102, new Pose2d(7.2, 0.5, Rotation2d.fromDegrees(90)));    // StandardRight
+            //  BLUE ALLIANCE        
               positionForRobot.put(17, new Pose2d(3.570, 2.332, Rotation2d.fromDegrees(60)));
               positionForRobot.put(18, new Pose2d(2.55,4, Rotation2d.fromDegrees(0))); 
               positionForRobot.put(19, new Pose2d(3.417,5.813, Rotation2d.fromDegrees(-60)));
@@ -135,15 +134,12 @@ public final class Constants
 
             // RED ALLIANCE
 
-              positionForRobot.put(101, new Pose2d(10.31, 0.554, Rotation2d.fromDegrees(90))); // StandardLeft
-              positionForRobot.put(102, new Pose2d(10.31, 7.81, Rotation2d.fromDegrees(-90))); // StandardRight
-
-              positionForRobot.put(6, new Pose2d(17 - 3.570, 2.332, Rotation2d.fromDegrees(120)));
-              positionForRobot.put(7, new Pose2d(17 - 2.55,4, Rotation2d.fromDegrees(-180)));
-              positionForRobot.put(8, new Pose2d(17 - 3.417,5.813, Rotation2d.fromDegrees(-120)));
-              positionForRobot.put(9, new Pose2d(17 - 5.369, 5.670, Rotation2d.fromDegrees(-60)));
-              positionForRobot.put(10, new Pose2d(17 - 6.4,4, Rotation2d.fromDegrees(0)));
-              positionForRobot.put(11, new Pose2d(17 - 5.436,2.370, Rotation2d.fromDegrees(60)));
+              positionForRobot.put(6, new Pose2d(13.914, 2.605, Rotation2d.fromDegrees(120)));
+              positionForRobot.put(7, new Pose2d(14.749,4.113, Rotation2d.fromDegrees(-180)));
+              positionForRobot.put(8, new Pose2d(13.945,5.447, Rotation2d.fromDegrees(-120)));
+              positionForRobot.put(9, new Pose2d(12.245, 5.441, Rotation2d.fromDegrees(-60)));
+              positionForRobot.put(10, new Pose2d(13.11,6.241, Rotation2d.fromDegrees(0)));
+              positionForRobot.put(11, new Pose2d(12.224,2.582, Rotation2d.fromDegrees(60)));
         }
 
         public static Pose2d getPositionForRobot(int aprilTagID) {
@@ -164,7 +160,7 @@ public final class Constants
         // Changing these back because may be causing the rope to break
         public static final double ELEVATOR_KG = 0.07;
         public static final double ELEVATOR_KV = 4.60;
-        public static final double ELEVATOR_KA = 0.01;
+        public static final double ELEVATOR_KA = 0.01;  
   }
 
   public static class Arm {

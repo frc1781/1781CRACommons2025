@@ -31,13 +31,17 @@ import frc.robot.commands.CenterAndScore;
 import frc.robot.commands.Clear;
 import frc.robot.commands.Collect;
 import frc.robot.commands.CollectAndClear;
+import frc.robot.commands.CollectAndPost;
+import frc.robot.commands.L2;
+import frc.robot.commands.L3;
 import frc.robot.commands.L4;
 import frc.robot.commands.MoveBack;
 import frc.robot.commands.MoveToTarget;
 import frc.robot.commands.PostCollect;
 import frc.robot.commands.PreCollect;
 import frc.robot.commands.SafeConfig;
-import frc.robot.commands.Score;
+import frc.robot.commands.ScoreL4;
+import frc.robot.commands.ScoreLow;
 import frc.robot.commands.SetArm;
 import frc.robot.commands.SetElevator;
 import frc.robot.commands.SetTargetPose;
@@ -56,20 +60,15 @@ import swervelib.SwerveInputStream;
 public class RobotContainer {
 
   final CommandXboxController driverXbox = new CommandXboxController(0);
-  final CommandJoystick copilotButtons = new CommandJoystick(1);
+  final CommandXboxController copilotXbox = new CommandXboxController(1);
+  final CommandJoystick copilotButtons = new CommandJoystick(2);
   private Sensation sensation = new Sensation();
-  private SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve/ava"));; // im
-                                                                                                                     // sure
-                                                                                                                     // this
-                                                                                                                     // wont
-                                                                                                                     // cause
-                                                                                                                     // issues
-                                                                                                                     // later
+  private SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve/ava"));
   private final Conveyor conveyor = new Conveyor();
   private final Lights lights = new Lights();
   private final Elevator elevator = new Elevator(this);
   private final Arm arm = new Arm(this);
-  // private final Climber climber = new Climber();
+  private final Climber climber = new Climber();
   private final SendableChooser<Command> autoChooser;
   private double wait_seconds = 5;
   private int targetAprilTagID = -1;
@@ -128,7 +127,7 @@ public class RobotContainer {
   public RobotContainer() {
     NamedCommands.registerCommand("CustomWaitCommand",
         new WaitCommand(SmartDashboard.getNumber("Wait Time", wait_seconds)));
-    NamedCommands.registerCommand("Score", new Score(arm, drivebase));
+    NamedCommands.registerCommand("Score", new ScoreL4(arm, drivebase));
     NamedCommands.registerCommand("Collect", new CollectAndClear(elevator, arm, sensation));
     NamedCommands.registerCommand("MoveToPositionToScore", drivebase.new MoveToPositionToScore(sensation));
     NamedCommands.registerCommand("Clear", new Clear(arm));
@@ -223,23 +222,28 @@ public class RobotContainer {
       driverXbox.leftBumper().onTrue(Commands.none());
       driverXbox.rightBumper().onTrue(Commands.none());
     } else {
-      driverXbox.a().onTrue((Commands.runOnce(drivebase::zeroGyro)));
-      driverXbox.start().whileTrue(Commands.none());
+      driverXbox.start().onTrue((Commands.runOnce(drivebase::zeroGyro)));
       driverXbox.back().whileTrue(Commands.none());
-      driverXbox.x().onTrue(new SafeConfig(elevator, arm));
+      driverXbox.a().onTrue(new Clear(arm));
+      driverXbox.x().onTrue(new L3(elevator, arm));
       driverXbox.b().onTrue(new PreCollect(elevator, arm));
-      // driverXbox.leftBumper().whileTrue(new StopMovingToTarget(drivebase));
+      driverXbox.y().onTrue(new L2(elevator, arm));
+      driverXbox.leftBumper().whileTrue(new ScoreLow(arm, drivebase));
       driverXbox.rightBumper().whileTrue(new MoveToTarget(this, this::getTargetAprilTagID));
       driverXbox.leftTrigger().whileTrue(new CenterAndScore(this, true));
       driverXbox.rightTrigger().whileTrue(new CenterAndScore(this, false));
+      driverXbox.povUp().whileTrue(climber.ascend().repeatedly());
+      driverXbox.povDown().whileTrue(climber.descend().repeatedly());
+      driverXbox.povLeft().whileTrue(new SetArm(arm, ArmState.STOP).alongWith(new SetElevator(elevator, ElevatorState.STOP)));
+
 
       // driver poses blue
-      driverXbox.povRight().and(isRedAllianceTrigger.negate()).onTrue(new SetTargetPose(this, 17));
-      driverXbox.povDown().and(isRedAllianceTrigger.negate()).onTrue(new SetTargetPose(this, 18));
-      driverXbox.povLeft().and(isRedAllianceTrigger.negate()).onTrue(new SetTargetPose(this, 19));
-      driverXbox.povUpLeft().and(isRedAllianceTrigger.negate()).onTrue(new SetTargetPose(this, 20));
-      driverXbox.povUp().and(isRedAllianceTrigger.negate()).onTrue(new SetTargetPose(this, 21));
-      driverXbox.povUpRight().and(isRedAllianceTrigger.negate()).onTrue(new SetTargetPose(this, 22));
+      // driverXbox.povRight().and(isRedAllianceTrigger.negate()).onTrue(new SetTargetPose(this, 17));
+      // driverXbox.povDown().and(isRedAllianceTrigger.negate()).onTrue(new SetTargetPose(this, 18));
+      // driverXbox.povLeft().and(isRedAllianceTrigger.negate()).onTrue(new SetTargetPose(this, 19));
+      // driverXbox.povUpLeft().and(isRedAllianceTrigger.negate()).onTrue(new SetTargetPose(this, 20));
+      // driverXbox.povUp().and(isRedAllianceTrigger.negate()).onTrue(new SetTargetPose(this, 21));
+      // driverXbox.povUpRight().and(isRedAllianceTrigger.negate()).onTrue(new SetTargetPose(this, 22));
 
       // copilot poses blue
       copilotButtons.button(1).and(isRedAllianceTrigger.negate()).onTrue(new SetTargetPose(this, 18));
@@ -250,12 +254,12 @@ public class RobotContainer {
       copilotButtons.button(6).and(isRedAllianceTrigger.negate()).onTrue(new SetTargetPose(this, 19));
 
       // driver poses red
-      driverXbox.povLeft().and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 6));
-      driverXbox.povDown().and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 7));
-      driverXbox.povRight().and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 8));
-      driverXbox.povUpRight().and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 9));
-      driverXbox.povUp().and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 10));
-      driverXbox.povUpLeft().and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 11));
+      // driverXbox.povLeft().and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 6));
+      // driverXbox.povDown().and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 7));
+      // driverXbox.povRight().and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 8));
+      // driverXbox.povUpRight().and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 9));
+      // driverXbox.povUp().and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 10));
+      // driverXbox.povUpLeft().and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 11));
 
       // copilot poses red
       copilotButtons.button(1).and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 7));
@@ -271,7 +275,7 @@ public class RobotContainer {
           .onTrue(lights.set(Lights.Colors.RED, Lights.Patterns.FAST_FLASH));
       coralHopper.and(coralExit.negate()).onTrue(lights.set(Lights.Colors.RED, Lights.Patterns.MARCH));
       coralExit.onFalse(lights.set(Lights.Colors.RED, Lights.Patterns.SOLID));
-      isTeleopTrigger.and(coralExit).and(readyToCollectTrigger).onTrue(new Collect(elevator, sensation));
+      isTeleopTrigger.and(coralExit).and(readyToCollectTrigger).onTrue(new CollectAndPost(elevator, arm, sensation));
     }
   }
 

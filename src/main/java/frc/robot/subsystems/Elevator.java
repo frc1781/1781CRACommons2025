@@ -78,7 +78,7 @@ public class Elevator extends SubsystemBase{
         positions.put(ElevatorState.SAFE, new Double[]{minFrameDistance, 80.0});
         positions.put(ElevatorState.SAFE_CORAL, new Double[]{minFrameDistance, 40.0});
         positions.put(ElevatorState.L1, new Double[]{0.0, 0.0});
-        positions.put(ElevatorState.L2, new Double[]{minFrameDistance, 80.0});
+        positions.put(ElevatorState.L2, new Double[]{minFrameDistance, 540.0});
         positions.put(ElevatorState.L3, new Double[]{minFrameDistance, 165.0});
         positions.put(ElevatorState.L3_LOW, new Double[]{minFrameDistance, 350.0});
         positions.put(ElevatorState.L4, new Double[]{maxFrameDistance, minCarriageDistance});
@@ -107,7 +107,11 @@ public class Elevator extends SubsystemBase{
         Logger.recordOutput("Elevator/DutyCycle", elevatorDutyCycle);
         Logger.recordOutput("Elevator/CurrentState", currentState);
         Logger.recordOutput("Elevator/hasReachedSafePosition", hasReachedPosition(ElevatorState.SAFE));
-       
+        
+        if (currentState == ElevatorState.STOP) {
+            elevatorDutyCycle = 0;
+        }
+
         motorRight.set(elevatorDutyCycle);
     }
 
@@ -120,6 +124,10 @@ public class Elevator extends SubsystemBase{
     }
 
     public boolean hasReachedPosition(ElevatorState desiredState) {
+        
+        if(desiredState == ElevatorState.STOP) {
+            return true;
+        }
         double carriagePosition = getCarriagePosition();
         double framePosition = getFramePosition();
         double desiredCarriagePosition = positions.get(desiredState)[1];
@@ -131,6 +139,11 @@ public class Elevator extends SubsystemBase{
     }
 
     public void setElevatorPosition(ElevatorState desiredState) {
+
+        if(desiredState == ElevatorState.STOP) {
+            return;
+        }
+
         isIdle = false;
         double carriagePosition = getCarriagePosition();
         double framePosition = getFramePosition();
@@ -158,7 +171,7 @@ public class Elevator extends SubsystemBase{
     }
 
     public double clampDutyCycle(double dutyCycle) {
-        return EEUtil.clamp(0, 0.5, dutyCycle);
+        return EEUtil.clamp(0, 0.75, dutyCycle);
     }
 
     public enum ElevatorState {
@@ -177,6 +190,7 @@ public class Elevator extends SubsystemBase{
         HIGH_ALGAE,
         LOW_ALGAE,
         SMART_ALGAE,
-        BARGE_SCORE
+        BARGE_SCORE,
+        STOP
     }
 }

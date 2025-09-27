@@ -22,7 +22,7 @@ public class MoveBack extends Command{
     @Override
     public void initialize() {
         t.restart();
-        requiredSpeeds = new ChassisSpeeds(-0.6, 0, 0);
+        requiredSpeeds = new ChassisSpeeds(-0.8, 0, 0);
     }
 
     @Override
@@ -33,7 +33,7 @@ public class MoveBack extends Command{
 
     @Override
     public boolean isFinished() {
-        return t.get() > 1;
+        return t.get() > 0.25;
     }
 
     @Override

@@ -22,7 +22,7 @@ import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
 public class Robot extends LoggedRobot {
-  private Command exampleAuto;
+  private Command autoroutine;
   private RobotContainer theRobotContainer;
   private Timer disabledTimer;
 
@@ -73,33 +73,35 @@ public class Robot extends LoggedRobot {
       disabledTimer.stop();
       disabledTimer.reset();
     }
+
+    theRobotContainer.periodic();
+
+    autoroutine = theRobotContainer.getAutonomousCommand();
+
+    if(autoroutine.getName().equals("StandardLeft")) {
+      theRobotContainer.getDrivebase().resetOdometry(Constants.Positions.getPositionForRobot(101));
+    }
+
+    if(autoroutine.getName().equals("StandardRight")) {
+      theRobotContainer.getDrivebase().resetOdometry(Constants.Positions.getPositionForRobot(102));
+    }
   }
 
   @Override
   public void autonomousInit() {
     theRobotContainer.setMotorBrake(true);
-    exampleAuto = theRobotContainer.getAutonomousCommand();
+    autoroutine = theRobotContainer.getAutonomousCommand();
 
-    if(exampleAuto.getName().equals("StandardLeft")) {
-      if (RobotContainer.isRed()) {
-        theRobotContainer.getDrivebase().resetOdometry(Constants.Positions.getPositionForRobot(101));
-      } 
-      else {
-        theRobotContainer.getDrivebase().resetOdometry(Constants.Positions.getPositionForRobot(201));
-      }
+    if(autoroutine.getName().equals("StandardLeft")) {
+      theRobotContainer.getDrivebase().resetOdometry(Constants.Positions.getPositionForRobot(101));
     }
 
-    if(exampleAuto.getName().equals("StandardRight")) {
-      if (RobotContainer.isRed()) {
-        theRobotContainer.getDrivebase().resetOdometry(Constants.Positions.getPositionForRobot(102));
-      } 
-      else {
-      }
+    if(autoroutine.getName().equals("StandardRight")) {
+      theRobotContainer.getDrivebase().resetOdometry(Constants.Positions.getPositionForRobot(102));
     }
-    
 
-    if (exampleAuto != null) {
-      exampleAuto.schedule();
+    if (autoroutine != null) {
+      autoroutine.schedule();
     }
   }
 
@@ -110,8 +112,8 @@ public class Robot extends LoggedRobot {
   @Override
   public void teleopInit() {
     theRobotContainer.teleopInit();
-    if (exampleAuto != null) {
-      exampleAuto.cancel();
+    if (autoroutine != null) {
+      autoroutine.cancel();
     } 
     else {
       CommandScheduler.getInstance().cancelAll();
@@ -129,6 +131,7 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void testPeriodic() {
+    
   }
 
   @Override

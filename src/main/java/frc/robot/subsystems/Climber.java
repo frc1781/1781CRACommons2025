@@ -56,7 +56,7 @@ public class Climber extends SubsystemBase {
         
         climberDutyCycle = climberPID.calculate(armEncoder.getPosition(), requestedPosition) + gravityDutyCycle;
         climberDutyCycle = MathUtil.clamp(climberDutyCycle, -0.5, 0.5);
-        // motor.set(climberDutyCycle);
+        motor.set(climberDutyCycle);
         Logger.recordOutput("Climber/MotorDutyCycle", climberDutyCycle);
     }
 
