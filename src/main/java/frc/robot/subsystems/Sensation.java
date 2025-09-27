@@ -57,7 +57,7 @@ public class Sensation extends SubsystemBase
     }
 
     public boolean coralExitedHopper() {
-        return !exitBeam.get() && hopperBackBeam.get() && hopperFrontBeam.get();
+        return !exitBeam.get() && /*hopperBackBeam.get() &&*/ hopperFrontBeam.get();
     }
 
     public double leftTOF(){
