@@ -133,7 +133,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("Clear", new Clear(arm));
     NamedCommands.registerCommand("StrafeCommand", new StrafeCommand(drivebase, elevator, arm, sensation, true));
     NamedCommands.registerCommand("L4", new L4(elevator, arm));
-    NamedCommands.registerCommand("PreCollect", new PreCollect(elevator, arm));
+    NamedCommands.registerCommand("PreCollect", new PreCollect(elevator, arm, sensation));
     NamedCommands.registerCommand("PostCollect", new PostCollect(elevator, arm));
     NamedCommands.registerCommand("SetElevator", new SetElevator(elevator, ElevatorState.SAFE));
     NamedCommands.registerCommand("SetArm", new SetArm(arm, ArmState.START));
@@ -226,7 +226,7 @@ public class RobotContainer {
       driverXbox.back().whileTrue(Commands.none());
       driverXbox.a().onTrue(new Clear(arm));
       driverXbox.x().onTrue(new L3(elevator, arm));
-      driverXbox.b().onTrue(new PreCollect(elevator, arm));
+      driverXbox.b().onTrue(new PreCollect(elevator, arm, sensation));
       driverXbox.y().onTrue(new L2(elevator, arm));
       driverXbox.leftBumper().whileTrue(new ScoreLow(arm, drivebase));
       driverXbox.rightBumper().whileTrue(new MoveToTarget(this, this::getTargetAprilTagID));
