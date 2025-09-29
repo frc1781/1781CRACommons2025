@@ -12,6 +12,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -25,6 +26,8 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
+import frc.robot.subsystems.swervedrive.Vision;
+
 import java.io.File;
 
 import swervelib.SwerveInputStream;
@@ -173,4 +176,22 @@ public class RobotContainer
   {
     drivebase.setMotorBrake(brake);
   }
+
+  public Pose2d Pose2d(int aprilTagID, boolean left) {
+    Pose2d apPose = Vision.fieldLayout.getTagPose(aprilTagID).get().toPose2d();
+
+    double xMeters = 0.3;
+    double yMeters = 0.3;
+
+        Translation2d localOffset = new Translation2d(xMeters, -yMeters); // right is negative Y
+
+        // Rotate the local offset into the global coordinate frame
+        Translation2d rotatedOffset = localOffset.rotateBy(apPose.getRotation());
+
+    // Compute the new position
+    Translation2d newTranslation = apPose.getTranslation().plus(rotatedOffset);
+
+    return new Pose2d(newTranslation, apPose.getRotation());
+  }
 }
+
