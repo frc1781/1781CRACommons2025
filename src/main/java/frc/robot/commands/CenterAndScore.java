@@ -30,7 +30,7 @@ public class CenterAndScore extends SequentialCommandGroup {
             swerveDrive.new MoveToPositionToScore(sensation),
             new StrafeCommand(swerveDrive, elevator, arm, sensation, isLeft),
             new ScoreL4(arm, swerveDrive),
-            new PreCollect(elevator, arm)
+            new PreCollect(elevator, arm, sensation)
         );
 
     }

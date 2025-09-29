@@ -192,7 +192,7 @@ public class RobotContainer {
       drivebase.setDefaultCommand(driveFieldOrientedDirectAngle);
     }
 
-    conveyor.setDefaultCommand(conveyor.clearCoral(coralHopper));
+    conveyor.setDefaultCommand(conveyor.clearCoral(coralHopper, elevator));
     lights.setDefaultCommand(lights.set(Lights.Special.OFF));
     elevator.setDefaultCommand(elevator.idle());
     sensation.setDefaultCommand(Commands.idle(sensation));
@@ -227,8 +227,8 @@ public class RobotContainer {
       driverXbox.a().onTrue(new Clear(arm));
       driverXbox.x().onTrue(new L3(elevator, arm));
       driverXbox.b().onTrue(new PreCollect(elevator, arm, sensation));
-      driverXbox.y().onTrue(new L2(elevator, arm));
-      driverXbox.leftBumper().whileTrue(new ScoreLow(arm, drivebase));
+      driverXbox.y().onTrue(new L4(elevator, arm));
+      driverXbox.leftBumper().whileTrue(new ScoreL4(arm, drivebase));
       driverXbox.rightBumper().whileTrue(new MoveToTarget(this, this::getTargetAprilTagID));
       driverXbox.leftTrigger().whileTrue(new CenterAndScore(this, true));
       driverXbox.rightTrigger().whileTrue(new CenterAndScore(this, false));
