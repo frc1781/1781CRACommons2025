@@ -319,7 +319,7 @@ public class RobotContainer {
   }
 
   public boolean readyToCollect() {
-    return elevator.hasReachedPosition(ElevatorState.SAFE) && arm.matchesState(ArmState.COLLECT);
+    return elevator.hasReachedPosition(ElevatorState.SAFE_CORAL) && arm.matchesState(ArmState.COLLECT);
   }
 
   public boolean isManualControlMode() {
