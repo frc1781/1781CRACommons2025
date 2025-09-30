@@ -54,10 +54,10 @@ public class Arm extends SubsystemBase {
         armMotorConfig.idleMode(SparkMaxConfig.IdleMode.kBrake);
         armMotorConfig.smartCurrentLimit(40);
         armMotorConfig.absoluteEncoder.positionConversionFactor(360);
-        armMotorConfig.absoluteEncoder.zeroOffset(0.4868528);
-        armMotorConfig.closedLoop.pid(0.004, 0,0.001);
+        armMotorConfig.absoluteEncoder.zeroOffset(0.315);
+        armMotorConfig.closedLoop.pid(0.004, 0,0.000);
         armMotorConfig.closedLoop.velocityFF((double) 1 /565); // https://docs.revrobotics.com/brushless/neo/vortex#motor-specifications
-        armMotorConfig.closedLoop.outputRange(-.55, .55); //(-.55, .55);
+        armMotorConfig.closedLoop.outputRange(-.25, .25); //(-.55, .55);
         armMotorConfig.closedLoop.positionWrappingEnabled(true);
         armMotorConfig.softLimit.forwardSoftLimit(180);
         armMotorConfig.softLimit.reverseSoftLimit(0);
@@ -102,7 +102,7 @@ public class Arm extends SubsystemBase {
             System.out.println("incrementing target " + targetPosition);
         }
         
-        double gravityFeedForward = -0.105  * Math.sin(Rotation2d.fromDegrees(getPosition()).getRadians());
+        double gravityFeedForward = -0.095  * Math.sin(Rotation2d.fromDegrees(getPosition()).getRadians());
         Logger.recordOutput("Arm/FFValue", gravityFeedForward);
         //if (/*RobotContainer.isSafeForArmToMoveUp() ||*/ currentState == ArmState.MANUAL_UP || currentState == ArmState.MANUAL_DOWN){
            // target = targetPosition;

@@ -199,7 +199,6 @@ public class RobotContainer {
     elevator.setDefaultCommand(elevator.idle(this::isArmInsideElevator, sensation::clawCoralPresent).repeatedly());
     sensation.setDefaultCommand(Commands.idle(sensation));
     arm.setDefaultCommand(arm.idle(this::isSafeForArmToMoveUp, this::isSafeForArmToMoveDown, sensation::clawCoralPresent).repeatedly());
-    // climber.setDefaultCommand(Commands.);
 
     if (Robot.isSimulation()) {
       Pose2d target = new Pose2d(new Translation2d(1, 4), Rotation2d.fromDegrees(90));
@@ -238,15 +237,6 @@ public class RobotContainer {
       driverXbox.povDown().whileTrue(climber.descend().repeatedly());
       driverXbox.povLeft().whileTrue(new SetArm(arm, ArmState.STOP).alongWith(new SetElevator(elevator, ElevatorState.STOP)));
 
-
-      // driver poses blue
-      // driverXbox.povRight().and(isRedAllianceTrigger.negate()).onTrue(new SetTargetPose(this, 17));
-      // driverXbox.povDown().and(isRedAllianceTrigger.negate()).onTrue(new SetTargetPose(this, 18));
-      // driverXbox.povLeft().and(isRedAllianceTrigger.negate()).onTrue(new SetTargetPose(this, 19));
-      // driverXbox.povUpLeft().and(isRedAllianceTrigger.negate()).onTrue(new SetTargetPose(this, 20));
-      // driverXbox.povUp().and(isRedAllianceTrigger.negate()).onTrue(new SetTargetPose(this, 21));
-      // driverXbox.povUpRight().and(isRedAllianceTrigger.negate()).onTrue(new SetTargetPose(this, 22));
-
       // copilot poses blue
       copilotButtons.button(1).and(isRedAllianceTrigger.negate()).onTrue(new SetTargetPose(this, 18));
       copilotButtons.button(2).and(isRedAllianceTrigger.negate()).onTrue(new SetTargetPose(this, 17));
@@ -254,14 +244,6 @@ public class RobotContainer {
       copilotButtons.button(4).and(isRedAllianceTrigger.negate()).onTrue(new SetTargetPose(this, 21));
       copilotButtons.button(5).and(isRedAllianceTrigger.negate()).onTrue(new SetTargetPose(this, 20));
       copilotButtons.button(6).and(isRedAllianceTrigger.negate()).onTrue(new SetTargetPose(this, 19));
-
-      // driver poses red
-      // driverXbox.povLeft().and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 6));
-      // driverXbox.povDown().and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 7));
-      // driverXbox.povRight().and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 8));
-      // driverXbox.povUpRight().and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 9));
-      // driverXbox.povUp().and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 10));
-      // driverXbox.povUpLeft().and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 11));
 
       // copilot poses red
       copilotButtons.button(1).and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 7));
