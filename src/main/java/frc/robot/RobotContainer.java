@@ -174,7 +174,7 @@ public class RobotContainer {
     Logger.recordOutput("RobotContainer/isArmInsideElevator", isArmInsideElevator());
     Logger.recordOutput("RobotContainer/readyToCollect", readyToCollect());
     Logger.recordOutput("RobotContainer/targetAprilTagID", targetAprilTagID);
-    Logger.recordOutput("RobotContainer/targetPose", Constants.Positions.getPositionForRobot(targetAprilTagID));
+    Logger.recordOutput("RobotContainer/targetPose", scorePose(targetAprilTagID, true));
   }
 
   private void configureBindings() {
