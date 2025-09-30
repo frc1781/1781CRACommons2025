@@ -55,7 +55,7 @@ public class Arm extends SubsystemBase {
         armMotorConfig.smartCurrentLimit(40);
         armMotorConfig.absoluteEncoder.positionConversionFactor(360);
         armMotorConfig.absoluteEncoder.zeroOffset(0.4868528);
-        armMotorConfig.closedLoop.pid(0.008, 0,0.001);
+        armMotorConfig.closedLoop.pid(0.004, 0,0.001);
         armMotorConfig.closedLoop.velocityFF((double) 1 /565); // https://docs.revrobotics.com/brushless/neo/vortex#motor-specifications
         armMotorConfig.closedLoop.outputRange(-.55, .55); //(-.55, .55);
         armMotorConfig.closedLoop.positionWrappingEnabled(true);
@@ -67,10 +67,19 @@ public class Arm extends SubsystemBase {
 
     public Command idle(BooleanSupplier isSafeForArmToMoveUp, BooleanSupplier isSafeForArmToMoveDown, BooleanSupplier clawCoralPresent) {
         return new InstantCommand(() -> {
-            if (clawCoralPresent.getAsBoolean() && isSafeForArmToMoveUp.getAsBoolean()) {
-                new SetArm(this, ArmState.L3).schedule();
-            } else if (!clawCoralPresent.getAsBoolean() && isSafeForArmToMoveDown.getAsBoolean()) {
-                new SetArm(this, ArmState.COLLECT).schedule();
+            ArmState correctArmState = ArmState.IDLE;
+            if (clawCoralPresent.getAsBoolean()) {
+                if (isSafeForArmToMoveUp.getAsBoolean() || funkyPositionConversionFromActualToState(getPosition()) < ArmState.L3.getPosition()) {
+                    correctArmState = ArmState.L3;
+                }
+            } else {
+                if (isSafeForArmToMoveDown.getAsBoolean()) {
+                    correctArmState = ArmState.COLLECT;
+                }
+            }
+
+            if (correctArmState != ArmState.IDLE) {
+                new SetArm(this, correctArmState).schedule();
             }
         }, this);
     }
@@ -184,7 +193,7 @@ public class Arm extends SubsystemBase {
         STOP(Double.NaN),
         L1(45.0),
         L2(90.0), // why was this 0.0
-        L3(28.0),
+        L3(35.0),
         SCORE_L4(75.0),
         COLLECT(149.0),
         WAIT(25.0),

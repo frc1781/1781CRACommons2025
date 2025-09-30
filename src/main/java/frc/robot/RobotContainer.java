@@ -196,7 +196,7 @@ public class RobotContainer {
     // --------------------------------- DEFAULT COMMANDS ---------------------------------
     conveyor.setDefaultCommand(conveyor.clearCoral(coralHopper, elevator));
     lights.setDefaultCommand(lights.set(Lights.Special.OFF));
-    elevator.setDefaultCommand(elevator.idle(this::isSafeForArmToMoveUp, sensation::clawCoralPresent).repeatedly());
+    elevator.setDefaultCommand(elevator.idle(this::isArmInsideElevator, sensation::clawCoralPresent).repeatedly());
     sensation.setDefaultCommand(Commands.idle(sensation));
     arm.setDefaultCommand(arm.idle(this::isSafeForArmToMoveUp, this::isSafeForArmToMoveDown, sensation::clawCoralPresent).repeatedly());
     // climber.setDefaultCommand(Commands.);
