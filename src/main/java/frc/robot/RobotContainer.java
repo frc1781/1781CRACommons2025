@@ -193,8 +193,8 @@ public class RobotContainer {
       drivebase.setDefaultCommand(driveFieldOrientedDirectAngle);
     }
     
-    // --------------------------------- DEFAULT COMMANDS ---------------------------------
-    conveyor.setDefaultCommand(conveyor.clearCoral(coralHopper, elevator));
+    // -----------------------------------------------------------------------Default Commands-----------------------------------------------------------------------
+    conveyor.setDefaultCommand(conveyor.clearCoral(coralHopper, coralExit, elevator));
     lights.setDefaultCommand(lights.set(Lights.Special.OFF));
     elevator.setDefaultCommand(elevator.idle(this::isArmInsideElevator, sensation::clawCoralPresent).repeatedly());
     sensation.setDefaultCommand(Commands.idle(sensation));
