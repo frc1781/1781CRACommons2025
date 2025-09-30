@@ -21,6 +21,7 @@ import frc.robot.utils.EEUtil;
 import frc.robot.utils.EEtimeOfFlight;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
+import frc.robot.commands.SetElevator;
 
 public class Elevator extends SubsystemBase{
 
@@ -89,8 +90,13 @@ public class Elevator extends SubsystemBase{
         positions.put(ElevatorState.LOW_ALGAE, new Double[]{maxFrameDistance, 350.0});
         positions.put(ElevatorState.SMART_ALGAE, new Double[]{minFrameDistance, 50.0});
     }
-
+    
     public Command idle() {
+        if (!robotContainer.isArmInsideElevator()) {
+            System.out.println("setting to L3");
+            return new SetElevator(this, ElevatorState.L3);
+        }
+        System.out.println("hi im being run repeatedly");
         return new InstantCommand(() -> {
             elevatorDutyCycle = IDLE_DUTY_CYCLE;
             Logger.recordOutput("Elevator/CurrentCommand", "Idle");

@@ -22,6 +22,9 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.RobotContainer;
+import frc.robot.commands.Clear;
+import frc.robot.commands.L3;
+import frc.robot.commands.PreCollect;
 import frc.robot.utils.EEtimeOfFlight;
 
 public class Arm extends SubsystemBase {
@@ -60,10 +63,20 @@ public class Arm extends SubsystemBase {
     }
 
     public Command idle() {
-        return new InstantCommand(() -> {
-            setState(ArmState.IDLE);
-            Logger.recordOutput("Arm/CurrentCommand", "Idle");
-        }, this);
+        if(robotContainer.isArmInsideElevator()){
+            Logger.recordOutput("Arm/CurrentCommand", "Clear");
+            return new Clear(this);
+        }
+
+        // if(!robotContainer.getSensation().clawCoralPresent()){
+        //     return new SetArm(this);
+        // }
+
+        // if(robotContainer.getSensation().clawCoralPresent()){
+        //     return new L3(robotContainer.getElevator(), this);
+        // }
+
+        return new Clear(this);
     }
 
     @Override

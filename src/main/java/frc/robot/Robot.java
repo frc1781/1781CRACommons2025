@@ -34,6 +34,7 @@ public class Robot extends LoggedRobot {
     return this;
   }
 
+  @Override
   public void robotInit() {
     theRobotContainer = new RobotContainer();
     disabledTimer = new Timer(); //for turning off breaking when disabled

@@ -81,6 +81,7 @@ public class RobotContainer {
   Trigger readyToCollectTrigger = new Trigger(this::readyToCollect);
   Trigger isTeleopTrigger = new Trigger(DriverStation::isTeleop);
   Trigger isRedAllianceTrigger = new Trigger(RobotContainer::isRed);
+  Trigger coralInClaw = new Trigger(sensation::clawCoralPresent);
 
   // Driving the robot during teleOp
   SwerveInputStream driveAngularVelocity = SwerveInputStream.of(
@@ -194,7 +195,7 @@ public class RobotContainer {
 
     conveyor.setDefaultCommand(conveyor.clearCoral(coralHopper, elevator));
     lights.setDefaultCommand(lights.set(Lights.Special.OFF));
-    elevator.setDefaultCommand(elevator.idle());
+    elevator.setDefaultCommand(elevator.idle().repeatedly());
     sensation.setDefaultCommand(Commands.idle(sensation));
     arm.setDefaultCommand(arm.idle());
     // climber.setDefaultCommand(Commands.);
@@ -268,6 +269,7 @@ public class RobotContainer {
       copilotButtons.button(4).and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 10));
       copilotButtons.button(5).and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 11));
       copilotButtons.button(6).and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 6));
+
       // TRIGGERS
 
       robotInPosition.whileTrue(lights.set(Lights.Colors.GREEN, Lights.Patterns.SOLID));
@@ -312,7 +314,7 @@ public class RobotContainer {
   }
 
   public boolean isArmInsideElevator() {
-    return elevator.getCarriagePosition() < 50 && arm.getPosition() < 30;
+    return elevator.getFramePosition() < 50 && arm.getPosition() < 30;
   }
 
   public boolean readyToCollect() {
