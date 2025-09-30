@@ -192,12 +192,13 @@ public class RobotContainer {
     } else {
       drivebase.setDefaultCommand(driveFieldOrientedDirectAngle);
     }
-
+    
+    // --------------------------------- DEFAULT COMMANDS ---------------------------------
     conveyor.setDefaultCommand(conveyor.clearCoral(coralHopper, elevator));
     lights.setDefaultCommand(lights.set(Lights.Special.OFF));
-    elevator.setDefaultCommand(elevator.idle().repeatedly());
+    elevator.setDefaultCommand(elevator.idle(this::isSafeForArmToMoveUp, sensation::clawCoralPresent).repeatedly());
     sensation.setDefaultCommand(Commands.idle(sensation));
-    arm.setDefaultCommand(arm.idle());
+    arm.setDefaultCommand(arm.idle(this::isSafeForArmToMoveUp, this::isSafeForArmToMoveDown, sensation::clawCoralPresent).repeatedly());
     // climber.setDefaultCommand(Commands.);
 
     if (Robot.isSimulation()) {
@@ -303,18 +304,18 @@ public class RobotContainer {
   }
 
   public boolean isSafeForArmToMoveUp() {
-    double maxUnsafeDistance = 100; // THESE ARE JUST PLACEHOLDER VALUES CHANGE THEM ASAP
-    double minUnsafeDistance = 200; // THESE ARE JUST PLACEHOLDER VALUES CHANGE THEM ASAP
-    return elevator.getCarriagePosition() < minUnsafeDistance || elevator.getCarriagePosition() > maxUnsafeDistance;
+    double unsafeCarriagePosition = 60.0;
+    double unsafeArmAngle = 170;
+    return elevator.getCarriagePosition() < unsafeCarriagePosition || arm.getPosition() > unsafeArmAngle;
   }
 
   public boolean isSafeForArmToMoveDown() {
-    double maxUnsafeDistance = elevator.maxCarriageDistance;
-    return elevator.getCarriagePosition() > maxUnsafeDistance;
+    double maxUnsafeDistance = 60.0;
+    return elevator.getCarriagePosition() < maxUnsafeDistance;
   }
 
   public boolean isArmInsideElevator() {
-    return elevator.getFramePosition() < 50 && arm.getPosition() < 30;
+    return elevator.getCarriagePosition() > 200 && arm.getPosition() < 30;
   }
 
   public boolean readyToCollect() {

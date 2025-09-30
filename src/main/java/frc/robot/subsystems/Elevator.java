@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import java.util.HashMap;
+import java.util.function.BooleanSupplier;
 
 import org.littletonrobotics.junction.Logger;
 
@@ -91,15 +92,16 @@ public class Elevator extends SubsystemBase{
         positions.put(ElevatorState.SMART_ALGAE, new Double[]{minFrameDistance, 50.0});
     }
     
-    public Command idle() {
-        if (!robotContainer.isArmInsideElevator()) {
-            System.out.println("setting to L3");
-            return new SetElevator(this, ElevatorState.L3);
-        }
-        System.out.println("hi im being run repeatedly");
+    public Command idle(BooleanSupplier isArmInsideElevator, BooleanSupplier clawCoralPresent) {
         return new InstantCommand(() -> {
-            elevatorDutyCycle = IDLE_DUTY_CYCLE;
-            Logger.recordOutput("Elevator/CurrentCommand", "Idle");
+            if(isArmInsideElevator.getAsBoolean()) {
+                Logger.recordOutput("Elevator/CurrentCommand", "Idle");
+                elevatorDutyCycle = IDLE_DUTY_CYCLE;
+            } else if (clawCoralPresent.getAsBoolean()) {
+                new SetElevator(this, ElevatorState.L3).schedule();
+            } else {
+                new SetElevator(this, ElevatorState.SAFE_CORAL).schedule();
+            }
         }, this);
     }
 

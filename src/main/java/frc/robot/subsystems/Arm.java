@@ -1,6 +1,8 @@
 package frc.robot.subsystems;
 
 import java.util.HashMap;
+import java.util.function.BooleanSupplier;
+
 import org.littletonrobotics.junction.Logger;
 import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkBase.ControlType;
@@ -25,6 +27,7 @@ import frc.robot.RobotContainer;
 import frc.robot.commands.Clear;
 import frc.robot.commands.L3;
 import frc.robot.commands.PreCollect;
+import frc.robot.commands.SetArm;
 import frc.robot.utils.EEtimeOfFlight;
 
 public class Arm extends SubsystemBase {
@@ -62,21 +65,14 @@ public class Arm extends SubsystemBase {
         armMotor.configure(armMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
-    public Command idle() {
-        if(robotContainer.isArmInsideElevator()){
-            Logger.recordOutput("Arm/CurrentCommand", "Clear");
-            return new Clear(this);
-        }
-
-        // if(!robotContainer.getSensation().clawCoralPresent()){
-        //     return new SetArm(this);
-        // }
-
-        // if(robotContainer.getSensation().clawCoralPresent()){
-        //     return new L3(robotContainer.getElevator(), this);
-        // }
-
-        return new Clear(this);
+    public Command idle(BooleanSupplier isSafeForArmToMoveUp, BooleanSupplier isSafeForArmToMoveDown, BooleanSupplier clawCoralPresent) {
+        return new InstantCommand(() -> {
+            if (clawCoralPresent.getAsBoolean() && isSafeForArmToMoveUp.getAsBoolean()) {
+                new SetArm(this, ArmState.L3).schedule();
+            } else if (!clawCoralPresent.getAsBoolean() && isSafeForArmToMoveDown.getAsBoolean()) {
+                new SetArm(this, ArmState.COLLECT).schedule();
+            }
+        }, this);
     }
 
     @Override
