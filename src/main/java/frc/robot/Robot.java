@@ -11,6 +11,9 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj.PowerDistribution;
+
+import java.sql.Driver;
+
 import org.littletonrobotics.junction.LoggedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -19,11 +22,19 @@ import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
 public class Robot extends LoggedRobot {
-  private Command exampleAuto;
+  private Command autoroutine;
   private RobotContainer theRobotContainer;
   private Timer disabledTimer;
 
+  public RobotContainer robotContainer() {
+    return theRobotContainer;
+  }
   
+  public Robot getInstance() {
+    return this;
+  }
+
+  @Override
   public void robotInit() {
     theRobotContainer = new RobotContainer();
     disabledTimer = new Timer(); //for turning off breaking when disabled
@@ -46,6 +57,7 @@ public class Robot extends LoggedRobot {
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
+    theRobotContainer.periodic();
   }
 
   @Override
@@ -62,15 +74,35 @@ public class Robot extends LoggedRobot {
       disabledTimer.stop();
       disabledTimer.reset();
     }
+
+    theRobotContainer.periodic();
+
+    autoroutine = theRobotContainer.getAutonomousCommand();
+
+    if(autoroutine.getName().equals("StandardLeft")) {
+      theRobotContainer.getDrivebase().resetOdometry(Constants.Positions.getPositionForRobot(101));
+    }
+
+    if(autoroutine.getName().equals("StandardRight")) {
+      theRobotContainer.getDrivebase().resetOdometry(Constants.Positions.getPositionForRobot(102));
+    }
   }
 
   @Override
   public void autonomousInit() {
     theRobotContainer.setMotorBrake(true);
-    exampleAuto = theRobotContainer.getAutonomousCommand();
+    autoroutine = theRobotContainer.getAutonomousCommand();
 
-    if (exampleAuto != null) {
-      exampleAuto.schedule();
+    if(autoroutine.getName().equals("StandardLeft")) {
+      theRobotContainer.getDrivebase().resetOdometry(Constants.Positions.getPositionForRobot(101));
+    }
+
+    if(autoroutine.getName().equals("StandardRight")) {
+      theRobotContainer.getDrivebase().resetOdometry(Constants.Positions.getPositionForRobot(102));
+    }
+
+    if (autoroutine != null) {
+      autoroutine.schedule();
     }
   }
 
@@ -80,9 +112,9 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void teleopInit() {
-    theRobotContainer.setMotorBrake(true);
-    if (exampleAuto != null) {
-      exampleAuto.cancel();
+    theRobotContainer.teleopInit();
+    if (autoroutine != null) {
+      autoroutine.cancel();
     } 
     else {
       CommandScheduler.getInstance().cancelAll();
@@ -100,6 +132,7 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void testPeriodic() {
+    
   }
 
   @Override

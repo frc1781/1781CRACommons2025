@@ -8,6 +8,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+
+import org.littletonrobotics.junction.Logger;
+
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.SparkLowLevel;
@@ -34,13 +37,12 @@ public class Climber extends SubsystemBase {
         leverMotorConfig.encoder.positionConversionFactor(Constants.Climber.RADIANS_PER_REVOLUTION);
         leverMotorConfig.closedLoop.apply(Constants.Climber.CLOSED_LOOP_CONFIG);
         motor.configure(leverMotorConfig, SparkBase.ResetMode.kResetSafeParameters, SparkBase.PersistMode.kPersistParameters);
-        armFeedforward = new ArmFeedforward(Constants.Climber.KS, Constants.Climber.KG, Constants.Climber.KV);
         armEncoder = motor.getEncoder();
         armFeedforward = new ArmFeedforward(Constants.Climber.KS, Constants.Climber.KG, Constants.Climber.KV);
     }
 
     public Command idle() {
-        return this.runOnce(() -> {initialized = false; });
+        return this.runOnce(() -> {initialized = false;});
     }
 
     public void periodic(){
@@ -55,6 +57,7 @@ public class Climber extends SubsystemBase {
         climberDutyCycle = climberPID.calculate(armEncoder.getPosition(), requestedPosition) + gravityDutyCycle;
         climberDutyCycle = MathUtil.clamp(climberDutyCycle, -0.5, 0.5);
         motor.set(climberDutyCycle);
+        Logger.recordOutput("Climber/MotorDutyCycle", climberDutyCycle);
     }
 
     public Command ascend(){

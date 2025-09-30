@@ -33,14 +33,24 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.Constants;
-import frc.robot.subsystems.swervedrive.Vision.Cameras;
+import frc.robot.subsystems.Vision;
+import frc.robot.subsystems.Lights;
+import frc.robot.subsystems.Sensation;
+import frc.robot.subsystems.Vision.Cameras;
+import frc.robot.utils.EEUtil;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
+import java.util.function.IntSupplier;
 import java.util.function.Supplier;
+import org.littletonrobotics.junction.Logger;
+
+
 import org.json.simple.parser.ParseException;
 import org.photonvision.targeting.PhotonPipelineResult;
 import swervelib.SwerveController;
@@ -58,7 +68,7 @@ public class SwerveSubsystem extends SubsystemBase
   private final SwerveDrive swerveDrive;
   private final boolean     visionDriveTest = true;
   private       Vision      vision;
-
+  private boolean inPosition = false;
   /**
    * Initialize {@link SwerveDrive} with the directory provided.
    *
@@ -69,7 +79,8 @@ public class SwerveSubsystem extends SubsystemBase
     boolean blueAlliance = true;
     Pose2d startingPose = 
       blueAlliance ? 
-        new Pose2d(new Translation2d(Meter.of(1.2), Meter.of(7.0)), Rotation2d.fromDegrees(-55.0))
+        new Pose2d(new Translation2d(Meter.of(7.2), Meter.of(7.5)), Rotation2d.fromDegrees(-90.0))
+      //new Pose2d(new Translation2d(Meter.of(3.0), Meter.of(5.0)), Rotation2d.fromDegrees(0.0))
       : new Pose2d(new Translation2d(Meter.of(16.3), Meter.of(1.0)), Rotation2d.fromDegrees(125.0));
     SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
     try
@@ -130,6 +141,8 @@ public class SwerveSubsystem extends SubsystemBase
         vision.updatePoseEstimation(swerveDrive);
       }
     }
+
+    Logger.recordOutput("Drive/robotPose", getPose());
   }
 
   @Override
@@ -221,7 +234,6 @@ public class SwerveSubsystem extends SubsystemBase
         {
           // Not sure if this will work, more math may be required.
           drive(getTargetSpeeds(0,0, Rotation2d.fromDegrees(result.getBestTarget().getYaw()))); 
-          
         }
       }
     });
@@ -248,9 +260,11 @@ public class SwerveSubsystem extends SubsystemBase
   public Command driveToPose(Pose2d pose)
   {
 // Create the constraints to use while pathfinding
-    PathConstraints constraints = new PathConstraints(
-        swerveDrive.getMaximumChassisVelocity(), 4.0,
+    PathConstraints constraints = new PathConstraints(2.5
+        /*swerveDrive.getMaximumChassisVelocity()*/, 2.5,
         swerveDrive.getMaximumChassisAngularVelocity(), Units.degreesToRadians(720));
+
+    Logger.recordOutput("Drive/CurrentCommand", "RunningDriveToPose");
 
 // Since AutoBuilder is configured, we can use it to build pathfinding commands
     return AutoBuilder.pathfindToPose(pose, constraints, edu.wpi.first.units.Units.MetersPerSecond.of(0) );
@@ -705,5 +719,48 @@ public class SwerveSubsystem extends SubsystemBase
   public SwerveDrive getSwerveDrive()
   {
     return swerveDrive;
+  }
+
+  public class MoveToPositionToScore extends Command {
+    BooleanSupplier coralPresent;
+    Sensation sensation;
+    int aprilTagID = 19;
+
+    public MoveToPositionToScore(Sensation sensation)
+    {
+      this.sensation = sensation;
+      addRequirements(SwerveSubsystem.this);
+    }
+
+    @Override
+    public void initialize()
+    {
+      inPosition = false;
+    }
+
+    @Override
+    public void execute()
+    {
+      ChassisSpeeds inputSpeeds = new ChassisSpeeds(); 
+      double avgDist = (sensation.rightTOF() + sensation.leftTOF()) / 2.0;
+      inPosition = avgDist < 290;
+      if(!inPosition){
+        inputSpeeds.vxMetersPerSecond = EEUtil.clamp(-0.5, 0.5, 0.005 * (avgDist - 280));
+      }
+      swerveDrive.drive(inputSpeeds);
+      Logger.recordOutput("Drive/CurrentCommand", "MoveToPositionToScore");
+    }
+
+    @Override
+    public boolean isFinished()
+    {
+      return inPosition;
+    }
+
+    @Override
+    public void end(boolean interrupted)
+    {
+    
+    }
   }
 }
