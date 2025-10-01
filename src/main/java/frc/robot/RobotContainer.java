@@ -356,14 +356,14 @@ public class RobotContainer {
     if (!aprilTagPose3d.isPresent())
     {
       return new Pose2d();
-    } 
+    }
 
     Pose2d apPose = aprilTagPose3d.get().toPose2d();
 
-    double xMeters = 0.3;
-    double yMeters = 0.3;
+    double xMeters = 0.6;
+    double yMeters = -0.6;
 
-        Translation2d localOffset = new Translation2d(xMeters, -yMeters); // right is negative Y
+        Translation2d localOffset = new Translation2d(xMeters, yMeters); // right is negative Y
 
         // Rotate the local offset into the global coordinate frame
         Translation2d rotatedOffset = localOffset.rotateBy(apPose.getRotation());
@@ -371,7 +371,7 @@ public class RobotContainer {
     // Compute the new position
     Translation2d newTranslation = apPose.getTranslation().plus(rotatedOffset);
 
-    return new Pose2d(newTranslation, apPose.getRotation());
+    return new Pose2d(newTranslation, apPose.getRotation().rotateBy(Rotation2d.fromDegrees(180)));
   }
 
   public boolean inPosition() {
