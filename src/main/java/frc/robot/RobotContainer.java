@@ -164,7 +164,6 @@ public class RobotContainer {
   }
 
   public void periodic() {
-    Logger.recordOutput("RobotContainer/isSafeForElevatortoMoveUp", isSafeForElevatorCarriagetoMove());
     Logger.recordOutput("RobotContainer/isSafeForArmToMoveUp", isSafeForArmToMoveUp());
     Logger.recordOutput("RobotContainer/isSafeForArmToMoveDown", isSafeForArmToMoveDown());
     Logger.recordOutput("RobotContainer/isArmInsideElevator", isArmInsideElevator());
@@ -280,11 +279,6 @@ public class RobotContainer {
     return targetAprilTagID;
   }
 
-  public boolean isSafeForElevatorCarriagetoMove() {
-    return arm.getPosition() > 40.0 && arm.getPosition() < 300; // should never be this high except with gimble lock
-                                                                // wrapping
-  }
-
   public boolean isSafeForArmToMoveUp() {
     double unsafeCarriagePosition = 60.0;
     double unsafeArmAngle = 170;
@@ -297,7 +291,7 @@ public class RobotContainer {
   }
 
   public boolean isArmInsideElevator() {
-    return elevator.getCarriagePosition() > 200 && arm.getPosition() < 30;
+    return elevator.getCarriagePosition() > 200 && arm.getPosition() < 35;
   }
 
   public boolean readyToCollect() {

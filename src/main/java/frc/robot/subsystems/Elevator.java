@@ -95,7 +95,7 @@ public class Elevator extends SubsystemBase{
     public Command idle(BooleanSupplier isArmInsideElevator, BooleanSupplier clawCoralPresent) {
         return new InstantCommand(() -> {
             if(isArmInsideElevator.getAsBoolean()) {
-                Logger.recordOutput("Elevator/CurrentCommand", "Idle");
+                Logger.recordOutput("Elevator/CurrentCommand", "Waiting for arm to clear");
                 elevatorDutyCycle = IDLE_DUTY_CYCLE;
             } else if (clawCoralPresent.getAsBoolean()) {
                 new SetElevator(this, ElevatorState.L3).schedule();
