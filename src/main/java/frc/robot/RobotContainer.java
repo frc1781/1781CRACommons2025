@@ -33,6 +33,7 @@ import frc.robot.commands.Clear;
 import frc.robot.commands.Collect;
 import frc.robot.commands.CollectAndClear;
 import frc.robot.commands.CollectAndPost;
+import frc.robot.commands.Collecting;
 import frc.robot.commands.L2;
 import frc.robot.commands.L3;
 import frc.robot.commands.L4;
@@ -76,7 +77,7 @@ public class RobotContainer {
   private double wait_seconds = 5;
   private int targetAprilTagID = -1;
 
-  Trigger coralEnter = new Trigger(sensation::coralPresent);
+  Trigger coralPresent = new Trigger(sensation::coralPresent);
   Trigger coralHopper = new Trigger(sensation::coralInHopper);
   Trigger coralExit = new Trigger(sensation::coralExitedHopper);
   Trigger armHasCoral = new Trigger(sensation::clawCoralPresent);
@@ -168,7 +169,6 @@ public class RobotContainer {
   }
 
   public void periodic() {
-    Logger.recordOutput("RobotContainer/isSafeForElevatortoMoveUp", isSafeForElevatorCarriagetoMove());
     Logger.recordOutput("RobotContainer/isSafeForArmToMoveUp", isSafeForArmToMoveUp());
     Logger.recordOutput("RobotContainer/isSafeForArmToMoveDown", isSafeForArmToMoveDown());
     Logger.recordOutput("RobotContainer/isArmInsideElevator", isArmInsideElevator());
@@ -197,13 +197,12 @@ public class RobotContainer {
       drivebase.setDefaultCommand(driveFieldOrientedDirectAngle);
     }
     
-    // --------------------------------- DEFAULT COMMANDS ---------------------------------
-    conveyor.setDefaultCommand(conveyor.clearCoral(coralHopper, elevator));
+    // -----------------------------------------------------------------------Default Commands-----------------------------------------------------------------------
+    conveyor.setDefaultCommand(conveyor.clearCoral(coralPresent, elevator));
     lights.setDefaultCommand(lights.set(Lights.Special.OFF));
     elevator.setDefaultCommand(elevator.idle(this::isArmInsideElevator, sensation::clawCoralPresent).repeatedly());
     sensation.setDefaultCommand(Commands.idle(sensation));
     arm.setDefaultCommand(arm.idle(this::isSafeForArmToMoveUp, this::isSafeForArmToMoveDown, sensation::clawCoralPresent).repeatedly());
-    // climber.setDefaultCommand(Commands.);
 
     if (Robot.isSimulation()) {
       Pose2d target = new Pose2d(new Translation2d(1, 4), Rotation2d.fromDegrees(90));
@@ -232,7 +231,7 @@ public class RobotContainer {
       driverXbox.back().whileTrue(Commands.none());
       driverXbox.a().onTrue(new Clear(arm));
       driverXbox.x().onTrue(new L3(elevator, arm));
-      driverXbox.b().onTrue(new PreCollect(elevator, arm, sensation));
+      driverXbox.b().onTrue(new Collecting(elevator, arm, sensation));
       driverXbox.y().onTrue(new L4(elevator, arm));
       driverXbox.leftBumper().whileTrue(new ScoreL4(arm, drivebase));
       driverXbox.rightBumper().whileTrue(new MoveToTarget(this, this::getTargetAprilTagID));
@@ -242,15 +241,6 @@ public class RobotContainer {
       driverXbox.povDown().whileTrue(climber.descend().repeatedly());
       driverXbox.povLeft().whileTrue(new SetArm(arm, ArmState.STOP).alongWith(new SetElevator(elevator, ElevatorState.STOP)));
 
-
-      // driver poses blue
-      // driverXbox.povRight().and(isRedAllianceTrigger.negate()).onTrue(new SetTargetPose(this, 17));
-      // driverXbox.povDown().and(isRedAllianceTrigger.negate()).onTrue(new SetTargetPose(this, 18));
-      // driverXbox.povLeft().and(isRedAllianceTrigger.negate()).onTrue(new SetTargetPose(this, 19));
-      // driverXbox.povUpLeft().and(isRedAllianceTrigger.negate()).onTrue(new SetTargetPose(this, 20));
-      // driverXbox.povUp().and(isRedAllianceTrigger.negate()).onTrue(new SetTargetPose(this, 21));
-      // driverXbox.povUpRight().and(isRedAllianceTrigger.negate()).onTrue(new SetTargetPose(this, 22));
-
       // copilot poses blue
       copilotButtons.button(1).and(isRedAllianceTrigger.negate()).onTrue(new SetTargetPose(this, 18));
       copilotButtons.button(2).and(isRedAllianceTrigger.negate()).onTrue(new SetTargetPose(this, 17));
@@ -258,14 +248,6 @@ public class RobotContainer {
       copilotButtons.button(4).and(isRedAllianceTrigger.negate()).onTrue(new SetTargetPose(this, 21));
       copilotButtons.button(5).and(isRedAllianceTrigger.negate()).onTrue(new SetTargetPose(this, 20));
       copilotButtons.button(6).and(isRedAllianceTrigger.negate()).onTrue(new SetTargetPose(this, 19));
-
-      // driver poses red
-      // driverXbox.povLeft().and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 6));
-      // driverXbox.povDown().and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 7));
-      // driverXbox.povRight().and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 8));
-      // driverXbox.povUpRight().and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 9));
-      // driverXbox.povUp().and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 10));
-      // driverXbox.povUpLeft().and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 11));
 
       // copilot poses red
       copilotButtons.button(1).and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 7));
@@ -278,7 +260,7 @@ public class RobotContainer {
       // TRIGGERS
 
       robotInPosition.whileTrue(lights.set(Lights.Colors.GREEN, Lights.Patterns.SOLID));
-      coralEnter.and(coralExit.negate()).and(coralHopper.negate())
+      coralPresent.and(coralExit.negate()).and(coralHopper.negate())
           .onTrue(lights.set(Lights.Colors.RED, Lights.Patterns.FAST_FLASH));
       coralHopper.and(coralExit.negate()).onTrue(lights.set(Lights.Colors.RED, Lights.Patterns.MARCH));
       coralExit.onFalse(lights.set(Lights.Colors.RED, Lights.Patterns.SOLID));
@@ -302,28 +284,24 @@ public class RobotContainer {
     return targetAprilTagID;
   }
 
-  public boolean isSafeForElevatorCarriagetoMove() {
-    return arm.getPosition() > 40.0 && arm.getPosition() < 300; // should never be this high except with gimble lock
-                                                                // wrapping
-  }
-
   public boolean isSafeForArmToMoveUp() {
-    double unsafeCarriagePosition = 60.0;
-    double unsafeArmAngle = 170;
-    return elevator.getCarriagePosition() < unsafeCarriagePosition || arm.getPosition() > unsafeArmAngle;
+    double safeCarriagePosition = 60.0;
+    double safeArmAngle = 150;
+    //don't move up if just collected coral and the elevator has not moved up yet to get the coral free from cradle
+    return elevator.getCarriagePosition() < safeCarriagePosition || arm.getPosition() > safeArmAngle;
   }
 
   public boolean isSafeForArmToMoveDown() {
     double maxUnsafeDistance = 60.0;
-    return elevator.getCarriagePosition() < maxUnsafeDistance;
+    return elevator.getCarriagePosition() > maxUnsafeDistance;
   }
 
   public boolean isArmInsideElevator() {
-    return elevator.getCarriagePosition() > 200 && arm.getPosition() < 30;
+    return elevator.getCarriagePosition() > 200 && arm.getPosition() < 35;
   }
 
   public boolean readyToCollect() {
-    return elevator.hasReachedPosition(ElevatorState.SAFE) && arm.matchesState(ArmState.COLLECT);
+    return elevator.hasReachedPosition(ElevatorState.SAFE_CORAL) && arm.matchesState(ArmState.COLLECT);
   }
 
   public boolean isManualControlMode() {
