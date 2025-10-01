@@ -33,7 +33,7 @@ public class MoveToTarget extends Command {
             return;
         } 
         targetPose = robotContainer.scorePose(aprilTagID, sideTargeted );
-       //swerveSubsystem.driveToPose(targetPose).schedule();
+        swerveSubsystem.driveToPose(targetPose).schedule();
     }
 
     @Override

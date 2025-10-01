@@ -179,7 +179,7 @@ public class RobotContainer {
     Logger.recordOutput("RobotContainer/isArmInsideElevator", isArmInsideElevator());
     Logger.recordOutput("RobotContainer/readyToCollect", readyToCollect());
     Logger.recordOutput("RobotContainer/targetAprilTagID", targetAprilTagID);
-    Logger.recordOutput("RobotContainer/targetPose", scorePose(targetAprilTagID, targetedSide == TargetSide.LEFT));
+    Logger.recordOutput("RobotContainer/targetPose", scorePose(targetAprilTagID, targetedSide));
     Logger.recordOutput("targetedSide", targetedSide.toString());
   }
 
