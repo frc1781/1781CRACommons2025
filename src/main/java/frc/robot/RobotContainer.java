@@ -180,6 +180,7 @@ public class RobotContainer {
     Logger.recordOutput("RobotContainer/readyToCollect", readyToCollect());
     Logger.recordOutput("RobotContainer/targetAprilTagID", targetAprilTagID);
     Logger.recordOutput("RobotContainer/targetPose", scorePose(targetAprilTagID, targetedSide == TargetSide.LEFT));
+    Logger.recordOutput("targetedSide", targetedSide.toString());
   }
 
   private void configureBindings() {
