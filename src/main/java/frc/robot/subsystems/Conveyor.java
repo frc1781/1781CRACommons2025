@@ -33,9 +33,9 @@ public class Conveyor extends SubsystemBase {
         Logger.recordOutput("Conveyor/motorOutput", dc);
     }
     
-    public Command clearCoral(BooleanSupplier hasCoralToClear, BooleanSupplier hasCoralInCradle, Elevator elevator) {
+    public Command clearCoral(BooleanSupplier coralPresent, Elevator elevator) {
         return new RunCommand(() -> {
-            if (hasCoralToClear.getAsBoolean() && hasCoralInCradle.getAsBoolean() && elevator.getFramePosition() < 10) {
+            if (coralPresent.getAsBoolean() && elevator.getFramePosition() < 50) {
                 dc = 0.5;
             } else {
                 dc = 0;

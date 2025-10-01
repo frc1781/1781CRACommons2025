@@ -66,23 +66,37 @@ public class Arm extends SubsystemBase {
     }
 
     public Command idle(BooleanSupplier isSafeForArmToMoveUp, BooleanSupplier isSafeForArmToMoveDown, BooleanSupplier clawCoralPresent) {
+        //Arm should always be in L3 when doing nothing
         return new InstantCommand(() -> {
-            ArmState correctArmState = ArmState.IDLE;
-            if (clawCoralPresent.getAsBoolean()) {
-                if (isSafeForArmToMoveUp.getAsBoolean() || funkyPositionConversionFromActualToState(getPosition()) < ArmState.L3.getPosition()) {
-                    correctArmState = ArmState.L3;
-                }
-            } else {
-                if (isSafeForArmToMoveDown.getAsBoolean()) {
-                    correctArmState = ArmState.COLLECT;
-                }
-            }
-
-            if (correctArmState != ArmState.IDLE) {
-                new SetArm(this, correctArmState).schedule();
+                //the only time it is not safe to move up is when the arm is in collect with a coral and the elevator is down and just collected, needs to move up a bit first
+            if (isSafeForArmToMoveUp.getAsBoolean() || funkyPositionConversionFromActualToState(getPosition()) < ArmState.L3.getPosition()) {
+                new SetArm(this, ArmState.L3).schedule();
             }
         }, this);
     }
+
+    // public Command idle(BooleanSupplier isSafeForArmToMoveUp, BooleanSupplier isSafeForArmToMoveDown, BooleanSupplier clawCoralPresent) {
+    //     //Arm should always be in L3 when doing nothing but will only move there on purpose if coral is present
+    //     return new InstantCommand(() -> {
+    //         ArmState correctArmState = ArmState.IDLE;
+    //         if (clawCoralPresent.getAsBoolean()) {
+    //             //the only time it is not safe to move up is when the arm is in collect with a coral and the elevator is down and just collected, needs to move up a bit first
+    //             if (isSafeForArmToMoveUp.getAsBoolean() || funkyPositionConversionFromActualToState(getPosition()) < ArmState.L3.getPosition()) {
+    //                 correctArmState = ArmState.L3;
+    //             }
+    //         } 
+    //         // took this out driver should hit X to explicitly go to collect state or will go there after a score if coral is not present
+    //         // else {
+    //         //     if (isSafeForArmToMoveDown.getAsBoolean()) {
+    //         //         correctArmState = ArmState.COLLECT;
+    //         //     }
+    //         // }
+
+    //         if (correctArmState != ArmState.IDLE) {
+    //             new SetArm(this, correctArmState).schedule();
+    //         }
+    //     }, this);
+    // }
 
     @Override
     public void periodic() {

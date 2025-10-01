@@ -32,6 +32,7 @@ import frc.robot.commands.Clear;
 import frc.robot.commands.Collect;
 import frc.robot.commands.CollectAndClear;
 import frc.robot.commands.CollectAndPost;
+import frc.robot.commands.Collecting;
 import frc.robot.commands.L2;
 import frc.robot.commands.L3;
 import frc.robot.commands.L4;
@@ -73,7 +74,7 @@ public class RobotContainer {
   private double wait_seconds = 5;
   private int targetAprilTagID = -1;
 
-  Trigger coralEnter = new Trigger(sensation::coralPresent);
+  Trigger coralPresent = new Trigger(sensation::coralPresent);
   Trigger coralHopper = new Trigger(sensation::coralInHopper);
   Trigger coralExit = new Trigger(sensation::coralExitedHopper);
   Trigger armHasCoral = new Trigger(sensation::clawCoralPresent);
@@ -193,7 +194,7 @@ public class RobotContainer {
     }
     
     // -----------------------------------------------------------------------Default Commands-----------------------------------------------------------------------
-    conveyor.setDefaultCommand(conveyor.clearCoral(coralHopper, coralExit, elevator));
+    conveyor.setDefaultCommand(conveyor.clearCoral(coralPresent, elevator));
     lights.setDefaultCommand(lights.set(Lights.Special.OFF));
     elevator.setDefaultCommand(elevator.idle(this::isArmInsideElevator, sensation::clawCoralPresent).repeatedly());
     sensation.setDefaultCommand(Commands.idle(sensation));
@@ -226,7 +227,7 @@ public class RobotContainer {
       driverXbox.back().whileTrue(Commands.none());
       driverXbox.a().onTrue(new Clear(arm));
       driverXbox.x().onTrue(new L3(elevator, arm));
-      driverXbox.b().onTrue(new PreCollect(elevator, arm, sensation));
+      driverXbox.b().onTrue(new Collecting(elevator, arm, sensation));
       driverXbox.y().onTrue(new L4(elevator, arm));
       driverXbox.leftBumper().whileTrue(new ScoreL4(arm, drivebase));
       driverXbox.rightBumper().whileTrue(new MoveToTarget(this, this::getTargetAprilTagID));
@@ -255,7 +256,7 @@ public class RobotContainer {
       // TRIGGERS
 
       robotInPosition.whileTrue(lights.set(Lights.Colors.GREEN, Lights.Patterns.SOLID));
-      coralEnter.and(coralExit.negate()).and(coralHopper.negate())
+      coralPresent.and(coralExit.negate()).and(coralHopper.negate())
           .onTrue(lights.set(Lights.Colors.RED, Lights.Patterns.FAST_FLASH));
       coralHopper.and(coralExit.negate()).onTrue(lights.set(Lights.Colors.RED, Lights.Patterns.MARCH));
       coralExit.onFalse(lights.set(Lights.Colors.RED, Lights.Patterns.SOLID));
@@ -280,9 +281,10 @@ public class RobotContainer {
   }
 
   public boolean isSafeForArmToMoveUp() {
-    double unsafeCarriagePosition = 60.0;
-    double unsafeArmAngle = 170;
-    return elevator.getCarriagePosition() < unsafeCarriagePosition || arm.getPosition() > unsafeArmAngle;
+    double safeCarriagePosition = 60.0;
+    double safeArmAngle = 150;
+    //don't move up if just collected coral and the elevator has not moved up yet to get the coral free from cradle
+    return elevator.getCarriagePosition() < safeCarriagePosition || arm.getPosition() > safeArmAngle;
   }
 
   public boolean isSafeForArmToMoveDown() {
