@@ -173,4 +173,9 @@ public final class Constants
     LIMELIGHT_VISION
   }
 
+  public enum TargetSide{
+    LEFT,
+    RIGHT
+  }
+
 }

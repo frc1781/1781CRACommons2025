@@ -23,12 +23,14 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.Constants.TargetSide;
 import frc.robot.commands.CenterAndScore;
 import frc.robot.commands.Clear;
 import frc.robot.commands.Collect;
@@ -78,6 +80,8 @@ public class RobotContainer {
   private final SendableChooser<Command> autoChooser;
   private double wait_seconds = 5;
   private int targetAprilTagID = -1;
+  private TargetSide targetedSide = TargetSide.LEFT;
+  
 
   Trigger coralPresent = new Trigger(sensation::coralPresent);
   Trigger coralHopper = new Trigger(sensation::coralInHopper);
@@ -175,7 +179,7 @@ public class RobotContainer {
     Logger.recordOutput("RobotContainer/isArmInsideElevator", isArmInsideElevator());
     Logger.recordOutput("RobotContainer/readyToCollect", readyToCollect());
     Logger.recordOutput("RobotContainer/targetAprilTagID", targetAprilTagID);
-    Logger.recordOutput("RobotContainer/targetPose", scorePose(targetAprilTagID, true));
+    Logger.recordOutput("RobotContainer/targetPose", scorePose(targetAprilTagID, targetedSide == TargetSide.LEFT));
   }
 
   private void configureBindings() {
@@ -242,6 +246,11 @@ public class RobotContainer {
       driverXbox.povDown().whileTrue(climber.descend().repeatedly());
       driverXbox.povLeft().whileTrue(new SetArm(arm, ArmState.STOP).alongWith(new SetElevator(elevator, ElevatorState.STOP)));
 
+      //copilot buttons
+
+      copilotXbox.rightBumper().onTrue(new InstantCommand(()->{targetedSide = TargetSide.RIGHT;} ));
+      copilotXbox.leftBumper().onTrue(new InstantCommand(()->{targetedSide = TargetSide.LEFT;}));
+
       // copilot poses blue
       copilotButtons.button(1).and(isRedAllianceTrigger.negate()).onTrue(new SetTargetPose(this, 18));
       copilotButtons.button(2).and(isRedAllianceTrigger.negate()).onTrue(new SetTargetPose(this, 17));
@@ -257,6 +266,7 @@ public class RobotContainer {
       copilotButtons.button(4).and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 10));
       copilotButtons.button(5).and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 11));
       copilotButtons.button(6).and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 6));
+      
 
       // TRIGGERS
 
