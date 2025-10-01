@@ -9,6 +9,7 @@ import com.pathplanner.lib.util.PathPlannerLogging;
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
@@ -54,10 +55,11 @@ import frc.robot.subsystems.*;
 import frc.robot.subsystems.Arm.ArmState;
 import frc.robot.subsystems.Elevator.ElevatorState;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
-import frc.robot.subsystems.Vision;
 
 import java.io.File;
 import java.util.NoSuchElementException;
+import java.util.Optional;
+
 import org.littletonrobotics.junction.Logger;
 import swervelib.SwerveInputStream;
 
@@ -130,8 +132,7 @@ public class RobotContainer {
   private boolean isManualControlMode;
 
   public RobotContainer() {
-    NamedCommands.registerCommand("CustomWaitCommand",
-        new WaitCommand(SmartDashboard.getNumber("Wait Time", wait_seconds)));
+    SmartDashboard.putNumber("Target Apriltag", targetAprilTagID);
     NamedCommands.registerCommand("Score", new ScoreL4(arm, drivebase));
     NamedCommands.registerCommand("Collect", new CollectAndClear(elevator, arm, sensation));
     NamedCommands.registerCommand("MoveToPositionToScore", drivebase.new MoveToPositionToScore(sensation));
@@ -151,7 +152,6 @@ public class RobotContainer {
     NamedCommands.registerCommand("CustomWaitCommand", new WaitCommand(SmartDashboard.getNumber("Wait Time", wait_seconds)));
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser", autoChooser);
-    SmartDashboard.putNumber("Wait Time", wait_seconds);
 
     PathPlannerLogging.setLogCurrentPoseCallback((pose) -> {
       Logger.recordOutput("Drive/currentPose", pose);
@@ -169,6 +169,7 @@ public class RobotContainer {
   }
 
   public void periodic() {
+    SmartDashboard.getNumber("Target Apriltag", targetAprilTagID);
     Logger.recordOutput("RobotContainer/isSafeForArmToMoveUp", isSafeForArmToMoveUp());
     Logger.recordOutput("RobotContainer/isSafeForArmToMoveDown", isSafeForArmToMoveDown());
     Logger.recordOutput("RobotContainer/isArmInsideElevator", isArmInsideElevator());
@@ -351,7 +352,13 @@ public class RobotContainer {
   }
 
   public Pose2d scorePose(int aprilTagID, boolean left) {
-    Pose2d apPose = Vision.fieldLayout.getTagPose(aprilTagID).get().toPose2d();
+    Optional<Pose3d> aprilTagPose3d = Vision.fieldLayout.getTagPose(aprilTagID);
+    if (!aprilTagPose3d.isPresent())
+    {
+      return new Pose2d();
+    } 
+
+    Pose2d apPose = aprilTagPose3d.get().toPose2d();
 
     double xMeters = 0.3;
     double yMeters = 0.3;
