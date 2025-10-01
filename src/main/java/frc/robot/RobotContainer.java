@@ -79,8 +79,8 @@ public class RobotContainer {
   private final Climber climber = new Climber();
   private final SendableChooser<Command> autoChooser;
   private double wait_seconds = 5;
-  private int targetAprilTagID = -1;
-  private TargetSide targetedSide = TargetSide.LEFT;
+  public int targetAprilTagID = -1;
+  public TargetSide targetedSide = TargetSide.LEFT;
   
 
   Trigger coralPresent = new Trigger(sensation::coralPresent);
@@ -239,7 +239,7 @@ public class RobotContainer {
       driverXbox.b().onTrue(new Collecting(elevator, arm, sensation));
       driverXbox.y().onTrue(new L4(elevator, arm));
       driverXbox.leftBumper().whileTrue(new ScoreL4(arm, drivebase));
-      driverXbox.rightBumper().whileTrue(new MoveToTarget(this, this::getTargetAprilTagID));
+      driverXbox.rightBumper().whileTrue(new MoveToTarget(this));
       driverXbox.leftTrigger().whileTrue(new CenterAndScore(this, true));
       driverXbox.rightTrigger().whileTrue(new CenterAndScore(this, false));
       driverXbox.povUp().whileTrue(climber.ascend().repeatedly());
@@ -361,7 +361,7 @@ public class RobotContainer {
     drivebase.setMotorBrake(brake);
   }
 
-  public Pose2d scorePose(int aprilTagID, boolean left) {
+  public Pose2d scorePose(int aprilTagID, TargetSide side) {
     Optional<Pose3d> aprilTagPose3d = Vision.fieldLayout.getTagPose(aprilTagID);
     if (!aprilTagPose3d.isPresent())
     {
@@ -371,7 +371,7 @@ public class RobotContainer {
     Pose2d apPose = aprilTagPose3d.get().toPose2d();
 
     double xMeters = 0.6;
-    double yMeters = -0.1;
+    double yMeters = (side == TargetSide.LEFT ? -0.1 : 0.1);
 
         Translation2d localOffset = new Translation2d(xMeters, yMeters); // right is negative Y
 

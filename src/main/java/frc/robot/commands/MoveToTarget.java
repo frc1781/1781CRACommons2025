@@ -7,34 +7,38 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
+import frc.robot.Constants.TargetSide;
 
 public class MoveToTarget extends Command {
     
-    IntSupplier aprilTagID;
+    int aprilTagID;
+    TargetSide sideTargeted;
     Pose2d targetPose;
     RobotContainer robotContainer;
     SwerveSubsystem swerveSubsystem;
 
-    public MoveToTarget(RobotContainer robotContainer, IntSupplier aprilTagID) {  
+    public MoveToTarget(RobotContainer robotContainer) {  
         this.robotContainer = robotContainer;
         this.swerveSubsystem = robotContainer.getDrivebase();
-        this.aprilTagID = aprilTagID;
+        this.aprilTagID = -1;
         addRequirements(swerveSubsystem);
     }
 
     @Override
     public void initialize() {
-        Logger.recordOutput("Drive/CurrentCommand", "RunningDriveToAprilTag:" + aprilTagID.getAsInt());
-        if(aprilTagID.getAsInt() == -1) {
+        this.aprilTagID = robotContainer.targetAprilTagID;
+        sideTargeted = robotContainer.targetedSide;
+        Logger.recordOutput("Drive/CurrentCommand", "RunningDriveToAprilTag:" + aprilTagID + sideTargeted);
+        if(aprilTagID == -1) {
             return;
         } 
-        targetPose = Constants.Positions.getPositionForRobot(aprilTagID.getAsInt());
-        swerveSubsystem.driveToPose(targetPose).schedule();
+        targetPose = robotContainer.scorePose(aprilTagID, sideTargeted );
+       //swerveSubsystem.driveToPose(targetPose).schedule();
     }
 
     @Override
     public boolean isFinished() {
-        if(aprilTagID.getAsInt() == -1) {
+        if(aprilTagID == -1) {
             return true;
         } 
         return 
