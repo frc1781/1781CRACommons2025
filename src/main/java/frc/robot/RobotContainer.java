@@ -293,7 +293,7 @@ public class RobotContainer {
 
   public boolean isSafeForArmToMoveDown() {
     double maxUnsafeDistance = 60.0;
-    return elevator.getCarriagePosition() < maxUnsafeDistance;
+    return elevator.getCarriagePosition() > maxUnsafeDistance;
   }
 
   public boolean isArmInsideElevator() {
