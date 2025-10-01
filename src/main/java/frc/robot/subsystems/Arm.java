@@ -211,7 +211,7 @@ public class Arm extends SubsystemBase {
         SCORE_L4(75.0),
         COLLECT(149.0),
         WAIT(25.0),
-        POLE(25.0),
+        POLE(28.0),
         SCORE_MID(60.0),
         START_MID(45.0),
         START_HIGH(5.0),
