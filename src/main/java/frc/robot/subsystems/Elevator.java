@@ -179,7 +179,7 @@ public class Elevator extends SubsystemBase{
     }
 
     public double clampDutyCycle(double dutyCycle) {
-        return EEUtil.clamp(0, 0.75, dutyCycle);
+        return EEUtil.clamp(0, 0.5, dutyCycle);
     }
 
     public enum ElevatorState {
