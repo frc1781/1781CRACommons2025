@@ -184,9 +184,9 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
-    Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveDirectAngle);
-    // Command driveFieldOrientedAnglularVelocity =
-    // drivebase.driveFieldOriented(driveAngularVelocity);
+    //Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveDirectAngle);
+     Command driveFieldOrientedAnglularVelocity =
+    drivebase.driveFieldOriented(driveAngularVelocity);
     // Command driveRobotOrientedAngularVelocity =
     // drivebase.driveFieldOriented(driveRobotOriented);
     // Command driveSetpointGen =
@@ -200,7 +200,7 @@ public class RobotContainer {
     if (RobotBase.isSimulation()) {
       drivebase.setDefaultCommand(driveFieldOrientedDirectAngleKeyboard);
     } else {
-      drivebase.setDefaultCommand(driveFieldOrientedDirectAngle);
+      drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
     }
     
     // -----------------------------------------------------------------------Default Commands-----------------------------------------------------------------------
@@ -239,10 +239,9 @@ public class RobotContainer {
       driverXbox.x().onTrue(new L3(elevator, arm));
       driverXbox.b().onTrue(new Collecting(elevator, arm, sensation));
       driverXbox.y().onTrue(new L4(elevator, arm));
-      driverXbox.leftBumper().whileTrue(new ScoreL4(arm, drivebase));
+      //driverXbox.leftBumper().whileTrue(new ScoreL4(arm, drivebase));
       driverXbox.rightBumper().whileTrue(new MoveToTarget(this));
-      driverXbox.leftTrigger().whileTrue(new CenterAndScore(this, true));
-      driverXbox.rightTrigger().whileTrue(new CenterAndScore(this, false));
+     
       driverXbox.povUp().whileTrue(climber.ascend().repeatedly());
       driverXbox.povDown().whileTrue(climber.descend().repeatedly());
       driverXbox.povLeft().whileTrue(new SetArm(arm, ArmState.STOP).alongWith(new SetElevator(elevator, ElevatorState.STOP)));
@@ -251,6 +250,8 @@ public class RobotContainer {
 
       copilotXbox.rightBumper().onTrue(new InstantCommand(()->{targetedSide = TargetSide.RIGHT;} ));
       copilotXbox.leftBumper().onTrue(new InstantCommand(()->{targetedSide = TargetSide.LEFT;}));
+      copilotXbox.leftTrigger().whileTrue(new CenterAndScore(this, true));
+      copilotXbox.rightTrigger().whileTrue(new CenterAndScore(this, false));
 
       // copilot poses blue
       copilotButtons.button(1).and(isRedAllianceTrigger.negate()).onTrue(new SetTargetPose(this, 18));
