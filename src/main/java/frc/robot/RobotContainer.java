@@ -59,6 +59,7 @@ import frc.robot.subsystems.Elevator.ElevatorState;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 
 import java.io.File;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -81,7 +82,6 @@ public class RobotContainer {
   private double wait_seconds = 5;
   public int targetAprilTagID = -1;
   public TargetSide targetedSide = TargetSide.LEFT;
-  
 
   Trigger coralPresent = new Trigger(sensation::coralPresent);
   Trigger coralHopper = new Trigger(sensation::coralInHopper);
@@ -153,7 +153,8 @@ public class RobotContainer {
 
     configureBindings();
     DriverStation.silenceJoystickConnectionWarning(true);
-    NamedCommands.registerCommand("CustomWaitCommand", new WaitCommand(SmartDashboard.getNumber("Wait Time", wait_seconds)));
+    NamedCommands.registerCommand("CustomWaitCommand",
+        new WaitCommand(SmartDashboard.getNumber("Wait Time", wait_seconds)));
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser", autoChooser);
 
@@ -178,9 +179,13 @@ public class RobotContainer {
     Logger.recordOutput("RobotContainer/isSafeForArmToMoveDown", isSafeForArmToMoveDown());
     Logger.recordOutput("RobotContainer/isArmInsideElevator", isArmInsideElevator());
     Logger.recordOutput("RobotContainer/readyToCollect", readyToCollect());
+
+    //APRILTAGS
+    aquireTargetAprilTag();
     Logger.recordOutput("RobotContainer/targetAprilTagID", targetAprilTagID);
     Logger.recordOutput("RobotContainer/targetPose", scorePose(targetAprilTagID, targetedSide));
     Logger.recordOutput("targetedSide", targetedSide.toString());
+
   }
 
   private void configureBindings() {
@@ -202,13 +207,15 @@ public class RobotContainer {
     } else {
       drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
     }
-    
-    // -----------------------------------------------------------------------Default Commands-----------------------------------------------------------------------
+
+    // -----------------------------------------------------------------------Default
+    // Commands-----------------------------------------------------------------------
     conveyor.setDefaultCommand(conveyor.clearCoral(coralPresent, elevator));
     lights.setDefaultCommand(lights.set(Lights.Special.OFF));
     elevator.setDefaultCommand(elevator.idle(this::isArmInsideElevator, sensation::clawCoralPresent).repeatedly());
     sensation.setDefaultCommand(Commands.idle(sensation));
-    arm.setDefaultCommand(arm.idle(this::isSafeForArmToMoveUp, this::isSafeForArmToMoveDown, sensation::clawCoralPresent).repeatedly());
+    arm.setDefaultCommand(
+        arm.idle(this::isSafeForArmToMoveUp, this::isSafeForArmToMoveDown, sensation::clawCoralPresent).repeatedly());
 
     if (Robot.isSimulation()) {
       Pose2d target = new Pose2d(new Translation2d(1, 4), Rotation2d.fromDegrees(90));
@@ -244,9 +251,10 @@ public class RobotContainer {
      
       driverXbox.povUp().whileTrue(climber.ascend().repeatedly());
       driverXbox.povDown().whileTrue(climber.descend().repeatedly());
-      driverXbox.povLeft().whileTrue(new SetArm(arm, ArmState.STOP).alongWith(new SetElevator(elevator, ElevatorState.STOP)));
+      driverXbox.povLeft()
+          .whileTrue(new SetArm(arm, ArmState.STOP).alongWith(new SetElevator(elevator, ElevatorState.STOP)));
 
-      //copilot buttons
+      // copilot buttons
 
       copilotXbox.rightBumper().onTrue(new InstantCommand(()->{targetedSide = TargetSide.RIGHT;} ));
       copilotXbox.leftBumper().onTrue(new InstantCommand(()->{targetedSide = TargetSide.LEFT;}));
@@ -268,7 +276,6 @@ public class RobotContainer {
       copilotButtons.button(4).and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 10));
       copilotButtons.button(5).and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 11));
       copilotButtons.button(6).and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 6));
-      
 
       // TRIGGERS
 
@@ -293,6 +300,24 @@ public class RobotContainer {
     this.targetAprilTagID = targetAprilTagID;
   }
 
+  private void aquireTargetAprilTag() {
+    List<Integer> aprilTagIDs = Vision.seenAprilTagIDs;
+    double minimumDistance = Double.MAX_VALUE;
+    int aprilTagID = -1;
+
+    for (Integer i : aprilTagIDs) {
+      if (drivebase.vision.getDistanceFromAprilTag(i) == -1) {
+        continue;
+      }
+      if (drivebase.vision.getDistanceFromAprilTag(i) < minimumDistance) {
+        minimumDistance = drivebase.vision.getDistanceFromAprilTag(i);
+        aprilTagID = i;
+      }
+    }
+
+    targetAprilTagID = aprilTagID;
+  }
+
   public int getTargetAprilTagID() {
     return targetAprilTagID;
   }
@@ -300,7 +325,8 @@ public class RobotContainer {
   public boolean isSafeForArmToMoveUp() {
     double safeCarriagePosition = 60.0;
     double safeArmAngle = 150;
-    //don't move up if just collected coral and the elevator has not moved up yet to get the coral free from cradle
+    // don't move up if just collected coral and the elevator has not moved up yet
+    // to get the coral free from cradle
     return elevator.getCarriagePosition() < safeCarriagePosition || arm.getPosition() > safeArmAngle;
   }
 
@@ -365,8 +391,7 @@ public class RobotContainer {
 
   public Pose2d scorePose(int aprilTagID, TargetSide side) {
     Optional<Pose3d> aprilTagPose3d = Vision.fieldLayout.getTagPose(aprilTagID);
-    if (!aprilTagPose3d.isPresent())
-    {
+    if (!aprilTagPose3d.isPresent()) {
       return new Pose2d();
     }
 
@@ -375,10 +400,10 @@ public class RobotContainer {
     double xMeters = 0.7;
     double yMeters = (side == TargetSide.LEFT ? -0.1 : 0.1);
 
-        Translation2d localOffset = new Translation2d(xMeters, yMeters); // right is negative Y
+    Translation2d localOffset = new Translation2d(xMeters, yMeters); // right is negative Y
 
-        // Rotate the local offset into the global coordinate frame
-        Translation2d rotatedOffset = localOffset.rotateBy(apPose.getRotation());
+    // Rotate the local offset into the global coordinate frame
+    Translation2d rotatedOffset = localOffset.rotateBy(apPose.getRotation());
 
     // Compute the new position
     Translation2d newTranslation = apPose.getTranslation().plus(rotatedOffset);
@@ -395,4 +420,3 @@ public class RobotContainer {
   }
 
 }
-

@@ -67,7 +67,7 @@ public class SwerveSubsystem extends SubsystemBase
 {
   private final SwerveDrive swerveDrive;
   private final boolean     visionDriveTest = true;
-  private       Vision      vision;
+  public       Vision      vision;
   private boolean inPosition = false;
   /**
    * Initialize {@link SwerveDrive} with the directory provided.
@@ -719,6 +719,10 @@ public class SwerveSubsystem extends SubsystemBase
   public SwerveDrive getSwerveDrive()
   {
     return swerveDrive;
+  }
+
+  public Vision getVision() {
+    return vision;
   }
 
   public class MoveToPositionToScore extends Command {

@@ -32,7 +32,7 @@ public class MoveToTarget extends Command {
         if(aprilTagID == -1) {
             return;
         } 
-        targetPose = robotContainer.scorePose(aprilTagID, sideTargeted );
+        targetPose = robotContainer.scorePose(aprilTagID, sideTargeted);
         swerveSubsystem.driveToPose(targetPose).schedule();
     }
 
