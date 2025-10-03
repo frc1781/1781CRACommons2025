@@ -325,6 +325,16 @@ public class RobotContainer {
       if (atPose == null) {
         continue;
       }
+      //filter out tags that are not on our side of the field
+      if (isRed()) {
+        if (i < 6 || i > 11) { //red reef tags are 6-11
+          continue;
+        }
+      } else {
+        if (i < 17 || i > 22) { //blue reef tags are 17-22
+          continue;
+        }
+      }
       
       if (drivebase.vision.getDistanceFromAprilTag(i) < minimumDistance) // && 
       {
