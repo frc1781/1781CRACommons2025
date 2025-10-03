@@ -93,6 +93,7 @@ public class RobotContainer {
   Trigger isTeleopTrigger = new Trigger(DriverStation::isTeleop);
   Trigger isRedAllianceTrigger = new Trigger(RobotContainer::isRed);
   Trigger coralInClaw = new Trigger(sensation::clawCoralPresent);
+  Trigger targetAquired = new Trigger(()->{return targetAprilTagID != -1;});
 
   // Driving the robot during teleOp
   SwerveInputStream driveAngularVelocity = SwerveInputStream.of(
@@ -280,12 +281,13 @@ public class RobotContainer {
 
       // TRIGGERS
 
-      robotInPosition.whileTrue(lights.set(Lights.Colors.GREEN, Lights.Patterns.SOLID));
-      coralPresent.and(coralExit.negate()).and(coralHopper.negate())
-          .onTrue(lights.set(Lights.Colors.RED, Lights.Patterns.FAST_FLASH));
-      coralHopper.and(coralExit.negate()).onTrue(lights.set(Lights.Colors.RED, Lights.Patterns.MARCH));
-      coralExit.onFalse(lights.set(Lights.Colors.RED, Lights.Patterns.SOLID));
-      isTeleopTrigger.and(coralExit).and(readyToCollectTrigger).onTrue(new CollectAndPost(elevator, arm, sensation));
+      // robotInPosition.whileTrue(lights.set(Lights.Colors.GREEN, Lights.Patterns.SOLID));
+      // coralPresent.and(coralExit.negate()).and(coralHopper.negate())
+      //     .onTrue(lights.set(Lights.Colors.GREEN, Lights.Patterns.FAST_FLASH));
+      // coralHopper.and(coralExit.negate()).onTrue(lights.set(Lights.Colors.RED, Lights.Patterns.MARCH));
+      // coralExit.onFalse(lights.set(Lights.Colors.RED, Lights.Patterns.SOLID));
+      // isTeleopTrigger.and(coralExit).and(readyToCollectTrigger).onTrue(new CollectAndPost(elevator, arm, sensation));
+      targetAquired.whileTrue(lights.set(Lights.Colors.RED, Lights.Patterns.FAST_FLASH));
     }
   }
 
