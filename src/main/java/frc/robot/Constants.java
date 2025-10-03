@@ -111,6 +111,9 @@ public final class Constants
                 .p(P)
                 .i(I)
                 .d(D);
+
+        public static final double MIN_POSITION = 0;
+        public static final double MAX_POSITION = -180;
   }
 
   public static class Positions {

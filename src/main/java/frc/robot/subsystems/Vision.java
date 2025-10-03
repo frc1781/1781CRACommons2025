@@ -108,6 +108,7 @@ public class Vision
      */
     public static Pose2d getAprilTagPose(int aprilTag, Transform2d robotOffset)
     {
+      if (aprilTag == -1) return null;
       Optional<Pose3d> aprilTagPose3d = fieldLayout.getTagPose(aprilTag);
       if (aprilTagPose3d.isPresent())
       {

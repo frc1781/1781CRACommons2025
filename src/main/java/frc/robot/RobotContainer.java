@@ -11,6 +11,7 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
@@ -306,17 +307,42 @@ public class RobotContainer {
     int aprilTagID = -1;
 
     for (Integer i : aprilTagIDs) {
-      if (drivebase.vision.getDistanceFromAprilTag(i) == -1) {
+      if (drivebase.vision.getDistanceFromAprilTag(i) == -1 || i == -1) {
         continue;
       }
-      if (drivebase.vision.getDistanceFromAprilTag(i) < minimumDistance) {
+      Pose2d atPose = Vision.getAprilTagPose(i, Transform2d.kZero);
+      if (atPose == null) {
+        continue;
+      }
+      
+      if (drivebase.vision.getDistanceFromAprilTag(i) < minimumDistance) // && 
+      {
         minimumDistance = drivebase.vision.getDistanceFromAprilTag(i);
         aprilTagID = i;
       }
-    }
 
-    targetAprilTagID = aprilTagID;
+      Rotation2d aprilTagAngle = Vision.getAprilTagPose(aprilTagID, Transform2d.kZero).getRotation().rotateBy(Rotation2d.fromDegrees(180));
+      if (!isRobotInSegment(aprilTagAngle, drivebase.getPose())) {  //disregard too oblique angles
+        continue;
+      }
+      targetAprilTagID = aprilTagID;
+    }
   }
+
+  //ONLY WORK FOR BLUE NEED TO FIX FOR RED
+  private boolean isRobotInSegment(Rotation2d aprilTagFacing, Pose2d robotPose) {
+    //find rotation from center of robot to, see if it is within 30 degrees from rotation of apriltag
+    Translation2d centerOfReef = new Translation2d(4.4, 4.02); 
+    Translation2d robotTranslation = robotPose.getTranslation();
+    Translation2d vectorToRobot = robotTranslation.minus(centerOfReef);
+    Rotation2d angleToRobot = vectorToRobot.getAngle(); 
+    Rotation2d angleDiff = angleToRobot.minus(aprilTagFacing.rotateBy(Rotation2d.fromDegrees(180)));
+    if (Math.abs(angleDiff.getDegrees()) < 30) {
+      return true;
+    }
+    return false;
+  }
+
 
   public int getTargetAprilTagID() {
     return targetAprilTagID;

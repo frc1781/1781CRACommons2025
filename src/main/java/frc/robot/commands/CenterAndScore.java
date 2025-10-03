@@ -19,7 +19,7 @@ public class CenterAndScore extends SequentialCommandGroup {
     
     public CenterAndScore(RobotContainer robotContainer, boolean isLeft) {
         this.isLeft = isLeft;
-        this.robotContainer = robotContainer;
+        this.robotContainer = robotContainer;   
         this.swerveDrive = robotContainer.getDrivebase();
         this.elevator = robotContainer.getElevator();
         this.arm = robotContainer.getArm();
@@ -27,7 +27,7 @@ public class CenterAndScore extends SequentialCommandGroup {
         addRequirements(swerveDrive, elevator, arm);
         addCommands(
             new L4(elevator, arm),
-            swerveDrive.new MoveToPositionToScore(sensation),
+            swerveDrive.new MoveToPositionToScore(sensation).withTimeout(5),
             new StrafeCommand(swerveDrive, elevator, arm, sensation, isLeft),
             new ScoreL4(arm, swerveDrive),
             new PreCollect(elevator, arm, sensation)

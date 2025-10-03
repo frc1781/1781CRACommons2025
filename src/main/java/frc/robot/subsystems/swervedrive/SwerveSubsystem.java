@@ -728,7 +728,6 @@ public class SwerveSubsystem extends SubsystemBase
   public class MoveToPositionToScore extends Command {
     BooleanSupplier coralPresent;
     Sensation sensation;
-    int aprilTagID = 19;
 
     public MoveToPositionToScore(Sensation sensation)
     {

@@ -56,8 +56,11 @@ public class Climber extends SubsystemBase {
         
         climberDutyCycle = climberPID.calculate(armEncoder.getPosition(), requestedPosition) + gravityDutyCycle;
         climberDutyCycle = MathUtil.clamp(climberDutyCycle, -0.5, 0.5);
+        //requestedPosition = MathUtil.clamp(requestedPosition, Constants.Climber.MIN_POSITION, Constants.Climber.MAX_POSITION);
         motor.set(climberDutyCycle);
         Logger.recordOutput("Climber/MotorDutyCycle", climberDutyCycle);
+        Logger.recordOutput("Climber/Position", armEncoder.getPosition());
+        Logger.recordOutput("Climber/RequestedPosition", requestedPosition);
     }
 
     public Command ascend(){
