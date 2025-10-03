@@ -180,7 +180,7 @@ public class Lights extends SubsystemBase
         for(int i = 0; i < LED_LENGTH; i++)
         {
             Color color = patternLookup(pattern, i, startColor);
-            buffer.setRGB(i, color.r, color.g, color.b);
+            buffer.setRGB(i, color.g, color.r, color.b);
         }
         controller.setData(buffer);
     }
