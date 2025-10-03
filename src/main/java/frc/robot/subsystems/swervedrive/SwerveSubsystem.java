@@ -748,7 +748,7 @@ public class SwerveSubsystem extends SubsystemBase
       double avgDist = (sensation.rightTOF() + sensation.leftTOF()) / 2.0;
       inPosition = avgDist < 294;
       if(!inPosition){
-        inputSpeeds.vxMetersPerSecond = EEUtil.clamp(-0.5, 0.5, 0.005 * (avgDist - 290));
+        inputSpeeds.vxMetersPerSecond = EEUtil.clamp(-0.5, 0.5, 0.005 * (avgDist - 270));
       }
       swerveDrive.drive(inputSpeeds);
       Logger.recordOutput("Drive/CurrentCommand", "MoveToPositionToScore");
