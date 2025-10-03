@@ -343,8 +343,9 @@ public class RobotContainer {
 
   //ONLY WORK FOR BLUE NEED TO FIX FOR RED
   private boolean isRobotInSegment(Rotation2d aprilTagFacing, Pose2d robotPose) {
-    //find rotation from center of robot to, see if it is within 30 degrees from rotation of apriltag
-    Translation2d centerOfReef = new Translation2d(4.4, 4.02); 
+  //find rotation from center of robot to, see if it is within 30 degrees from rotation of apriltag
+    
+    Translation2d centerOfReef = (isRed() ? (new Translation2d(13.04, 4.02)) : (new Translation2d(4.48, 4.02)));
     Translation2d robotTranslation = robotPose.getTranslation();
     Translation2d vectorToRobot = robotTranslation.minus(centerOfReef);
     Rotation2d angleToRobot = vectorToRobot.getAngle(); 
