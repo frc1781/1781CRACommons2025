@@ -17,17 +17,18 @@ public class MoveToTarget extends Command {
     RobotContainer robotContainer;
     SwerveSubsystem swerveSubsystem;
 
-    public MoveToTarget(RobotContainer robotContainer) {  
+    public MoveToTarget(RobotContainer robotContainer, TargetSide sideTargeted) {  
         this.robotContainer = robotContainer;
         this.swerveSubsystem = robotContainer.getDrivebase();
         this.aprilTagID = 19;
+        this.sideTargeted = sideTargeted;
         addRequirements(swerveSubsystem);
     }
 
     @Override
     public void initialize() {
         this.aprilTagID = robotContainer.targetAprilTagID;
-        sideTargeted = robotContainer.targetedSide;
+        robotContainer.targetedSide = sideTargeted;
         Logger.recordOutput("Drive/CurrentCommand", "RunningDriveToAprilTag:" + aprilTagID + sideTargeted);
         if(aprilTagID == -1) {
             return;
