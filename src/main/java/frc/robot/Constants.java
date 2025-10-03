@@ -112,8 +112,7 @@ public final class Constants
                 .i(I)
                 .d(D);
 
-        public static final double MIN_POSITION = 0;
-        public static final double MAX_POSITION = -180;
+        public static final double GEAR_RATIO = 5/1;
   }
 
   public static class Positions {
