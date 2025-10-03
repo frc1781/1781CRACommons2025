@@ -251,7 +251,7 @@ public class RobotContainer {
       driverXbox.b().onTrue(new Collecting(elevator, arm, sensation));
       driverXbox.y().onTrue(new L4(elevator, arm));
       //driverXbox.leftBumper().whileTrue(new ScoreL4(arm, drivebase));
-      driverXbox.rightBumper().whileTrue(new MoveToTarget(this));
+      
      
       driverXbox.povUp().whileTrue(climber.ascend().repeatedly());
       driverXbox.povDown().whileTrue(climber.descend().repeatedly());
@@ -259,9 +259,8 @@ public class RobotContainer {
           .whileTrue(new SetArm(arm, ArmState.STOP).alongWith(new SetElevator(elevator, ElevatorState.STOP)));
 
       // copilot buttons
-
-      copilotXbox.rightBumper().onTrue(new InstantCommand(()->{targetedSide = TargetSide.RIGHT;} ));
-      copilotXbox.leftBumper().onTrue(new InstantCommand(()->{targetedSide = TargetSide.LEFT;}));
+      copilotXbox.leftBumper().whileTrue(new MoveToTarget(this, TargetSide.LEFT));
+      copilotXbox.rightBumper().whileTrue(new MoveToTarget(this, TargetSide.RIGHT));
       copilotXbox.leftTrigger().whileTrue(new CenterAndScore(this, true));
       copilotXbox.rightTrigger().whileTrue(new CenterAndScore(this, false));
 
@@ -325,6 +324,16 @@ public class RobotContainer {
       Pose2d atPose = Vision.getAprilTagPose(i, Transform2d.kZero);
       if (atPose == null) {
         continue;
+      }
+      //filter out tags that are not on our side of the field
+      if (isRed()) {
+        if (i < 6 || i > 11) { //red reef tags are 6-11
+          continue;
+        }
+      } else {
+        if (i < 17 || i > 22) { //blue reef tags are 17-22
+          continue;
+        }
       }
       
       if (drivebase.vision.getDistanceFromAprilTag(i) < minimumDistance) // && 
