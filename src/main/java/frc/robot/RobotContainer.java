@@ -190,7 +190,7 @@ public class RobotContainer {
 
   private void configureBindings() {
     //Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveDirectAngle);
-     Command driveFieldOrientedAnglularVelocity =
+     Command driveFieldOrientedAngularVelocity =
     drivebase.driveFieldOriented(driveAngularVelocity);
     // Command driveRobotOrientedAngularVelocity =
     // drivebase.driveFieldOriented(driveRobotOriented);
@@ -205,7 +205,7 @@ public class RobotContainer {
     if (RobotBase.isSimulation()) {
       drivebase.setDefaultCommand(driveFieldOrientedDirectAngleKeyboard);
     } else {
-      drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
+      drivebase.setDefaultCommand(driveFieldOrientedAngularVelocity);
     }
 
     // -----------------------------------------------------------------------Default
