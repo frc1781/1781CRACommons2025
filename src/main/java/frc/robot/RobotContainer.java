@@ -263,6 +263,10 @@ public class RobotContainer {
       copilotXbox.rightBumper().whileTrue(new MoveToTarget(this, TargetSide.RIGHT));
       copilotXbox.leftTrigger().whileTrue(new CenterAndScore(this, true));
       copilotXbox.rightTrigger().whileTrue(new CenterAndScore(this, false));
+      copilotXbox.y().whileTrue(new L4(elevator, arm));
+      copilotXbox.b().whileTrue(new L3(elevator, arm));
+      copilotXbox.a().whileTrue(new L2(elevator, arm));
+      copilotXbox.x().whileTrue(new ScoreLow(arm, drivebase));
 
       // copilot poses blue
       copilotButtons.button(1).and(isRedAllianceTrigger.negate()).onTrue(new SetTargetPose(this, 18));

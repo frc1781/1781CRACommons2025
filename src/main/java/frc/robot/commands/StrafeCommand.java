@@ -34,7 +34,7 @@ public class StrafeCommand extends Command {
 
     public void initialize() {
         isFinished = false;
-        timer.start();
+        timer.restart();
         strafeTries = 1; //when it's initialized it starts strafing, so this is the first try
     }
 
