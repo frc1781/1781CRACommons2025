@@ -300,7 +300,6 @@ public class RobotContainer {
 
       coralPresent.and(armHasCoral.negate()).and(seeingReefPole.negate()).and(targetAquired.negate())
            .whileTrue(lights.set(Lights.Colors.GREEN, Lights.Patterns.FAST_FLASH));
-      
     }
   }
 
@@ -379,7 +378,7 @@ public class RobotContainer {
     double safeArmAngle = 150;
     // don't move up if just collected coral and the elevator has not moved up yet
     // to get the coral free from cradle
-    return elevator.getCarriagePosition() < safeCarriagePosition || arm.getPosition() > safeArmAngle;
+    return elevator.getCarriagePosition() < safeCarriagePosition || arm.getPosition() < safeArmAngle;
   }
 
   public boolean isSafeForArmToMoveDown() {
