@@ -246,7 +246,7 @@ public class RobotContainer {
     } else {
       driverXbox.start().onTrue((Commands.runOnce(drivebase::zeroGyro)));
       driverXbox.back().whileTrue(Commands.none());
-      driverXbox.a().onTrue(new Collect(arm));d
+      driverXbox.a().onTrue(new Collect(elevator, sensation));
       driverXbox.x().onTrue(new L3(elevator, arm));
       driverXbox.b().onTrue(new PreCollect(elevator, arm, sensation));
       //driverXbox.b().onTrue(new Collecting(elevator, arm, sensation));
