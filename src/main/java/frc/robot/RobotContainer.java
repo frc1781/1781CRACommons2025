@@ -145,7 +145,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("Collect", new CollectAndClear(elevator, arm, sensation));
     NamedCommands.registerCommand("MoveToPositionToScore", drivebase.new MoveToPositionToScore(sensation));
     NamedCommands.registerCommand("Clear", new Clear(arm));
-    NamedCommands.registerCommand("StrafeCommand", new StrafeCommand(drivebase, elevator, arm, sensation, true));
+    NamedCommands.registerCommand("StrafeCommand", new StrafeCommand(drivebase, elevator, arm, sensation, () -> true));
     NamedCommands.registerCommand("L4", new L4(elevator, arm));
     NamedCommands.registerCommand("PreCollect", new PreCollect(elevator, arm, sensation));
     NamedCommands.registerCommand("PostCollect", new PostCollect(elevator, arm));
@@ -246,7 +246,7 @@ public class RobotContainer {
     } else {
       driverXbox.start().onTrue((Commands.runOnce(drivebase::zeroGyro)));
       driverXbox.back().whileTrue(Commands.none());
-      driverXbox.a().onTrue(new Collect(elevator, sensation));
+      driverXbox.a().onTrue(new Collect(elevator, arm, sensation));
       driverXbox.x().onTrue(new L3(elevator, arm));
       driverXbox.b().onTrue(new PreCollect(elevator, arm, sensation));
       //driverXbox.b().onTrue(new Collecting(elevator, arm, sensation));
@@ -262,8 +262,8 @@ public class RobotContainer {
       // copilot buttons
       copilotXbox.leftBumper().whileTrue(new MoveToTarget(this, TargetSide.LEFT));
       copilotXbox.rightBumper().whileTrue(new MoveToTarget(this, TargetSide.RIGHT));
-      copilotXbox.leftTrigger().whileTrue(new CenterAndScore(this, true));
-      copilotXbox.rightTrigger().whileTrue(new CenterAndScore(this, false));
+      copilotXbox.leftTrigger().whileTrue(new CenterAndScore(this, () -> true));
+      copilotXbox.rightTrigger().whileTrue(new CenterAndScore(this, () -> false));
       copilotXbox.y().whileTrue(new L4(elevator, arm));
       copilotXbox.b().whileTrue(new L3(elevator, arm));
       copilotXbox.a().whileTrue(new L2(elevator, arm));

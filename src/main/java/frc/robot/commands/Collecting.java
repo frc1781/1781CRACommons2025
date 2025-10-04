@@ -16,7 +16,7 @@ public class Collecting extends SequentialCommandGroup {
         addRequirements(elevator, arm);
         addCommands(
             new PreCollect(elevator, arm, sensation),
-            new Collect(elevator, sensation)
+            new Collect(elevator, arm, sensation)
         );
     }  
 }

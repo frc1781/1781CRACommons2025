@@ -1,5 +1,7 @@
 package frc.robot.commands;
 
+import java.util.function.BooleanSupplier;
+
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.geometry.Translation2d;
@@ -17,22 +19,24 @@ public class StrafeCommand extends Command {
     Elevator elevator;
     Arm arm;
     Sensation sensations;
-    boolean isLeft;
+    BooleanSupplier strafeLeft;
+    boolean goLeft;
     int strafeTries = 0;
     boolean isFinished;
     Timer timer;
     
-    public StrafeCommand(SwerveSubsystem driveSystem, Elevator elevator, Arm arm, Sensation sensations, boolean isLeft) {
+    public StrafeCommand(SwerveSubsystem driveSystem, Elevator elevator, Arm arm, Sensation sensations, BooleanSupplier strafeLeft) {
         this.driveSystem = driveSystem;
         this.elevator = elevator;
         this.arm = arm;
         this.sensations = sensations;
-        this.isLeft = isLeft;
+        this.strafeLeft = strafeLeft;
         timer = new Timer();
         addRequirements(driveSystem);
     }
 
     public void initialize() {
+        goLeft = strafeLeft.getAsBoolean();
         isFinished = false;
         timer.restart();
         strafeTries = 1; //when it's initialized it starts strafing, so this is the first try
@@ -43,20 +47,20 @@ public class StrafeCommand extends Command {
             isFinished = true;
         }
         if (timer.get() > 2.0 && strafeTries == 1) {
-            isLeft = !isLeft;
+            goLeft = !goLeft;
             timer.reset();
             timer.start();
             strafeTries = 2;
         }
         if (timer.get() > 3.0 && strafeTries == 2) {
-            isLeft = !isLeft;
+            goLeft = !goLeft;
             timer.reset();
             timer.start();
             CommandScheduler.getInstance().cancelAll();
         }
 
         ChassisSpeeds requiredSpeeds = new ChassisSpeeds();
-        requiredSpeeds.vyMetersPerSecond = isLeft? 0.2 : -0.2;
+        requiredSpeeds.vyMetersPerSecond = goLeft? 0.2 : -0.2;
         driveSystem.drive(requiredSpeeds);
         Logger.recordOutput("Drive/CurrentCommand", "Strafe");
     }
