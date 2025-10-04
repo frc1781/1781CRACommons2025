@@ -45,6 +45,7 @@ import frc.robot.commands.MoveBack;
 import frc.robot.commands.MoveToTarget;
 import frc.robot.commands.PostCollect;
 import frc.robot.commands.PreCollect;
+import frc.robot.commands.PreCollectAuto;
 import frc.robot.commands.SafeConfig;
 import frc.robot.commands.ScoreL4;
 import frc.robot.commands.ScoreLow;
@@ -147,7 +148,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("Clear", new Clear(arm));
     NamedCommands.registerCommand("StrafeCommand", new StrafeCommand(drivebase, elevator, arm, sensation, () -> true));
     NamedCommands.registerCommand("L4", new L4(elevator, arm));
-    NamedCommands.registerCommand("PreCollect", new PreCollect(elevator, arm, sensation));
+    NamedCommands.registerCommand("PreCollect", new PreCollectAuto(elevator, arm, sensation));
     NamedCommands.registerCommand("PostCollect", new PostCollect(elevator, arm));
     NamedCommands.registerCommand("SetElevator", new SetElevator(elevator, ElevatorState.SAFE));
     NamedCommands.registerCommand("SetArm", new SetArm(arm, ArmState.START));

@@ -34,6 +34,7 @@ public class MoveToTarget extends Command {
             return;
         } 
         targetPose = robotContainer.scorePose(aprilTagID, sideTargeted);
+        new L4(robotContainer.getElevator(), robotContainer.getArm()).schedule();
         swerveSubsystem.driveToPose(targetPose).schedule();
     }
 
