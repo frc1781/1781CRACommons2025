@@ -1,6 +1,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Elevator;
 
@@ -15,7 +16,8 @@ public class L2 extends SequentialCommandGroup {
         addCommands(
             new SetArm(arm, Arm.ArmState.START_MID),
             new SetElevator(elevator, Elevator.ElevatorState.L2),
-            new SetArm(arm, Arm.ArmState.WAIT)
+            new SetArm(arm, Arm.ArmState.WAIT),
+            new WaitUntilCommand(() -> false)
         );
     }
     

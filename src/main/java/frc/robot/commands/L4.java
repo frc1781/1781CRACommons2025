@@ -1,10 +1,11 @@
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Elevator;
 
-public class L4 extends ParallelCommandGroup {
+public class L4 extends SequentialCommandGroup {
 
     Elevator elevator;
     Arm arm;
@@ -13,9 +14,9 @@ public class L4 extends ParallelCommandGroup {
         this.elevator = elevator;
         this.arm = arm;
         addCommands(
-            new SetElevator(elevator, Elevator.ElevatorState.L4),
-            new SetArm(arm, Arm.ArmState.POLE),
-            new SetArm(arm, Arm.ArmState.WAIT)
+            new SetArm(arm, Arm.ArmState.START_MID),
+            new SetElevator(elevator, Elevator.ElevatorState.POLE),
+            new WaitUntilCommand(() -> false)
         );
     }
     
