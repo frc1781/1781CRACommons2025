@@ -448,7 +448,7 @@ public class RobotContainer {
 
     Pose2d apPose = aprilTagPose3d.get().toPose2d();
 
-    double xMeters = 0.75;
+    double xMeters = 0.8;
     double yMeters = (side == TargetSide.LEFT ? -0.1 : 0.1);
 
     Translation2d localOffset = new Translation2d(xMeters, yMeters); // right is negative Y

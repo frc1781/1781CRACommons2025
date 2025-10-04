@@ -42,9 +42,9 @@ public class MoveToTarget extends Command {
         if(aprilTagID == -1) {
             return true;
         } 
-        return 
-            swerveSubsystem.getPose().getTranslation().getDistance(targetPose.getTranslation()) < 0.1 && 
-            Math.abs(swerveSubsystem.getPose().getRotation().getDegrees() - targetPose.getRotation().getDegrees()) < 5;
+        return false; //try never finishing, driver will take over when done.
+         //   swerveSubsystem.getPose().getTranslation().getDistance(targetPose.getTranslation()) < 0.1 && 
+          //  Math.abs(swerveSubsystem.getPose().getRotation().getDegrees() - targetPose.getRotation().getDegrees()) < 5;
     }
 
     @Override
