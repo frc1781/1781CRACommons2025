@@ -65,6 +65,15 @@ public class Robot extends LoggedRobot {
     theRobotContainer.setMotorBrake(true);
     disabledTimer.reset();
     disabledTimer.start();
+    autoroutine = theRobotContainer.getAutonomousCommand();
+
+    if(autoroutine.getName().equals("StandardLeft")) {
+      theRobotContainer.getDrivebase().resetOdometry(Constants.Positions.getPositionForRobot(101));
+    }
+
+    if(autoroutine.getName().equals("StandardRight")) {
+      theRobotContainer.getDrivebase().resetOdometry(Constants.Positions.getPositionForRobot(102));
+    }
   }
 
   @Override
@@ -77,15 +86,7 @@ public class Robot extends LoggedRobot {
 
     theRobotContainer.periodic();
 
-    autoroutine = theRobotContainer.getAutonomousCommand();
-
-    if(autoroutine.getName().equals("StandardLeft")) {
-      theRobotContainer.getDrivebase().resetOdometry(Constants.Positions.getPositionForRobot(101));
-    }
-
-    if(autoroutine.getName().equals("StandardRight")) {
-      theRobotContainer.getDrivebase().resetOdometry(Constants.Positions.getPositionForRobot(102));
-    }
+    
   }
 
   @Override
