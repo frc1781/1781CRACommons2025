@@ -4,9 +4,17 @@
 
 package frc.robot;
 
+import java.io.File;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+
+import org.littletonrobotics.junction.Logger;
+
+import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.util.PathPlannerLogging;
-import com.pathplanner.lib.auto.AutoBuilder;
+
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -15,20 +23,16 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.TargetSide;
@@ -36,8 +40,6 @@ import frc.robot.commands.CenterAndScore;
 import frc.robot.commands.Clear;
 import frc.robot.commands.Collect;
 import frc.robot.commands.CollectAndClear;
-import frc.robot.commands.CollectAndPost;
-import frc.robot.commands.Collecting;
 import frc.robot.commands.L2;
 import frc.robot.commands.L3;
 import frc.robot.commands.L4;
@@ -55,21 +57,21 @@ import frc.robot.commands.SetTargetPose;
 //import frc.robot.commands.StopMovingToTarget;
 import frc.robot.commands.StrafeCommand;
 import frc.robot.commands.WaitForCoral;
-import frc.robot.subsystems.*;
+import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Arm.ArmState;
+import frc.robot.subsystems.Climber;
+import frc.robot.subsystems.Conveyor;
+import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Elevator.ElevatorState;
+import frc.robot.subsystems.Lights;
+import frc.robot.subsystems.Sensation;
+import frc.robot.subsystems.Vision;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
-
-import java.io.File;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
-
-import org.littletonrobotics.junction.Logger;
 import swervelib.SwerveInputStream;
 
 public class RobotContainer {
 
+  private boolean hasOdometryBeenReset = false; 
   final CommandXboxController driverXbox = new CommandXboxController(0);
   final CommandXboxController copilotXbox = new CommandXboxController(1);
   final CommandJoystick copilotButtons = new CommandJoystick(2);
@@ -470,6 +472,23 @@ public class RobotContainer {
         sensation.leftTOF() < 1000 &&
         sensation.rightTOF() < 1000;
     // robotController.visionSystem.getDoubleCameraReefApriltag() != -1;
+  }
+
+  public void initializeRobotPositionBasedOnAutoRoutine(){
+    
+    Command autoroutine = getAutonomousCommand();
+
+    if(hasOdometryBeenReset == false){
+      if(autoroutine.getName().equals("StandardLeft")) {
+        getDrivebase().resetOdometry(Constants.Positions.getPositionForRobot(101));
+        hasOdometryBeenReset = true;
+      }
+  
+      if(autoroutine.getName().equals("StandardRight")) {
+        getDrivebase().resetOdometry(Constants.Positions.getPositionForRobot(102));
+        hasOdometryBeenReset = true;
+      }
+    }
   }
 
 }
