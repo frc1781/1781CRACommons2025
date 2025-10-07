@@ -67,7 +67,7 @@ public class SwerveSubsystem extends SubsystemBase
 {
   private final SwerveDrive swerveDrive;
   private final boolean     visionDriveTest = true;
-  private       Vision      vision;
+  public       Vision      vision;
   private boolean inPosition = false;
   /**
    * Initialize {@link SwerveDrive} with the directory provided.
@@ -721,10 +721,13 @@ public class SwerveSubsystem extends SubsystemBase
     return swerveDrive;
   }
 
+  public Vision getVision() {
+    return vision;
+  }
+
   public class MoveToPositionToScore extends Command {
     BooleanSupplier coralPresent;
     Sensation sensation;
-    int aprilTagID = 19;
 
     public MoveToPositionToScore(Sensation sensation)
     {
@@ -743,9 +746,9 @@ public class SwerveSubsystem extends SubsystemBase
     {
       ChassisSpeeds inputSpeeds = new ChassisSpeeds(); 
       double avgDist = (sensation.rightTOF() + sensation.leftTOF()) / 2.0;
-      inPosition = avgDist < 290;
+      inPosition = avgDist < 294;
       if(!inPosition){
-        inputSpeeds.vxMetersPerSecond = EEUtil.clamp(-0.5, 0.5, 0.005 * (avgDist - 280));
+        inputSpeeds.vxMetersPerSecond = EEUtil.clamp(-0.5, 0.5, 0.005 * (avgDist - 270));
       }
       swerveDrive.drive(inputSpeeds);
       Logger.recordOutput("Drive/CurrentCommand", "MoveToPositionToScore");

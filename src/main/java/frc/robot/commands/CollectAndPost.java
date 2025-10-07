@@ -17,7 +17,7 @@ public class CollectAndPost extends SequentialCommandGroup {
         this.sensation = sensation;
         addRequirements(elevator, arm);
         addCommands(
-            new Collect(elevator, sensation),
+            new Collect(elevator, arm, sensation),
             new PostCollect(elevator, arm)
         );
     }

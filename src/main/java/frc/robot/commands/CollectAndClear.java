@@ -18,7 +18,7 @@ public class CollectAndClear extends SequentialCommandGroup {
         addRequirements(elevator, arm);
         addCommands(
             new SetElevator(elevator, Elevator.ElevatorState.SAFE_CORAL),
-            new Collect(elevator, sensation),
+            new Collect(elevator, arm, sensation),
             new PostCollect(elevator, arm)
         );
     }

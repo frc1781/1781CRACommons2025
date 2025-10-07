@@ -1,6 +1,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Sensation;
@@ -16,7 +17,8 @@ public class PreCollect extends SequentialCommandGroup {
         addRequirements(elevator, arm);
         addCommands(
             new SetElevator(elevator, Elevator.ElevatorState.SAFE_CORAL),
-            new SetArm(arm, Arm.ArmState.COLLECT)
+            new SetArm(arm, Arm.ArmState.COLLECT),
+            new WaitUntilCommand(() -> false)
         );
     }
     

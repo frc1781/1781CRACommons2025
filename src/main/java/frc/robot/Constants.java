@@ -111,6 +111,8 @@ public final class Constants
                 .p(P)
                 .i(I)
                 .d(D);
+
+        public static final double GEAR_RATIO = 5/1;
   }
 
   public static class Positions {

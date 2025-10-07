@@ -17,23 +17,25 @@ public class MoveToTarget extends Command {
     RobotContainer robotContainer;
     SwerveSubsystem swerveSubsystem;
 
-    public MoveToTarget(RobotContainer robotContainer) {  
+    public MoveToTarget(RobotContainer robotContainer, TargetSide sideTargeted) {  
         this.robotContainer = robotContainer;
         this.swerveSubsystem = robotContainer.getDrivebase();
-        this.aprilTagID = -1;
+        this.aprilTagID = 19;
+        this.sideTargeted = sideTargeted;
         addRequirements(swerveSubsystem);
     }
 
     @Override
     public void initialize() {
         this.aprilTagID = robotContainer.targetAprilTagID;
-        sideTargeted = robotContainer.targetedSide;
+        robotContainer.targetedSide = sideTargeted;
         Logger.recordOutput("Drive/CurrentCommand", "RunningDriveToAprilTag:" + aprilTagID + sideTargeted);
         if(aprilTagID == -1) {
             return;
         } 
-        targetPose = robotContainer.scorePose(aprilTagID, sideTargeted );
-       //swerveSubsystem.driveToPose(targetPose).schedule();
+        targetPose = robotContainer.scorePose(aprilTagID, sideTargeted);
+        new L4(robotContainer.getElevator(), robotContainer.getArm()).schedule();
+        swerveSubsystem.driveToPose(targetPose).schedule();
     }
 
     @Override
@@ -41,9 +43,9 @@ public class MoveToTarget extends Command {
         if(aprilTagID == -1) {
             return true;
         } 
-        return 
-            swerveSubsystem.getPose().getTranslation().getDistance(targetPose.getTranslation()) < 0.1 && 
-            Math.abs(swerveSubsystem.getPose().getRotation().getDegrees() - targetPose.getRotation().getDegrees()) < 5;
+        return false; //try never finishing, driver will take over when done.
+         //   swerveSubsystem.getPose().getTranslation().getDistance(targetPose.getTranslation()) < 0.1 && 
+          //  Math.abs(swerveSubsystem.getPose().getRotation().getDegrees() - targetPose.getRotation().getDegrees()) < 5;
     }
 
     @Override

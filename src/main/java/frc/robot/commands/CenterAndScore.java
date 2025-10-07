@@ -1,5 +1,7 @@
 package frc.robot.commands;
 
+import java.util.function.BooleanSupplier;
+
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.Arm;
@@ -15,11 +17,11 @@ public class CenterAndScore extends SequentialCommandGroup {
     Elevator elevator;
     Sensation sensation;
     SwerveSubsystem swerveDrive;
-    boolean isLeft;
+    BooleanSupplier strafeLeft;
     
-    public CenterAndScore(RobotContainer robotContainer, boolean isLeft) {
-        this.isLeft = isLeft;
-        this.robotContainer = robotContainer;
+    public CenterAndScore(RobotContainer robotContainer, BooleanSupplier strafeLeft) {
+        this.strafeLeft = strafeLeft;
+        this.robotContainer = robotContainer;   
         this.swerveDrive = robotContainer.getDrivebase();
         this.elevator = robotContainer.getElevator();
         this.arm = robotContainer.getArm();
@@ -27,8 +29,8 @@ public class CenterAndScore extends SequentialCommandGroup {
         addRequirements(swerveDrive, elevator, arm);
         addCommands(
             new L4(elevator, arm),
-            swerveDrive.new MoveToPositionToScore(sensation),
-            new StrafeCommand(swerveDrive, elevator, arm, sensation, isLeft),
+            swerveDrive.new MoveToPositionToScore(sensation).withTimeout(5),
+            new StrafeCommand(swerveDrive, elevator, arm, sensation, strafeLeft),
             new ScoreL4(arm, swerveDrive),
             new PreCollect(elevator, arm, sensation)
         );

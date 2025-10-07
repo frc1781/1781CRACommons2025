@@ -130,6 +130,12 @@ public class Arm extends SubsystemBase {
             armMotor.set(0.0);
             return;
         }
+
+        //keep arm from moving up if elevator is too low
+        if (armNeedsToMoveUp() && !robotContainer.isSafeForArmToMoveUp()) {
+            armMotor.set(0.0);
+            return;
+        }
         
         armMotor.getClosedLoopController().setReference(
             targetPosition,
@@ -138,6 +144,10 @@ public class Arm extends SubsystemBase {
             gravityFeedForward,
             SparkClosedLoopController.ArbFFUnits.kPercentOut
         );  
+    }
+
+    private boolean armNeedsToMoveUp() {
+        return funkyPositionConversionFromActualToState(getPosition()) > targetPosition;
     }
 
     public void setState(ArmState newState) {
@@ -211,7 +221,7 @@ public class Arm extends SubsystemBase {
         SCORE_L4(75.0),
         COLLECT(149.0),
         WAIT(25.0),
-        POLE(25.0),
+        POLE(28.0),
         SCORE_MID(60.0),
         START_MID(45.0),
         START_HIGH(5.0),
