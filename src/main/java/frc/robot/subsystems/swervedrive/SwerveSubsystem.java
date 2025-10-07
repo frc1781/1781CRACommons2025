@@ -5,6 +5,7 @@
 package frc.robot.subsystems.swervedrive;
 
 import static edu.wpi.first.units.Units.Meter;
+import static edu.wpi.first.units.Units.MetersPerSecond;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
@@ -33,6 +34,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.Constants;
+import frc.robot.commands.MoveBack;
 import frc.robot.subsystems.Vision;
 import frc.robot.subsystems.Lights;
 import frc.robot.subsystems.Sensation;
@@ -69,6 +71,7 @@ public class SwerveSubsystem extends SubsystemBase
   private final boolean     visionDriveTest = true;
   public       Vision      vision;
   private boolean inPosition = false;
+  private boolean hasMovedBack;
   /**
    * Initialize {@link SwerveDrive} with the directory provided.
    *
@@ -746,8 +749,14 @@ public class SwerveSubsystem extends SubsystemBase
     {
       ChassisSpeeds inputSpeeds = new ChassisSpeeds(); 
       double avgDist = (sensation.rightTOF() + sensation.leftTOF()) / 2.0;
-      inPosition = avgDist < 294;
+      inPosition = avgDist < 294 && avgDist > 50; 
+      if (avgDist <= 50) {        //Find units of distance used here for TOF
       
+       inputSpeeds.vxMetersPerSecond = EEUtil.clamp(-.3);   //Make robot move back (Incomplete)
+      }
+      else {
+         //Try to run Command MoveBack using boolean?
+      }
       if(!inPosition){
         inputSpeeds.vxMetersPerSecond = EEUtil.clamp(-0.5, 0.5, 0.005 * (avgDist - 270));
       }
