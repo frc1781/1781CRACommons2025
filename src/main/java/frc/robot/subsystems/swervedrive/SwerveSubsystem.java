@@ -260,7 +260,7 @@ public class SwerveSubsystem extends SubsystemBase
   public Command driveToPose(Pose2d pose)
   {
 // Create the constraints to use while pathfinding
-    PathConstraints constraints = new PathConstraints(2.5
+    PathConstraints constraints = new PathConstraints(1.5
         /*swerveDrive.getMaximumChassisVelocity()*/, 2.5,
         swerveDrive.getMaximumChassisAngularVelocity(), Units.degreesToRadians(720));
 
@@ -746,9 +746,9 @@ public class SwerveSubsystem extends SubsystemBase
     {
       ChassisSpeeds inputSpeeds = new ChassisSpeeds(); 
       double avgDist = (sensation.rightTOF() + sensation.leftTOF()) / 2.0;
-      inPosition = avgDist < 294;
+      inPosition = avgDist < 294 && avgDist > 284;
       if(!inPosition){
-        inputSpeeds.vxMetersPerSecond = EEUtil.clamp(-0.5, 0.5, 0.005 * (avgDist - 270));
+        inputSpeeds.vxMetersPerSecond = EEUtil.clamp(-0.5, 0.5, 0.008 * (avgDist - 290));
       }
       swerveDrive.drive(inputSpeeds);
       Logger.recordOutput("Drive/CurrentCommand", "MoveToPositionToScore");

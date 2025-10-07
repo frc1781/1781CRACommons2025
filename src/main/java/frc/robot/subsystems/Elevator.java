@@ -97,7 +97,7 @@ public class Elevator extends SubsystemBase{
             if(isArmInsideElevator.getAsBoolean()) {
                 Logger.recordOutput("Elevator/CurrentCommand", "Waiting for arm to clear");
                 elevatorDutyCycle = IDLE_DUTY_CYCLE;
-            } else if (clawCoralPresent.getAsBoolean()) {
+            } else if (clawCoralPresent.getAsBoolean() && !hasReachedPosition(ElevatorState.L4)) {
                 new SetElevator(this, ElevatorState.L3).schedule();
             } else {
                 new SetElevator(this, ElevatorState.SAFE_CORAL).schedule();
