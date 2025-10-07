@@ -22,7 +22,8 @@ public class MoveToTarget extends Command {
         this.swerveSubsystem = robotContainer.getDrivebase();
         this.aprilTagID = 19;
         this.sideTargeted = sideTargeted;
-        addRequirements(swerveSubsystem);
+        addRequirements(swerveSubsystem, robotContainer.getElevator(), robotContainer.getArm());
+        this.setName("MoveToTarget");   
     }
 
     @Override
