@@ -8,6 +8,8 @@ import java.io.File;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
 
 import org.littletonrobotics.junction.Logger;
 
@@ -86,6 +88,7 @@ public class RobotContainer {
   private double wait_seconds = 5;
   public int targetAprilTagID = -1;
   public TargetSide targetedSide = TargetSide.LEFT;
+  private boolean sendyPressed = false;
 
   Trigger coralPresent = new Trigger(sensation::coralPresent);
   Trigger coralHopper = new Trigger(sensation::coralInHopper);
@@ -125,8 +128,8 @@ public class RobotContainer {
 
   SwerveInputStream driveAngularVelocityKeyboard = SwerveInputStream.of(
       drivebase.getSwerveDrive(),
-      () -> -driverXbox.getLeftY(),
-      () -> -driverXbox.getLeftX())
+       driverJoystickX(),
+       driverJoystickY())
       .withControllerRotationAxis(() -> driverXbox.getRawAxis(2))
       .deadband(OperatorConstants.DEADBAND)
       .scaleTranslation(0.8)
@@ -209,14 +212,8 @@ public class RobotContainer {
     // Command driveSetpointGenKeyboard =
     // drivebase.driveWithSetpointGeneratorFieldRelative(driveDirectAngleKeyboard);
 
-    if (RobotBase.isSimulation()) {
-      drivebase.setDefaultCommand(driveFieldOrientedDirectAngleKeyboard);
-    } else {
-      drivebase.setDefaultCommand(driveFieldOrientedAngularVelocity);
-    }
-
-    // -----------------------------------------------------------------------Default
-    // Commands-----------------------------------------------------------------------
+    // -----------------------------------------------------------------------Default Commands-----------------------------------------------------------------------
+    drivebase.setDefaultCommand(driveFieldOrientedAngularVelocity);
     conveyor.setDefaultCommand(conveyor.clearCoral(coralPresent, elevator));
     lights.setDefaultCommand(lights.set(Lights.Special.OFF));
     elevator.setDefaultCommand(elevator.idle(this::isArmInsideElevator, sensation::clawCoralPresent).repeatedly());
@@ -263,8 +260,8 @@ public class RobotContainer {
           .whileTrue(new SetArm(arm, ArmState.STOP).alongWith(new SetElevator(elevator, ElevatorState.STOP)));
 
       // copilot buttons
-      copilotXbox.leftBumper().whileTrue(new MoveToTarget(this, TargetSide.LEFT));
-      copilotXbox.rightBumper().whileTrue(new MoveToTarget(this, TargetSide.RIGHT));
+      copilotXbox.leftBumper().whileTrue(new MoveToTarget(this));
+      copilotXbox.rightBumper().whileTrue(new MoveToTarget(this));
       copilotXbox.leftTrigger().whileTrue(new CenterAndScore(this, () -> true));
       copilotXbox.rightTrigger().whileTrue(new CenterAndScore(this, () -> false));
       copilotXbox.y().whileTrue(new L4(elevator, arm));
@@ -405,6 +402,26 @@ public class RobotContainer {
   public void teleopInit() {
     drivebase.setMotorBrake(true);
     arm.setState(ArmState.START);
+  }
+
+  public DoubleSupplier driverJoystickX() { 
+    if(copilotXbox.getHID().getLeftBumperButton() || 
+    copilotXbox.getHID().getRightBumperButton() || 
+    copilotXbox.getHID().getLeftTriggerAxis() < 0.1 || 
+    copilotXbox.getHID().getRightTriggerAxis() < 0.1){
+      return () -> 0;
+    }
+    return () -> driverXbox.getLeftX() * -1;
+  }
+
+  public DoubleSupplier driverJoystickY() {
+    if(copilotXbox.getHID().getLeftBumperButton() || 
+    copilotXbox.getHID().getRightBumperButton() || 
+    copilotXbox.getHID().getLeftTriggerAxis() < 0.1 || 
+    copilotXbox.getHID().getRightTriggerAxis() < 0.1){
+      return () -> 0;
+    }
+    return () -> driverXbox.getLeftY() * -1;
   }
 
   public SwerveSubsystem getDrivebase() {
