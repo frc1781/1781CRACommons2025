@@ -45,6 +45,7 @@ import frc.robot.commands.L3;
 import frc.robot.commands.L4;
 import frc.robot.commands.MoveBack;
 import frc.robot.commands.MoveToTarget;
+import frc.robot.commands.MoveToTargetImproved;
 import frc.robot.commands.PostCollect;
 import frc.robot.commands.PreCollect;
 import frc.robot.commands.PreCollectAuto;
@@ -191,7 +192,7 @@ public class RobotContainer {
     aquireTargetAprilTag();
     Logger.recordOutput("RobotContainer/targetAprilTagID", targetAprilTagID);
     Logger.recordOutput("RobotContainer/targetPose", scorePose(targetAprilTagID, targetedSide));
-    Logger.recordOutput("targetedSide", targetedSide.toString());
+    // Logger.recordOutput("RobotContainer/targetedSide", targetedSide.toString());
 
   }
 
@@ -263,8 +264,8 @@ public class RobotContainer {
           .whileTrue(new SetArm(arm, ArmState.STOP).alongWith(new SetElevator(elevator, ElevatorState.STOP)));
 
       // copilot buttons
-      copilotXbox.leftBumper().whileTrue(new MoveToTarget(this, TargetSide.LEFT));
-      copilotXbox.rightBumper().whileTrue(new MoveToTarget(this, TargetSide.RIGHT));
+      copilotXbox.leftBumper().whileTrue(new MoveToTargetImproved(this));
+      copilotXbox.rightBumper().whileTrue(new MoveToTargetImproved(this));
       copilotXbox.leftTrigger().whileTrue(new CenterAndScore(this, () -> true));
       copilotXbox.rightTrigger().whileTrue(new CenterAndScore(this, () -> false));
       copilotXbox.y().whileTrue(new L4(elevator, arm));
@@ -375,6 +376,10 @@ public class RobotContainer {
 
   public int getTargetAprilTagID() {
     return targetAprilTagID;
+  }
+
+  public Pose2d getTargetPose() {
+    return scorePose(targetAprilTagID, targetedSide);
   }
 
   public boolean isSafeForArmToMoveUp() {
