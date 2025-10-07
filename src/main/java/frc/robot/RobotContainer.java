@@ -71,7 +71,7 @@ import swervelib.SwerveInputStream;
 
 public class RobotContainer {
 
-  private boolean hasOdometryBeenReset = false; 
+  private String robotPoseHasBeenSetFor = "nothing"; 
   final CommandXboxController driverXbox = new CommandXboxController(0);
   final CommandXboxController copilotXbox = new CommandXboxController(1);
   final CommandJoystick copilotButtons = new CommandJoystick(2);
@@ -475,20 +475,14 @@ public class RobotContainer {
   }
 
   public void initializeRobotPositionBasedOnAutoRoutine(){
-    
     Command autoroutine = getAutonomousCommand();
+    String routineName = autoroutine.getName();
 
-    if(hasOdometryBeenReset == false){
-      if(autoroutine.getName().equals("StandardLeft")) {
-        getDrivebase().resetOdometry(Constants.Positions.getPositionForRobot(101));
-        hasOdometryBeenReset = true;
-      }
-  
-      if(autoroutine.getName().equals("StandardRight")) {
-        getDrivebase().resetOdometry(Constants.Positions.getPositionForRobot(102));
-        hasOdometryBeenReset = true;
-      }
+    if(robotPoseHasBeenSetFor.equals(routineName)) {
+      return; //already set for this routine
     }
-  }
 
+    getDrivebase().resetOdometry(Constants.Positions.getPositionForRobot(routineName));
+    robotPoseHasBeenSetFor = routineName;
+  }
 }

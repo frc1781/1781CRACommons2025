@@ -118,34 +118,34 @@ public final class Constants
   public static class Positions {
 
 
-        private static final HashMap<Integer, Pose2d> positionForRobot;
+        private static final HashMap<String, Pose2d> startingPoseOfAuto;
 
         static {
-            positionForRobot = new HashMap<Integer, Pose2d>();
+          startingPoseOfAuto = new HashMap<String, Pose2d>();
 
             // STARTING POSITIONS FOR PATHS
-              positionForRobot.put(101, new Pose2d(7.2, 7.5, Rotation2d.fromDegrees(-90)));   // StandardLeft
-              positionForRobot.put(102, new Pose2d(7.2, 0.5, Rotation2d.fromDegrees(90)));    // StandardRight
+            startingPoseOfAuto.put("StandardLeft", new Pose2d(7.2, 7.5, Rotation2d.fromDegrees(-90))); 
+            startingPoseOfAuto.put("StandardRight", new Pose2d(7.2, 0.5, Rotation2d.fromDegrees(90)));  
             //  BLUE ALLIANCE        
-              positionForRobot.put(17, new Pose2d(3.570, 2.332, Rotation2d.fromDegrees(60)));
-              positionForRobot.put(18, new Pose2d(2.55,4, Rotation2d.fromDegrees(0))); 
-              positionForRobot.put(19, new Pose2d(3.417,5.813, Rotation2d.fromDegrees(-60)));
-              positionForRobot.put(20, new Pose2d(5.3, 5.4, Rotation2d.fromDegrees(-120)));
-              positionForRobot.put(21, new Pose2d(6.4,4, Rotation2d.fromDegrees(-180)));
-              positionForRobot.put(22, new Pose2d(5.436,2.370, Rotation2d.fromDegrees(120)));
+              // positionForRobot.put(17, new Pose2d(3.570, 2.332, Rotation2d.fromDegrees(60)));
+              // positionForRobot.put(18, new Pose2d(2.55,4, Rotation2d.fromDegrees(0))); 
+              // positionForRobot.put(19, new Pose2d(3.417,5.813, Rotation2d.fromDegrees(-60)));
+              // positionForRobot.put(20, new Pose2d(5.3, 5.4, Rotation2d.fromDegrees(-120)));
+              // positionForRobot.put(21, new Pose2d(6.4,4, Rotation2d.fromDegrees(-180)));
+              // positionForRobot.put(22, new Pose2d(5.436,2.370, Rotation2d.fromDegrees(120)));
 
             // RED ALLIANCE
 
-              positionForRobot.put(6, new Pose2d(13.914, 2.605, Rotation2d.fromDegrees(120)));
-              positionForRobot.put(7, new Pose2d(14.749,4.113, Rotation2d.fromDegrees(-180)));
-              positionForRobot.put(8, new Pose2d(13.945,5.447, Rotation2d.fromDegrees(-120)));
-              positionForRobot.put(9, new Pose2d(12.245, 5.441, Rotation2d.fromDegrees(-60)));
-              positionForRobot.put(10, new Pose2d(13.11,6.241, Rotation2d.fromDegrees(0)));
-              positionForRobot.put(11, new Pose2d(12.224,2.582, Rotation2d.fromDegrees(60)));
+              // positionForRobot.put(6, new Pose2d(13.914, 2.605, Rotation2d.fromDegrees(120)));
+              // positionForRobot.put(7, new Pose2d(14.749,4.113, Rotation2d.fromDegrees(-180)));
+              // positionForRobot.put(8, new Pose2d(13.945,5.447, Rotation2d.fromDegrees(-120)));
+              // positionForRobot.put(9, new Pose2d(12.245, 5.441, Rotation2d.fromDegrees(-60)));
+              // positionForRobot.put(10, new Pose2d(13.11,6.241, Rotation2d.fromDegrees(0)));
+              // positionForRobot.put(11, new Pose2d(12.224,2.582, Rotation2d.fromDegrees(60)));
         }
 
-        public static Pose2d getPositionForRobot(int aprilTagID) {
-            return positionForRobot.get(aprilTagID);
+        public static Pose2d getPositionForRobot(String autoName) {
+            return startingPoseOfAuto.get(autoName);
         }       
   }
 
