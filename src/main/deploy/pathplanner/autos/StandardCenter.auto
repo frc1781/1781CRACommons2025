@@ -57,19 +57,6 @@
                 "data": {
                   "name": "Score"
                 }
-              }
-            ]
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "centerAuto2"
-                }
               },
               {
                 "type": "named",
