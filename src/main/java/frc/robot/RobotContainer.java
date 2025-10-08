@@ -173,8 +173,8 @@ public class RobotContainer {
 
     PathPlannerLogging.setLogActivePathCallback((path) -> {
       if (path != null) {
-        Logger.recordOutput("Drive/CurrentCommand/", "RunningPath");
-      }
+        Logger.recordOutput("Drive/CurrentCommand", "RunningPath");
+      } 
     });
   }
 
