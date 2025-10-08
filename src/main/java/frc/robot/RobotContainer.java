@@ -72,6 +72,8 @@ import frc.robot.subsystems.Sensation;
 import frc.robot.subsystems.Vision;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import swervelib.SwerveInputStream;
+import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
 
 public class RobotContainer {
 
@@ -108,8 +110,8 @@ public class RobotContainer {
   // Driving the robot during teleOp
   SwerveInputStream driveAngularVelocity = SwerveInputStream.of(
       drivebase.getSwerveDrive(),
-      () -> driverXbox.getLeftY() * -1,
-      () -> driverXbox.getLeftX() * -1)
+      driverXInput(),
+      driverYInput())
       .withControllerRotationAxis(() -> driverXbox.getRightX() * -1)
       .deadband(OperatorConstants.DEADBAND)
       .scaleTranslation(0.8) // might be changed to 1
@@ -130,8 +132,8 @@ public class RobotContainer {
 
   SwerveInputStream driveAngularVelocityKeyboard = SwerveInputStream.of(
       drivebase.getSwerveDrive(),
-       driverJoystickX(),
-       driverJoystickY())
+       driverXInput(),
+       driverYInput())
       .withControllerRotationAxis(() -> driverXbox.getRawAxis(2))
       .deadband(OperatorConstants.DEADBAND)
       .scaleTranslation(0.8)
@@ -318,6 +320,29 @@ public class RobotContainer {
     this.targetAprilTagID = targetAprilTagID;
   }
 
+  public DoubleSupplier driverXInput() { 
+    if(copilotXbox.leftBumper().getAsBoolean() || 
+    copilotXbox.rightBumper().getAsBoolean() || 
+    (Math.abs(driverXbox.getLeftY()) < 0.1 && 
+     Math.abs(driverXbox.getLeftX()) < 0.1)){
+      return () -> 0;
+     
+    }
+    return () -> driverXbox.getLeftX() * -1;
+  }
+ 
+  public DoubleSupplier driverYInput() {
+    if(copilotXbox.leftBumper().getAsBoolean() || 
+    copilotXbox.rightBumper().getAsBoolean() || 
+    (Math.abs(driverXbox.getRightY()) < 0.1 && 
+    Math.abs(driverXbox.getRightX()) < 0.1)){
+      return () -> 0;
+    } else {
+      return () -> driverXbox.getLeftY() * -1;
+    }
+   
+  }
+
   private void aquireTargetAprilTag() {
     List<Integer> aprilTagIDs = Vision.seenAprilTagIDs;
     double minimumDistance = Double.MAX_VALUE;
@@ -404,26 +429,6 @@ public class RobotContainer {
   public void teleopInit() {
     drivebase.setMotorBrake(true);
     arm.setState(ArmState.START);
-  }
-
-  public DoubleSupplier driverJoystickX() { 
-    if(copilotXbox.getHID().getLeftBumperButton() || 
-    copilotXbox.getHID().getRightBumperButton() || 
-    copilotXbox.getHID().getLeftTriggerAxis() < 0.1 || 
-    copilotXbox.getHID().getRightTriggerAxis() < 0.1){
-      return () -> 0;
-    }
-    return () -> driverXbox.getLeftX() * -1;
-  }
-
-  public DoubleSupplier driverJoystickY() {
-    if(copilotXbox.getHID().getLeftBumperButton() || 
-    copilotXbox.getHID().getRightBumperButton() || 
-    copilotXbox.getHID().getLeftTriggerAxis() < 0.1 || 
-    copilotXbox.getHID().getRightTriggerAxis() < 0.1){
-      return () -> 0;
-    }
-    return () -> driverXbox.getLeftY() * -1;
   }
 
   public SwerveSubsystem getDrivebase() {
