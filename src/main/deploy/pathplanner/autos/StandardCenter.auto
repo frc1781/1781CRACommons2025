@@ -5,9 +5,15 @@
     "data": {
       "commands": [
         {
-          "type": "parallel",
+          "type": "sequential",
           "data": {
             "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Clear"
+                }
+              },
               {
                 "type": "path",
                 "data": {
@@ -15,22 +21,9 @@
                 }
               },
               {
-                "type": "sequential",
+                "type": "named",
                 "data": {
-                  "commands": [
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "Clear"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "L4"
-                      }
-                    }
-                  ]
+                  "name": "L4"
                 }
               }
             ]
