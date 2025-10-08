@@ -4,9 +4,19 @@
 
 package frc.robot;
 
+import java.io.File;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
+
+import org.littletonrobotics.junction.Logger;
+
+import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.util.PathPlannerLogging;
-import com.pathplanner.lib.auto.AutoBuilder;
+
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -15,20 +25,16 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.TargetSide;
@@ -36,8 +42,6 @@ import frc.robot.commands.CenterAndScore;
 import frc.robot.commands.Clear;
 import frc.robot.commands.Collect;
 import frc.robot.commands.CollectAndClear;
-import frc.robot.commands.CollectAndPost;
-import frc.robot.commands.Collecting;
 import frc.robot.commands.L2;
 import frc.robot.commands.L2hold;
 import frc.robot.commands.L3;
@@ -57,21 +61,21 @@ import frc.robot.commands.SetTargetPose;
 //import frc.robot.commands.StopMovingToTarget;
 import frc.robot.commands.StrafeCommand;
 import frc.robot.commands.WaitForCoral;
-import frc.robot.subsystems.*;
+import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Arm.ArmState;
+import frc.robot.subsystems.Climber;
+import frc.robot.subsystems.Conveyor;
+import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Elevator.ElevatorState;
+import frc.robot.subsystems.Lights;
+import frc.robot.subsystems.Sensation;
+import frc.robot.subsystems.Vision;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
-
-import java.io.File;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
-
-import org.littletonrobotics.junction.Logger;
 import swervelib.SwerveInputStream;
 
 public class RobotContainer {
 
+  private String robotPoseHasBeenSetFor = "nothing"; 
   final CommandXboxController driverXbox = new CommandXboxController(0);
   final CommandXboxController copilotXbox = new CommandXboxController(1);
   final CommandJoystick copilotButtons = new CommandJoystick(2);
@@ -86,6 +90,7 @@ public class RobotContainer {
   private double wait_seconds = 5;
   public int targetAprilTagID = -1;
   public TargetSide targetedSide = TargetSide.LEFT;
+  private boolean sendyPressed = false;
 
   Trigger coralPresent = new Trigger(sensation::coralPresent);
   Trigger coralHopper = new Trigger(sensation::coralInHopper);
@@ -125,8 +130,8 @@ public class RobotContainer {
 
   SwerveInputStream driveAngularVelocityKeyboard = SwerveInputStream.of(
       drivebase.getSwerveDrive(),
-      () -> -driverXbox.getLeftY(),
-      () -> -driverXbox.getLeftX())
+       driverJoystickX(),
+       driverJoystickY())
       .withControllerRotationAxis(() -> driverXbox.getRawAxis(2))
       .deadband(OperatorConstants.DEADBAND)
       .scaleTranslation(0.8)
@@ -209,14 +214,8 @@ public class RobotContainer {
     // Command driveSetpointGenKeyboard =
     // drivebase.driveWithSetpointGeneratorFieldRelative(driveDirectAngleKeyboard);
 
-    if (RobotBase.isSimulation()) {
-      drivebase.setDefaultCommand(driveFieldOrientedDirectAngleKeyboard);
-    } else {
-      drivebase.setDefaultCommand(driveFieldOrientedAngularVelocity);
-    }
-
-    // -----------------------------------------------------------------------Default
-    // Commands-----------------------------------------------------------------------
+    // -----------------------------------------------------------------------Default Commands-----------------------------------------------------------------------
+    drivebase.setDefaultCommand(driveFieldOrientedAngularVelocity);
     conveyor.setDefaultCommand(conveyor.clearCoral(coralPresent, elevator));
     lights.setDefaultCommand(lights.set(Lights.Special.OFF));
     elevator.setDefaultCommand(elevator.idle(this::isArmInsideElevator, sensation::clawCoralPresent).repeatedly());
@@ -407,6 +406,26 @@ public class RobotContainer {
     arm.setState(ArmState.START);
   }
 
+  public DoubleSupplier driverJoystickX() { 
+    if(copilotXbox.getHID().getLeftBumperButton() || 
+    copilotXbox.getHID().getRightBumperButton() || 
+    copilotXbox.getHID().getLeftTriggerAxis() < 0.1 || 
+    copilotXbox.getHID().getRightTriggerAxis() < 0.1){
+      return () -> 0;
+    }
+    return () -> driverXbox.getLeftX() * -1;
+  }
+
+  public DoubleSupplier driverJoystickY() {
+    if(copilotXbox.getHID().getLeftBumperButton() || 
+    copilotXbox.getHID().getRightBumperButton() || 
+    copilotXbox.getHID().getLeftTriggerAxis() < 0.1 || 
+    copilotXbox.getHID().getRightTriggerAxis() < 0.1){
+      return () -> 0;
+    }
+    return () -> driverXbox.getLeftY() * -1;
+  }
+
   public SwerveSubsystem getDrivebase() {
     return drivebase;
   }
@@ -474,4 +493,15 @@ public class RobotContainer {
     // robotController.visionSystem.getDoubleCameraReefApriltag() != -1;
   }
 
+  public void initializeRobotPositionBasedOnAutoRoutine(){
+    Command autoroutine = getAutonomousCommand();
+    String routineName = autoroutine.getName();
+
+    if(robotPoseHasBeenSetFor.equals(routineName)) {
+      return; //already set for this routine
+    }
+
+    getDrivebase().resetOdometry(Constants.Positions.getPositionForRobot(routineName));
+    robotPoseHasBeenSetFor = routineName;
+  }
 }
