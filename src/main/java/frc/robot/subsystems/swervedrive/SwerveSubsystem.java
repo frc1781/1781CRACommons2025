@@ -763,7 +763,7 @@ public class SwerveSubsystem extends SubsystemBase
     @Override
     public void end(boolean interrupted)
     {
-    
+      Logger.recordOutput("Drive/CurrentCommand", "EndedMoveToPositionToScore");
     }
   }
 }
