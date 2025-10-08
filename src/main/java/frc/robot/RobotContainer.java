@@ -39,8 +39,10 @@ import frc.robot.commands.CollectAndClear;
 import frc.robot.commands.CollectAndPost;
 import frc.robot.commands.Collecting;
 import frc.robot.commands.L2;
+import frc.robot.commands.L2hold;
 import frc.robot.commands.L3;
 import frc.robot.commands.L4;
+import frc.robot.commands.L4hold;
 import frc.robot.commands.MoveBack;
 import frc.robot.commands.MoveToTarget;
 import frc.robot.commands.PostCollect;
@@ -267,7 +269,7 @@ public class RobotContainer {
       copilotXbox.rightTrigger().whileTrue(new CenterAndScore(this, () -> false));
       copilotXbox.y().whileTrue(new L4(elevator, arm));
       copilotXbox.b().whileTrue(new L3(elevator, arm));
-      copilotXbox.a().whileTrue(new L2(elevator, arm));
+      copilotXbox.a().whileTrue(new L2hold(elevator, arm));
       copilotXbox.x().whileTrue(new ScoreLow(arm, drivebase));
 
       // copilot poses blue

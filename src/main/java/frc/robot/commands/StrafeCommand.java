@@ -60,9 +60,9 @@ public class StrafeCommand extends Command {
         }
 
         ChassisSpeeds requiredSpeeds = new ChassisSpeeds();
-        requiredSpeeds.vyMetersPerSecond = goLeft? 0.2 : -0.2;
+        requiredSpeeds.vyMetersPerSecond = goLeft ? 0.2 : -0.2;
         driveSystem.drive(requiredSpeeds);
-        Logger.recordOutput("Drive/CurrentCommand", "Strafe");
+        Logger.recordOutput("Drive/CurrentCommand", "Strafe:" + strafeLeft.getAsBoolean() + " gl " + goLeft);
     }
 
     public boolean isFinished() {
