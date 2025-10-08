@@ -424,7 +424,7 @@ public class RobotContainer {
     if(isElevatorUp() == false){
       return () -> driverXbox.getLeftX() * -1;
     }
-    return () -> driverXbox.getLeftX() * -0.25;
+    return () -> driverXbox.getLeftX() * -0.1;
   }
 
 
@@ -438,7 +438,7 @@ public class RobotContainer {
     if(isElevatorUp() == false){
       return () -> driverXbox.getLeftY() * -1;
     }
-    return () -> driverXbox.getLeftY() * -0.25;
+    return () -> driverXbox.getLeftY() * -0.1;
   }
 
   public SwerveSubsystem getDrivebase() {
