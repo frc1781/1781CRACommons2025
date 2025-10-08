@@ -268,7 +268,7 @@ public class RobotContainer {
       copilotXbox.leftTrigger().whileTrue(new CenterAndScoreL4(this, () -> true));
       copilotXbox.rightTrigger().whileTrue(new CenterAndScoreL4(this, () -> false));
       copilotXbox.povLeft().whileTrue(new CenterAndScoreL3(this, () -> true));
-      copilotXbox.povRight().whileTrue(new CenterAndScoreL3(this, () -> false));
+      copilotXbox.povRight().whileTrue(new CenterAndScoreL3(this, () -> true));
       copilotXbox.y().whileTrue(new L4hold(elevator, arm));
       copilotXbox.b().whileTrue(new L3(elevator, arm));
       copilotXbox.a().whileTrue(new L2hold(elevator, arm));
@@ -404,6 +404,10 @@ public class RobotContainer {
     return isManualControlMode();
   }
 
+  public boolean isElevatorUp () {
+    return elevator.getFramePosition() > 10;
+  }
+
   public void teleopInit() {
     drivebase.setMotorBrake(true);
     arm.setState(ArmState.START);
@@ -416,8 +420,13 @@ public class RobotContainer {
     copilotXbox.getHID().getRightTriggerAxis() > 0.1){
       return () -> 0;
     }
-    return () -> driverXbox.getLeftX() * -1;
+    
+    if(isElevatorUp() == false){
+      return () -> driverXbox.getLeftX() * -1;
+    }
+    return () -> driverXbox.getLeftX() * -0.25;
   }
+
 
   public DoubleSupplier driverJoystickY() {
     if(copilotXbox.getHID().getLeftBumperButton() || 
@@ -426,7 +435,10 @@ public class RobotContainer {
     copilotXbox.getHID().getRightTriggerAxis() > 0.1){
       return () -> 0;
     }
-    return () -> driverXbox.getLeftY() * -1;
+    if(isElevatorUp() == false){
+      return () -> driverXbox.getLeftY() * -1;
+    }
+    return () -> driverXbox.getLeftY() * -0.25;
   }
 
   public SwerveSubsystem getDrivebase() {

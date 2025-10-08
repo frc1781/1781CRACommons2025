@@ -125,7 +125,9 @@ public final class Constants
 
             // STARTING POSITIONS FOR PATHS
             startingPoseOfAuto.put("StandardLeft", new Pose2d(7.2, 7.5, Rotation2d.fromDegrees(-90))); 
-            startingPoseOfAuto.put("StandardRight", new Pose2d(7.2, 0.5, Rotation2d.fromDegrees(90)));  
+            startingPoseOfAuto.put("StandardRight", new Pose2d(7.2, 0.5, Rotation2d.fromDegrees(90)));
+            startingPoseOfAuto.put("StandardCenter", new Pose2d(7.165, 4, Rotation2d.fromDegrees(180)));
+
             //  BLUE ALLIANCE        
               // positionForRobot.put(17, new Pose2d(3.570, 2.332, Rotation2d.fromDegrees(60)));
               // positionForRobot.put(18, new Pose2d(2.55,4, Rotation2d.fromDegrees(0))); 
