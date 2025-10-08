@@ -171,11 +171,11 @@ public class RobotContainer {
       Logger.recordOutput("Drive/targetPose", pose);
     });
 
-    PathPlannerLogging.setLogActivePathCallback((path) -> {
-      if (path != null) {
-        Logger.recordOutput("Drive/CurrentCommand", "RunningPath");
-      } 
-    });
+    // PathPlannerLogging.setLogActivePathCallback((path) -> {
+    //   if (path != null) {
+    //     Logger.recordOutput("Drive/CurrentCommand", "RunningPath");
+    //   } 
+    // });
   }
 
   public void periodic() {
