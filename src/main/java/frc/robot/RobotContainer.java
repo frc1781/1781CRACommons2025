@@ -38,7 +38,8 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.TargetSide;
-import frc.robot.commands.CenterAndScore;
+import frc.robot.commands.CenterAndScoreL3;
+import frc.robot.commands.CenterAndScoreL4;
 import frc.robot.commands.Clear;
 import frc.robot.commands.Collect;
 import frc.robot.commands.CollectAndClear;
@@ -264,28 +265,30 @@ public class RobotContainer {
       // copilot buttons
       copilotXbox.leftBumper().whileTrue(new MoveToTarget(this, TargetSide.LEFT));
       copilotXbox.rightBumper().whileTrue(new MoveToTarget(this, TargetSide.RIGHT));
-      copilotXbox.leftTrigger().whileTrue(new CenterAndScore(this, () -> true));
-      copilotXbox.rightTrigger().whileTrue(new CenterAndScore(this, () -> false));
-      copilotXbox.y().whileTrue(new L4(elevator, arm));
+      copilotXbox.leftTrigger().whileTrue(new CenterAndScoreL4(this, () -> true));
+      copilotXbox.rightTrigger().whileTrue(new CenterAndScoreL4(this, () -> false));
+      copilotXbox.povLeft().whileTrue(new CenterAndScoreL3(this, () -> true));
+      copilotXbox.povRight().whileTrue(new CenterAndScoreL3(this, () -> false));
+      copilotXbox.y().whileTrue(new L4hold(elevator, arm));
       copilotXbox.b().whileTrue(new L3(elevator, arm));
       copilotXbox.a().whileTrue(new L2hold(elevator, arm));
       copilotXbox.x().whileTrue(new ScoreLow(arm, drivebase));
 
       // copilot poses blue
-      copilotButtons.button(1).and(isRedAllianceTrigger.negate()).onTrue(new SetTargetPose(this, 18));
-      copilotButtons.button(2).and(isRedAllianceTrigger.negate()).onTrue(new SetTargetPose(this, 17));
-      copilotButtons.button(3).and(isRedAllianceTrigger.negate()).onTrue(new SetTargetPose(this, 22));
-      copilotButtons.button(4).and(isRedAllianceTrigger.negate()).onTrue(new SetTargetPose(this, 21));
-      copilotButtons.button(5).and(isRedAllianceTrigger.negate()).onTrue(new SetTargetPose(this, 20));
-      copilotButtons.button(6).and(isRedAllianceTrigger.negate()).onTrue(new SetTargetPose(this, 19));
+      // copilotButtons.button(1).and(isRedAllianceTrigger.negate()).onTrue(new SetTargetPose(this, 18));
+      // copilotButtons.button(2).and(isRedAllianceTrigger.negate()).onTrue(new SetTargetPose(this, 17));
+      // copilotButtons.button(3).and(isRedAllianceTrigger.negate()).onTrue(new SetTargetPose(this, 22));
+      // copilotButtons.button(4).and(isRedAllianceTrigger.negate()).onTrue(new SetTargetPose(this, 21));
+      // copilotButtons.button(5).and(isRedAllianceTrigger.negate()).onTrue(new SetTargetPose(this, 20));
+      // copilotButtons.button(6).and(isRedAllianceTrigger.negate()).onTrue(new SetTargetPose(this, 19));
 
       // copilot poses red
-      copilotButtons.button(1).and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 7));
-      copilotButtons.button(2).and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 8));
-      copilotButtons.button(3).and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 9));
-      copilotButtons.button(4).and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 10));
-      copilotButtons.button(5).and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 11));
-      copilotButtons.button(6).and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 6));
+      // copilotButtons.button(1).and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 7));
+      // copilotButtons.button(2).and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 8));
+      // copilotButtons.button(3).and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 9));
+      // copilotButtons.button(4).and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 10));
+      // copilotButtons.button(5).and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 11));
+      // copilotButtons.button(6).and(isRedAllianceTrigger).onTrue(new SetTargetPose(this, 6));
 
       // TRIGGERS
 
@@ -409,8 +412,8 @@ public class RobotContainer {
   public DoubleSupplier driverJoystickX() { 
     if(copilotXbox.getHID().getLeftBumperButton() || 
     copilotXbox.getHID().getRightBumperButton() || 
-    copilotXbox.getHID().getLeftTriggerAxis() < 0.1 || 
-    copilotXbox.getHID().getRightTriggerAxis() < 0.1){
+    copilotXbox.getHID().getLeftTriggerAxis() > 0.1 || 
+    copilotXbox.getHID().getRightTriggerAxis() > 0.1){
       return () -> 0;
     }
     return () -> driverXbox.getLeftX() * -1;
@@ -419,8 +422,8 @@ public class RobotContainer {
   public DoubleSupplier driverJoystickY() {
     if(copilotXbox.getHID().getLeftBumperButton() || 
     copilotXbox.getHID().getRightBumperButton() || 
-    copilotXbox.getHID().getLeftTriggerAxis() < 0.1 || 
-    copilotXbox.getHID().getRightTriggerAxis() < 0.1){
+    copilotXbox.getHID().getLeftTriggerAxis() > 0.1 || 
+    copilotXbox.getHID().getRightTriggerAxis() > 0.1){
       return () -> 0;
     }
     return () -> driverXbox.getLeftY() * -1;

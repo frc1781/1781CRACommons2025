@@ -11,7 +11,7 @@ import frc.robot.subsystems.Arm.ArmState;
 import frc.robot.subsystems.Elevator.ElevatorState;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 
-public class CenterAndScore extends SequentialCommandGroup {
+public class CenterAndScoreL4 extends SequentialCommandGroup {
     RobotContainer robotContainer;
     Arm arm;
     Elevator elevator;
@@ -19,7 +19,7 @@ public class CenterAndScore extends SequentialCommandGroup {
     SwerveSubsystem swerveDrive;
     BooleanSupplier strafeLeft;
     
-    public CenterAndScore(RobotContainer robotContainer, BooleanSupplier strafeLeft) {
+    public CenterAndScoreL4(RobotContainer robotContainer, BooleanSupplier strafeLeft) {
         this.strafeLeft = strafeLeft;
         this.robotContainer = robotContainer;   
         this.swerveDrive = robotContainer.getDrivebase();

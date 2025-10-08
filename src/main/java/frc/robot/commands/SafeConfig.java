@@ -16,8 +16,7 @@ public class SafeConfig extends SequentialCommandGroup {
         addRequirements(elevator, arm);
         addCommands(
             new SetArm(arm, Arm.ArmState.START_MID),
-            new SetElevator(elevator, Elevator.ElevatorState.SAFE),
-            new SetArm(arm, Arm.ArmState.START_HIGH)
+            new SetElevator(elevator, Elevator.ElevatorState.SAFE)
         );
     }
     

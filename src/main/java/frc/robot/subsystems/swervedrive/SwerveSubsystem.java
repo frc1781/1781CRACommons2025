@@ -766,4 +766,46 @@ public class SwerveSubsystem extends SubsystemBase
       Logger.recordOutput("Drive/CurrentCommand", "EndedMoveToPositionToScore");
     }
   }
+
+  public class MoveToPositionToScoreL3 extends Command {
+    BooleanSupplier coralPresent;
+    Sensation sensation;
+
+    public MoveToPositionToScoreL3(Sensation sensation)
+    {
+      this.sensation = sensation;
+      addRequirements(SwerveSubsystem.this);
+    }
+
+    @Override
+    public void initialize()
+    {
+      inPosition = false;
+    }
+
+    @Override
+    public void execute()
+    {
+      ChassisSpeeds inputSpeeds = new ChassisSpeeds(); 
+      double avgDist = (sensation.rightTOF() + sensation.leftTOF()) / 2.0;
+      inPosition = avgDist < 200 && avgDist > 190;
+      if(!inPosition){
+        inputSpeeds.vxMetersPerSecond = EEUtil.clamp(-0.5, 0.5, 0.008 * (avgDist - 195));
+      }
+      swerveDrive.drive(inputSpeeds);
+      Logger.recordOutput("Drive/CurrentCommand", "MoveToPositionToScoreL3");
+    }
+
+    @Override
+    public boolean isFinished()
+    {
+      return inPosition;
+    }
+
+    @Override
+    public void end(boolean interrupted)
+    {
+      Logger.recordOutput("Drive/CurrentCommand", "EndedMoveToPositionToScoreL3");
+    }
+  }
 }
