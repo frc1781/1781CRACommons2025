@@ -421,10 +421,10 @@ public class RobotContainer {
       return () -> 0;
     }
     
-    if(isElevatorUp() == false){
-      return () -> driverXbox.getLeftX() * -1;
+    if(isElevatorUp()){
+      return () -> driverXbox.getLeftX() * -0.1;
     }
-    return () -> driverXbox.getLeftX() * -0.1;
+    return () -> driverXbox.getLeftX() * -1;
   }
 
 
@@ -435,10 +435,10 @@ public class RobotContainer {
     copilotXbox.getHID().getRightTriggerAxis() > 0.1){
       return () -> 0;
     }
-    if(isElevatorUp() == false){
-      return () -> driverXbox.getLeftY() * -1;
+    if(isElevatorUp()){
+      return () -> driverXbox.getLeftY() * -0.1;
     }
-    return () -> driverXbox.getLeftY() * -0.1;
+    return () -> driverXbox.getLeftY() * -1;
   }
 
   public SwerveSubsystem getDrivebase() {
