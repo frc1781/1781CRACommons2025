@@ -45,6 +45,11 @@ public class Sensation extends SubsystemBase {
       Logger.recordOutput("Sensation/clawCoralTOF", clawCoralTOF.getRange());
       Logger.recordOutput("Sensation/clawCoralTOFValid", clawCoralTOF.isRangeValidRegularCheck());
       Logger.recordOutput("Sensation/clawCoralPresent", clawCoralPresent());
+
+      Logger.recordOutput("Sensation/enterBeamTriggered", !enterBeam.get());
+      Logger.recordOutput("Sensation/hopperBackBeamTriggered", !hopperBackBeam.get());
+      Logger.recordOutput("Sensation/hopperFrontBeamTriggered", !hopperFrontBeam.get());
+      Logger.recordOutput("Sensation/exitBeamTriggered", !exitBeam.get());
    }
 
    public boolean coralPresent() {
