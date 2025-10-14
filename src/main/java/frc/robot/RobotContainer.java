@@ -325,41 +325,35 @@ public class RobotContainer {
 
   private void aquireTargetAprilTag() {
     List<Integer> aprilTagIDs = Vision.seenAprilTagIDs;
-    double minimumDistance = Double.MAX_VALUE;
-    int aprilTagID = -1;
+    targetAprilTagID = -1;
 
-    for (Integer i : aprilTagIDs) {
-      if (drivebase.vision.getDistanceFromAprilTag(i) == -1 || i == -1) {
+    for (Integer currentTagID : aprilTagIDs) {
+      if (drivebase.vision.getDistanceFromAprilTag(currentTagID) == -1 || currentTagID == -1) {
         continue;
       }
-      Pose2d atPose = Vision.getAprilTagPose(i, Transform2d.kZero);
+      Pose2d atPose = Vision.getAprilTagPose(currentTagID, Transform2d.kZero);
       if (atPose == null) {
         continue;
       }
       //filter out tags that are not on our side of the field
       if (isRed()) {
-        if (i < 6 || i > 11) { //red reef tags are 6-11
+        if (currentTagID < 6 || currentTagID > 11) { //red reef tags are 6-11
           continue;
         }
       } else {
-        if (i < 17 || i > 22) { //blue reef tags are 17-22
+        if (currentTagID < 17 || currentTagID > 22) { //blue reef tags are 17-22
           continue;
         }
       }
       
-      if (drivebase.vision.getDistanceFromAprilTag(i) < minimumDistance) // && 
-      {
-        minimumDistance = drivebase.vision.getDistanceFromAprilTag(i);
-        aprilTagID = i;
-      }
-
-      Rotation2d aprilTagAngle = Vision.getAprilTagPose(aprilTagID, Transform2d.kZero).getRotation().rotateBy(Rotation2d.fromDegrees(180));
+      Rotation2d aprilTagAngle = Vision.getAprilTagPose(currentTagID, Transform2d.kZero).getRotation().rotateBy(Rotation2d.fromDegrees(180));
       if (!isRobotInSegment(aprilTagAngle, drivebase.getPose())) {  //disregard too oblique angles
         continue;
       }
+      targetAprilTagID = currentTagID;  // -1 if none appropriate seen, still need to filter by only red or blue reef tags
     }
-    targetAprilTagID = aprilTagID;  // -1 if none appropriate seen, still need to filter by only red or blue reef tags
   }
+
 
   //ONLY WORK FOR BLUE NEED TO FIX FOR RED
   private boolean isRobotInSegment(Rotation2d aprilTagFacing, Pose2d robotPose) {
