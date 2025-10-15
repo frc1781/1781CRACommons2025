@@ -184,6 +184,8 @@ public class RobotContainer {
     //     Logger.recordOutput("Drive/CurrentCommand", "RunningPath");
     //   } 
     // });
+
+    
   }
 
   public void periodic() {
@@ -192,6 +194,8 @@ public class RobotContainer {
     Logger.recordOutput("RobotContainer/isSafeForArmToMoveDown", isSafeForArmToMoveDown());
     Logger.recordOutput("RobotContainer/isArmInsideElevator", isArmInsideElevator());
     Logger.recordOutput("RobotContainer/readyToCollect", readyToCollect());
+    Logger.recordOutput("RobotContainer/CurrentAuto", getAutonomousCommand().getName());
+
 
     //APRILTAGS
     aquireTargetAprilTag();
