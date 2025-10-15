@@ -424,7 +424,8 @@ public class RobotContainer {
     }
     
     if(isElevatorUp()){
-      return () -> driverXbox.getLeftX() * -0.1;
+      //return () -> driverXbox.getLeftX() * -0.1;
+      return () -> driverXbox.getLeftX() * -0.075;
     }
     return () -> driverXbox.getLeftX() * -1;
   }
@@ -438,8 +439,9 @@ public class RobotContainer {
       return () -> 0;
     }
     if(isElevatorUp()){
-      return () -> driverXbox.getLeftY() * -0.1;
-    }
+    //return () -> driverXbox.getLeftX() * -0.1;
+    return () -> driverXbox.getLeftX() * -0.075;    
+  }
     return () -> driverXbox.getLeftY() * -1;
   }
 
