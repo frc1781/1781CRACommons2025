@@ -47,7 +47,7 @@ public class StrafeCommand extends Command {
             isFinished = true;
         }
         if (timer.get() > 2.0 && strafeTries == 1) {
-            goLeft = !goLeft;
+            //goLeft = !goLeft;
             timer.reset();
             timer.start();
             strafeTries = 2;
