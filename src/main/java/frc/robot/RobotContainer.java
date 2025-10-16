@@ -263,12 +263,12 @@ public class RobotContainer {
       //     .whileTrue(new SetArm(arm, ArmState.STOP).alongWith(new SetElevator(elevator, ElevatorState.STOP)));
 
       // copilot buttons
-      copilotXbox.leftBumper().whileTrue(new MoveToTarget(this, TargetSide.LEFT));
-      copilotXbox.rightBumper().whileTrue(new MoveToTarget(this, TargetSide.RIGHT));
-      copilotXbox.leftTrigger().whileTrue(new CenterAndScoreL4(this, () -> true));
-      copilotXbox.rightTrigger().whileTrue(new CenterAndScoreL4(this, () -> false));
-      copilotXbox.povLeft().whileTrue(new CenterAndScoreL3(this, () -> true));
-      copilotXbox.povRight().whileTrue(new CenterAndScoreL3(this, () -> false));
+      // copilotXbox.leftBumper().whileTrue(new MoveToTarget(this, TargetSide.LEFT));
+      // copilotXbox.rightBumper().whileTrue(new MoveToTarget(this, TargetSide.RIGHT));
+      // copilotXbox.leftTrigger().whileTrue(new CenterAndScoreL4(this, () -> true));
+      // copilotXbox.rightTrigger().whileTrue(new CenterAndScoreL4(this, () -> false));
+      // copilotXbox.povLeft().whileTrue(new CenterAndScoreL3(this, () -> true));
+      // copilotXbox.povRight().whileTrue(new CenterAndScoreL3(this, () -> false));
       // copilotXbox.y().whileTrue(new L4hold(elevator, arm));
       // copilotXbox.b().whileTrue(new L3(elevator, arm));
       // copilotXbox.a().whileTrue(new L2hold(elevator, arm));
