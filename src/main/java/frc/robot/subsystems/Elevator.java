@@ -152,12 +152,12 @@ public class Elevator extends SubsystemBase{
             return;
         }
 
-        if (positions.get(desiredState)[0] >= 1 && !robotContainer.getSensation().clawCoralPresent()) {
-            System.out.println("Elevator cannot reach state " + desiredState + " because coral is not present in claw");
-            System.out.println(positions.get(desiredState)[0]);
-            System.out.println(robotContainer.getSensation().clawCoralPresent());
-            return;
-        }
+        // if (positions.get(desiredState)[0] >= 1 && !robotContainer.getSensation().clawCoralPresent()) {
+        //     System.out.println("Elevator cannot reach state " + desiredState + " because coral is not present in claw");
+        //     System.out.println(positions.get(desiredState)[0]);
+        //     System.out.println(robotContainer.getSensation().clawCoralPresent());
+        //     return;
+        // }
 
         isIdle = false;
         double carriagePosition = getCarriagePosition();

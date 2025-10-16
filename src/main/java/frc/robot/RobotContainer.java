@@ -87,7 +87,7 @@ public class RobotContainer {
   //private final Elevator elevator = new Elevator(this);
   //private final Arm arm = new Arm(this);
   //private final Climber climber = new Climber();
-  private final SendableChooser<Command> autoChooser;
+  //private final SendableChooser<Command> autoChooser;
   private double wait_seconds = 5;
   public int targetAprilTagID = -1;
   public TargetSide targetedSide = TargetSide.LEFT;
@@ -166,10 +166,10 @@ public class RobotContainer {
 
     configureBindings();
     DriverStation.silenceJoystickConnectionWarning(true);
-    NamedCommands.registerCommand("CustomWaitCommand",
-        new WaitCommand(SmartDashboard.getNumber("Wait Time", wait_seconds)));
-    autoChooser = AutoBuilder.buildAutoChooser();
-    SmartDashboard.putData("Auto Chooser", autoChooser);
+    // NamedCommands.registerCommand("CustomWaitCommand",
+    //     new WaitCommand(SmartDashboard.getNumber("Wait Time", wait_seconds)));
+    // autoChooser = AutoBuilder.buildAutoChooser();
+    // SmartDashboard.putData("Auto Chooser", autoChooser);
 
     PathPlannerLogging.setLogCurrentPoseCallback((pose) -> {
       Logger.recordOutput("Drive/currentPose", pose);
@@ -381,34 +381,32 @@ public class RobotContainer {
     return targetAprilTagID;
   }
 
-  // public boolean isSafeForArmToMoveUp() {
-  //   double safeCarriagePosition = 60.0;
-  //   double safeArmAngle = 150;
-  //   // don't move up if just collected coral and the elevator has not moved up yet
-  //   // to get the coral free from cradle
-  //   return elevator.getCarriagePosition() < safeCarriagePosition || arm.getPosition() < safeArmAngle;
-  // }
+  public boolean isSafeForArmToMoveUp() {
+    // don't move up if just collected coral and the elevator has not moved up yet
+    // to get the coral free from cradle
+    return false;
+  }
 
-  // public boolean isSafeForArmToMoveDown() {
-  //   double maxUnsafeDistance = 60.0;
-  //   return elevator.getCarriagePosition() > maxUnsafeDistance;
-  // }
+  public boolean isSafeForArmToMoveDown() {
+    
+    return false;
+  }
 
-  // public boolean isArmInsideElevator() {
-  //   return elevator.getCarriagePosition() > 200 && arm.getPosition() < 35;
-  // }
+  public boolean isArmInsideElevator() {
+    return false;
+  }
 
-  // public boolean readyToCollect() {
-  //   return elevator.hasReachedPosition(ElevatorState.SAFE_CORAL) && arm.matchesState(ArmState.COLLECT);
-  // }
+  public boolean readyToCollect() {
+    return false;
+  }
 
   public boolean isManualControlMode() {
     return isManualControlMode();
   }
 
-  // public boolean isElevatorUp () {
-  //   return elevator.getFramePosition() > 10;
-  // }
+  public boolean isElevatorUp () {
+    return false;
+  }
 
   public void teleopInit() {
     drivebase.setMotorBrake(true);
@@ -447,34 +445,34 @@ public class RobotContainer {
     return drivebase;
   }
 
-  // public Arm getArm() {
-  //   return arm;
-  // }
+  public Arm getArm() {
+    return null;
+  }
 
-  // public Elevator getElevator() {
-  //   return elevator;
-  // }
+  public Elevator getElevator() {
+    return null;
+  }
 
-  // public Conveyor getConveyor() {
-  //   return conveyor;
-  // }
+  public Conveyor getConveyor() {
+    return null;
+  }
 
   public Lights getLights() {
     return lights;
   }
 
-  // public Sensation getSensation() {
-  //   return sensation;
-  // }
+  public Sensation getSensation() {
+    return null;
+  }
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
    * @return the command to run in autonomous
    */
-  public Command getAutonomousCommand() {
-    return autoChooser.getSelected();
-  }
+  // public Command getAutonomousCommand() {
+  //   return autoChooser.getSelected();
+  // }
 
   public void setMotorBrake(boolean brake) {
     drivebase.setMotorBrake(brake);
@@ -510,15 +508,15 @@ public class RobotContainer {
   //   // robotController.visionSystem.getDoubleCameraReefApriltag() != -1;
   // }
 
-  public void initializeRobotPositionBasedOnAutoRoutine(){
-    Command autoroutine = getAutonomousCommand();
-    String routineName = autoroutine.getName();
+  // public void initializeRobotPositionBasedOnAutoRoutine(){
+  //   Command autoroutine = getAutonomousCommand();
+  //   String routineName = autoroutine.getName();
 
-    if(robotPoseHasBeenSetFor.equals(routineName)) {
-      return; //already set for this routine
-    }
+  //   if(robotPoseHasBeenSetFor.equals(routineName)) {
+  //     return; //already set for this routine
+  //   }
 
-    getDrivebase().resetOdometry(Constants.Positions.getPositionForRobot(routineName));
-    robotPoseHasBeenSetFor = routineName;
-  }
+  //   getDrivebase().resetOdometry(Constants.Positions.getPositionForRobot(routineName));
+  //   robotPoseHasBeenSetFor = routineName;
+  // }
 }

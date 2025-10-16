@@ -76,15 +76,15 @@ public class Robot extends LoggedRobot {
     }
 
     theRobotContainer.periodic();
-    theRobotContainer.initializeRobotPositionBasedOnAutoRoutine();
+    //theRobotContainer.initializeRobotPositionBasedOnAutoRoutine();
     
   }
 
   @Override
   public void autonomousInit() {
-    theRobotContainer.initializeRobotPositionBasedOnAutoRoutine();
+    //theRobotContainer.initializeRobotPositionBasedOnAutoRoutine();
     theRobotContainer.setMotorBrake(true);
-    autoroutine = theRobotContainer.getAutonomousCommand();
+    //autoroutine = theRobotContainer.getAutonomousCommand();
 
     if (autoroutine != null) {
       autoroutine.schedule();
