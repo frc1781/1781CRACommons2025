@@ -4,6 +4,27 @@ import static edu.wpi.first.units.Units.Microseconds;
 import static edu.wpi.first.units.Units.Milliseconds;
 import static edu.wpi.first.units.Units.Seconds;
 
+import java.awt.Desktop;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Supplier;
+
+import org.littletonrobotics.junction.Logger;
+import org.photonvision.EstimatedRobotPose;
+import org.photonvision.PhotonCamera;
+import org.photonvision.PhotonPoseEstimator;
+import org.photonvision.PhotonPoseEstimator.PoseStrategy;
+import org.photonvision.PhotonUtils;
+import org.photonvision.simulation.PhotonCameraSim;
+import org.photonvision.simulation.SimCameraProperties;
+import org.photonvision.simulation.VisionSystemSim;
+import org.photonvision.targeting.PhotonPipelineResult;
+import org.photonvision.targeting.PhotonTrackedTarget;
+
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Matrix;
@@ -22,30 +43,8 @@ import edu.wpi.first.networktables.NetworkTablesJNI;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-import frc.robot.Robot;
-import java.awt.Desktop;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Supplier;
 import frc.robot.Constants;
-import org.littletonrobotics.junction.Logger;
-import org.photonvision.EstimatedRobotPose;
-import org.photonvision.PhotonCamera;
-import org.photonvision.PhotonPoseEstimator;
-import org.photonvision.PhotonTargetSortMode;
-import org.photonvision.PhotonPoseEstimator.PoseStrategy;
-import org.photonvision.PhotonUtils;
-import org.photonvision.simulation.PhotonCameraSim;
-import org.photonvision.simulation.SimCameraProperties;
-import org.photonvision.simulation.VisionSystemSim;
-import org.photonvision.targeting.PhotonPipelineResult;
-import org.photonvision.targeting.PhotonTrackedTarget;
-import org.photonvision.targeting.proto.PhotonTrackedTargetProto;
-
+import frc.robot.Robot;
 import swervelib.SwerveDrive;
 import swervelib.telemetry.SwerveDriveTelemetry;
 
@@ -361,7 +360,12 @@ public class Vision
     {
       BACK_CAM("back",
             new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(0), Units.degreesToRadians(180)),
-            new Translation3d(Units.inchesToMeters(-18.00), Units.inchesToMeters(1.0), Units.inchesToMeters(8.0)),
+            new Translation3d(Units.inchesToMeters(-13.75), Units.inchesToMeters(0), Units.inchesToMeters(6.5)),
+               VecBuilder.fill(4, 4, 8), VecBuilder.fill(0.5, 0.5, 1)),
+
+      FRONT_CAM("front",
+            new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(0), Units.degreesToRadians(0)),
+            new Translation3d(Units.inchesToMeters(13.75), Units.inchesToMeters(0), Units.inchesToMeters(6.5)),
                VecBuilder.fill(4, 4, 8), VecBuilder.fill(0.5, 0.5, 1));
   
       // RIGHT_CAM("RightApriltag",
