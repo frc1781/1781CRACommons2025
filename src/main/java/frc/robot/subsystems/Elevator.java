@@ -77,11 +77,11 @@ public class Elevator extends SubsystemBase{
         motorLeft.configure(leftMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
         positions.put(ElevatorState.POLE, new Double[]{730.0, minCarriageDistance});
-        positions.put(ElevatorState.SAFE, new Double[]{minFrameDistance, 80.0});
-        positions.put(ElevatorState.SAFE_CORAL, new Double[]{minFrameDistance, 40.0});
+        positions.put(ElevatorState.SAFE, new Double[]{minFrameDistance, 150.0});
+        positions.put(ElevatorState.SAFE_CORAL, new Double[]{minFrameDistance, 150.0});
         positions.put(ElevatorState.L1, new Double[]{0.0, 0.0});
         positions.put(ElevatorState.L2, new Double[]{minFrameDistance, 540.0});
-        positions.put(ElevatorState.L3, new Double[]{minFrameDistance, 80.0});
+        positions.put(ElevatorState.L3, new Double[]{35, 150.0});
         positions.put(ElevatorState.L3_LOW, new Double[]{minFrameDistance, 350.0});
         positions.put(ElevatorState.L4, new Double[]{maxFrameDistance, minCarriageDistance});
         positions.put(ElevatorState.BARGE_SCORE, new Double[]{maxFrameDistance, minCarriageDistance});
@@ -172,7 +172,7 @@ public class Elevator extends SubsystemBase{
         isIdle = false;
         double carriagePosition = getCarriagePosition();
         double framePosition = getFramePosition();
-        double tolerance = 80; // obviously subject to change
+        double tolerance = 20; // obviously subject to change
         Double[] desiredPosition = positions.get(desiredState);
         if (carriageTOF.isRangeValidRegularCheck() && Math.abs(desiredPosition[1] - carriagePosition) >= tolerance) {
             double ff = -feedforwardController.calculate(desiredPosition[1] - carriagePosition);
@@ -196,7 +196,7 @@ public class Elevator extends SubsystemBase{
     }
 
     public double clampDutyCycle(double dutyCycle) {
-        return EEUtil.clamp(-0.1, 0.1, dutyCycle);
+        return EEUtil.clamp(-0.2, 0.2, dutyCycle);
     }
 
     public enum ElevatorState {
