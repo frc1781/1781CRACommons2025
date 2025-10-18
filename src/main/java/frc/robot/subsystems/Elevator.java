@@ -36,11 +36,11 @@ public class Elevator extends SubsystemBase{
     private EEtimeOfFlight frameTOF;
     private EEtimeOfFlight carriageTOF;
 
-    public double minCarriageDistance = 0;
-    public double maxCarriageDistance = 680;
+    public double minCarriageDistance = 120;
+    public double maxCarriageDistance = 605;
 
     public double minFrameDistance = 0;
-    public double maxFrameDistance = 810; 
+    public double maxFrameDistance = 730; 
 
     private final double IDLE_DUTY_CYCLE = 0.02;
 
@@ -76,7 +76,7 @@ public class Elevator extends SubsystemBase{
         leftMotorConfig.smartCurrentLimit(30);
         motorLeft.configure(leftMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-        positions.put(ElevatorState.POLE, new Double[]{750.0, minCarriageDistance});
+        positions.put(ElevatorState.POLE, new Double[]{730.0, minCarriageDistance});
         positions.put(ElevatorState.SAFE, new Double[]{minFrameDistance, 80.0});
         positions.put(ElevatorState.SAFE_CORAL, new Double[]{minFrameDistance, 40.0});
         positions.put(ElevatorState.L1, new Double[]{0.0, 0.0});
@@ -120,7 +120,7 @@ public class Elevator extends SubsystemBase{
             elevatorDutyCycle = 0;
         }
 
-        //motorRight.set(elevatorDutyCycle);
+        motorRight.set(elevatorDutyCycle);
     }
 
     public void testPositiveDutyCycle() {
@@ -196,7 +196,7 @@ public class Elevator extends SubsystemBase{
     }
 
     public double clampDutyCycle(double dutyCycle) {
-        return EEUtil.clamp(0, 0.5, dutyCycle);
+        return EEUtil.clamp(-0.1, 0.1, dutyCycle);
     }
 
     public enum ElevatorState {
