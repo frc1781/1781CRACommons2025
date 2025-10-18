@@ -120,6 +120,16 @@ public class Elevator extends SubsystemBase{
             elevatorDutyCycle = 0;
         }
 
+        //motorRight.set(elevatorDutyCycle);
+    }
+
+    public void testPositiveDutyCycle() {
+        elevatorDutyCycle = 0.05;
+        motorRight.set(elevatorDutyCycle);
+    }
+
+    public void testNegativeDutyCycle() {
+        elevatorDutyCycle = -0.05;
         motorRight.set(elevatorDutyCycle);
     }
 
