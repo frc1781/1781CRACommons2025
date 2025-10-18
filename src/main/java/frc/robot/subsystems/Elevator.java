@@ -44,6 +44,8 @@ public class Elevator extends SubsystemBase{
 
     private final double IDLE_DUTY_CYCLE = 0.02;
 
+    private PIDController pidController = new PIDController(0.01, 0, 0);
+
     private ElevatorFeedforward feedforwardController = new ElevatorFeedforward
     (
         Constants.Elevator.ELEVATOR_KS,
@@ -81,7 +83,7 @@ public class Elevator extends SubsystemBase{
         positions.put(ElevatorState.SAFE_CORAL, new Double[]{minFrameDistance, 150.0});
         positions.put(ElevatorState.L1, new Double[]{0.0, 0.0});
         positions.put(ElevatorState.L2, new Double[]{minFrameDistance, 540.0});
-        positions.put(ElevatorState.L3, new Double[]{35, 150.0});
+        positions.put(ElevatorState.L3, new Double[]{60.0, 150.0});
         positions.put(ElevatorState.L3_LOW, new Double[]{minFrameDistance, 350.0});
         positions.put(ElevatorState.L4, new Double[]{maxFrameDistance, minCarriageDistance});
         positions.put(ElevatorState.BARGE_SCORE, new Double[]{maxFrameDistance, minCarriageDistance});
@@ -175,13 +177,13 @@ public class Elevator extends SubsystemBase{
         double tolerance = 20; // obviously subject to change
         Double[] desiredPosition = positions.get(desiredState);
         if (carriageTOF.isRangeValidRegularCheck() && Math.abs(desiredPosition[1] - carriagePosition) >= tolerance) {
-            double ff = -feedforwardController.calculate(desiredPosition[1] - carriagePosition);
+            double ff = -pidController.calculate(desiredPosition[1] - carriagePosition);
             Logger.recordOutput("Elevator/FFUnClamped", ff);
             double clampedResult = clampDutyCycle(ff);
             Logger.recordOutput("Elevator/FFClampedOutput", clampedResult);
             elevatorDutyCycle = clampedResult;
         } else if (frameTOF.isRangeValidRegularCheck() && Math.abs(desiredPosition[0] - framePosition) >= tolerance) {
-            double ff = feedforwardController.calculate(desiredPosition[0] - framePosition);
+            double ff = pidController.calculate(desiredPosition[0] - framePosition);
             Logger.recordOutput("Elevator/FFUnClamped", ff);
             double clampedResult = clampDutyCycle(ff);
             Logger.recordOutput("Elevator/FFClampedOutput", clampedResult);
