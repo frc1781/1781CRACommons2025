@@ -257,8 +257,6 @@ public class RobotContainer {
       //driverXbox.leftBumper().whileTrue(new ScoreL4(arm, drivebase));
       driverXbox.leftBumper().whileTrue(Commands.runOnce(elevator::testNegativeDutyCycle).repeatedly());
       driverXbox.rightBumper().whileTrue(Commands.runOnce(elevator::testPositiveDutyCycle).repeatedly());
-      
-     
       driverXbox.povUp().whileTrue(climber.ascend().repeatedly());
       driverXbox.povDown().whileTrue(climber.descend().repeatedly());
       driverXbox.povLeft()
