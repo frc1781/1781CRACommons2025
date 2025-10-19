@@ -48,6 +48,11 @@ public class Elevator extends SubsystemBase{
 
     private PIDController pidController = new PIDController(0.005, 0, 0);
     
+    //Velocity and acceleration units: measured in change in TOFvalues/second
+    //I would think we could move the frame up or down in one second or faster, so 
+    //velocity would be about 600 TOFvals/second, accelleration about 1200 TOFvals/second/second
+    //but I have no idea, so these proposed settings are low to see if it works, but again not sure
+    //about that.  The PID values could possibly be much lower if we are using feed foward
     private ProfiledPIDController frameController = new ProfiledPIDController(
       0.005,
       0,
