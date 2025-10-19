@@ -44,7 +44,7 @@ public class Elevator extends SubsystemBase{
 
     private final double IDLE_DUTY_CYCLE = 0.02;
 
-    private PIDController pidController = new PIDController(0.01, 0, 0);
+    private PIDController pidController = new PIDController(0.005, 0, 0);
 
     private ElevatorFeedforward feedforwardController = new ElevatorFeedforward
     (
