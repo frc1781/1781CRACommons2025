@@ -154,7 +154,7 @@ public class Elevator extends SubsystemBase{
         double desiredFramePosition = positions.get(desiredState)[0];
         double firstStageDiff = Math.abs(desiredFramePosition - framePosition);
         double secondStageDiff = Math.abs(desiredCarriagePosition - carriagePosition);
-        double tolerance = 70;
+        double tolerance = 70;  //CONSIDER TIGHTER TOLERANCE BUT WORKING NOW SO ???
         return firstStageDiff <= tolerance && secondStageDiff <= tolerance;
     }
 
