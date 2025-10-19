@@ -174,19 +174,21 @@ public class Elevator extends SubsystemBase{
         isIdle = false;
         double carriagePosition = getCarriagePosition();
         double framePosition = getFramePosition();
-        double tolerance = 20; // obviously subject to change
+        double tolerance = 10; 
         Double[] desiredPosition = positions.get(desiredState);
         if (carriageTOF.isRangeValidRegularCheck() && Math.abs(desiredPosition[1] - carriagePosition) >= tolerance) {
-            double ff = -pidController.calculate(desiredPosition[1] - carriagePosition);
-            Logger.recordOutput("Elevator/FFUnClamped", ff);
-            double clampedResult = clampDutyCycle(ff);
-            Logger.recordOutput("Elevator/FFClampedOutput", clampedResult);
+            //double calculatedDC = -pidController.calculate(desiredPosition[1] - carriagePosition);
+            double calculatedDC = -0.005 * (desiredPosition[1] - carriagePosition);
+            Logger.recordOutput("Elevator/calculatedDC", calculatedDC);
+            double clampedResult = clampDutyCycle(calculatedDC);
+            Logger.recordOutput("Elevator/clampedDC", clampedResult);
             elevatorDutyCycle = clampedResult;
         } else if (frameTOF.isRangeValidRegularCheck() && Math.abs(desiredPosition[0] - framePosition) >= tolerance) {
-            double ff = pidController.calculate(desiredPosition[0] - framePosition);
-            Logger.recordOutput("Elevator/FFUnClamped", ff);
-            double clampedResult = clampDutyCycle(ff);
-            Logger.recordOutput("Elevator/FFClampedOutput", clampedResult);
+            //double calculatedDC = pidController.calculate(desiredPosition[0] - framePosition);
+            double calculatedDC = 0.005 * (desiredPosition[0] - framePosition);
+            Logger.recordOutput("Elevator/calculatedDC", calculatedDC);
+            double clampedResult = clampDutyCycle(calculatedDC);
+            Logger.recordOutput("Elevator/clampedDC", clampedResult);
             elevatorDutyCycle = clampedResult;
         } else {
             elevatorDutyCycle = IDLE_DUTY_CYCLE;
