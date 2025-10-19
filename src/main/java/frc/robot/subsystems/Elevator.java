@@ -79,11 +79,11 @@ public class Elevator extends SubsystemBase{
         motorLeft.configure(leftMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
         positions.put(ElevatorState.POLE, new Double[]{maxFrameDistance, minCarriageDistance});
-        positions.put(ElevatorState.SAFE, new Double[]{minFrameDistance, 100.0});
-        positions.put(ElevatorState.SAFE_CORAL, new Double[]{minFrameDistance, 150.0});
-        positions.put(ElevatorState.L1, new Double[]{0.0, 0.0});
+        positions.put(ElevatorState.SAFE, new Double[]{minFrameDistance, minCarriageDistance});
+        positions.put(ElevatorState.SAFE_CORAL, new Double[]{minFrameDistance, minCarriageDistance});
+        // positions.put(ElevatorState.L1, new Double[]{0.0, 0.0});
         positions.put(ElevatorState.L2, new Double[]{minFrameDistance, 540.0});
-        positions.put(ElevatorState.L3, new Double[]{minFrameDistance, 150.0});
+        positions.put(ElevatorState.L3, new Double[]{minFrameDistance, minCarriageDistance});
         positions.put(ElevatorState.L3_LOW, new Double[]{minFrameDistance, 350.0});
         positions.put(ElevatorState.L4, new Double[]{maxFrameDistance, minCarriageDistance});
         positions.put(ElevatorState.BARGE_SCORE, new Double[]{maxFrameDistance, minCarriageDistance});
@@ -91,7 +91,7 @@ public class Elevator extends SubsystemBase{
         positions.put(ElevatorState.GROUND_COLLECT, new Double[]{0.0, 290.0});
         positions.put(ElevatorState.HIGH_ALGAE, new Double[]{minFrameDistance, minCarriageDistance});
         positions.put(ElevatorState.LOW_ALGAE, new Double[]{maxFrameDistance, 350.0});
-        positions.put(ElevatorState.SMART_ALGAE, new Double[]{minFrameDistance, 50.0});
+        positions.put(ElevatorState.SMART_ALGAE, new Double[]{minFrameDistance, minCarriageDistance});
     }
     
     public Command idle(BooleanSupplier isArmInsideElevator, BooleanSupplier clawCoralPresent) {
@@ -177,15 +177,15 @@ public class Elevator extends SubsystemBase{
         double tolerance = 20.0; 
         Double[] desiredPosition = positions.get(desiredState);
         if (carriageTOF.isRangeValidRegularCheck() && Math.abs(desiredPosition[1] - carriagePosition) >= tolerance) {
-            double calculatedDutyCycle = pidController.calculate(desiredPosition[1] - carriagePosition);
-            // double calculatedDutyCycle = -0.005 * (desiredPosition[1] - carriagePosition);
+            // double calculatedDutyCycle = pidController.calculate(desiredPosition[1] - carriagePosition);
+            double calculatedDutyCycle = -0.01 * (desiredPosition[1] - carriagePosition);
             Logger.recordOutput("Elevator/unclampedDC", calculatedDutyCycle);
             double clampedResult = clampDutyCycle(calculatedDutyCycle);
             Logger.recordOutput("Elevator/clampedDC", clampedResult);
             elevatorDutyCycle = clampedResult;
         } else if (frameTOF.isRangeValidRegularCheck() && Math.abs(desiredPosition[0] - framePosition) >= tolerance) {
-            double calculatedDutyCycle = pidController.calculate(desiredPosition[0] - framePosition);
-            // double calculatedDutyCycle = 0.005 * (desiredPosition[0] - framePosition);
+            // double calculatedDutyCycle = pidController.calculate(desiredPosition[0] - framePosition);
+            double calculatedDutyCycle = 0.01 * (desiredPosition[0] - framePosition);
             Logger.recordOutput("Elevator/unclampedDC", calculatedDutyCycle);
             double clampedResult = clampDutyCycle(calculatedDutyCycle);
             Logger.recordOutput("Elevator/clampedDC", clampedResult);
