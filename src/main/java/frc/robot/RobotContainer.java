@@ -354,7 +354,7 @@ public class RobotContainer {
       if (!isRobotInSegment(aprilTagAngle, drivebase.getPose())) {  //disregard too oblique angles
         continue;
       }
-      targetAprilTagID = currentTagID;  // -1 if none appropriate seen, still need to filter by only red or blue reef tags
+      targetAprilTagID = currentTagID;  // -1 if none appropriate seen
     }
   }
 
