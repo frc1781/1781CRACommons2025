@@ -382,11 +382,10 @@ public class RobotContainer {
   }
 
   public boolean isSafeForArmToMoveUp() {
-    double safeCarriagePosition = 60.0;
-    double safeArmAngle = 150;
+    double safeCarriagePosition = 150.0;
     // don't move up if just collected coral and the elevator has not moved up yet
     // to get the coral free from cradle
-    return elevator.getCarriagePosition() < safeCarriagePosition || arm.getPosition() < safeArmAngle;
+    return elevator.getCarriagePosition() < safeCarriagePosition;
   }
 
   public boolean isSafeForArmToMoveDown() {

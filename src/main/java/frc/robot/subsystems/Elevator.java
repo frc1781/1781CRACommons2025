@@ -36,13 +36,13 @@ public class Elevator extends SubsystemBase{
     private EEtimeOfFlight frameTOF;
     private EEtimeOfFlight carriageTOF;
 
-    public double minCarriageDistance = 150;
+    public double minCarriageDistance = 80;
     public double maxCarriageDistance = 605;
 
     public double minFrameDistance = 25;
     public double maxFrameDistance = 700; 
 
-    private final double IDLE_DUTY_CYCLE = 0.0;
+    private final double IDLE_DUTY_CYCLE = 0.02;
 
     private PIDController pidController = new PIDController(0.005, 0, 0);
 
@@ -80,7 +80,7 @@ public class Elevator extends SubsystemBase{
 
         positions.put(ElevatorState.POLE, new Double[]{maxFrameDistance, minCarriageDistance});
         positions.put(ElevatorState.SAFE, new Double[]{minFrameDistance, minCarriageDistance});
-        positions.put(ElevatorState.SAFE_CORAL, new Double[]{minFrameDistance, minCarriageDistance});
+        positions.put(ElevatorState.SAFE_CORAL, new Double[]{minFrameDistance, 120.0});
         // positions.put(ElevatorState.L1, new Double[]{0.0, 0.0});
         positions.put(ElevatorState.L2, new Double[]{minFrameDistance, 540.0});
         positions.put(ElevatorState.L3, new Double[]{minFrameDistance, minCarriageDistance});
@@ -182,17 +182,17 @@ public class Elevator extends SubsystemBase{
         Double[] desiredPosition = positions.get(desiredState);
          if (frameTOF.isRangeValidRegularCheck() && Math.abs(desiredPosition[0] - framePosition) >= frameTolerance) {
             // double calculatedDutyCycle = pidController.calculate(desiredPosition[0] - framePosition);
-            double calculatedDutyCycle = carriagePID * (desiredPosition[0] - framePosition) + (robotContainer.getSensation().clawCoralPresent()? 0.02 : 0.01);
+            double calculatedDutyCycle = carriagePID * (desiredPosition[0] - framePosition) + 0.01;
             Logger.recordOutput("Elevator/unclampedDC", calculatedDutyCycle);
-            System.out.println("difference in position for frame: " + (desiredPosition[0] - framePosition));
+            System.out.println("difference in position for frame: " +  desiredPosition[0] + " " + framePosition);
             double clampedResult = clampDutyCycle(calculatedDutyCycle);
             Logger.recordOutput("Elevator/clampedDC", clampedResult);
             elevatorDutyCycle = clampedResult;
         } else if (carriageTOF.isRangeValidRegularCheck() && Math.abs(desiredPosition[1] - carriagePosition) >= carriageTolerance) {
             // double calculatedDutyCycle = pidController.calculate(desiredPosition[1] - carriagePosition);
-            double calculatedDutyCycle = -framePID * (desiredPosition[1] - carriagePosition) + (robotContainer.getSensation().clawCoralPresent()? 0.02 : 0.01);
+            double calculatedDutyCycle = -framePID * (desiredPosition[1] - carriagePosition) + 0.01;
             Logger.recordOutput("Elevator/unclampedDC", calculatedDutyCycle);
-            System.out.println("difference in position for carriage: " + (desiredPosition[1] - carriagePosition));
+            System.out.println("difference in position for carriage: " +  desiredPosition[1] + " " + carriagePosition);
             double clampedResult = clampDutyCycle(calculatedDutyCycle);
             Logger.recordOutput("Elevator/clampedDC", clampedResult);
             elevatorDutyCycle = clampedResult;
@@ -207,7 +207,7 @@ public class Elevator extends SubsystemBase{
     }
 
     public double clampDutyCycle(double dutyCycle) {
-        return EEUtil.clamp(-0.8, 1, dutyCycle);
+        return EEUtil.clamp(-1, 1, dutyCycle);
     }
 
     public enum ElevatorState {
