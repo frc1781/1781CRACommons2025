@@ -40,7 +40,7 @@ public class Conveyor extends SubsystemBase {
             } else {
                 dc = 0;
             }
-            motor.set(0.0); //TURNED OFF FOR A SECOND dc);
+            motor.set(dc);
         }, this);
     }         
 }

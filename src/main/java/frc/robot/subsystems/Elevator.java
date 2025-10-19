@@ -39,7 +39,7 @@ public class Elevator extends SubsystemBase{
     public double minCarriageDistance = 150;
     public double maxCarriageDistance = 605;
 
-    public double minFrameDistance = 0;
+    public double minFrameDistance = 25;
     public double maxFrameDistance = 700; 
 
     private final double IDLE_DUTY_CYCLE = 0.0;
@@ -164,29 +164,35 @@ public class Elevator extends SubsystemBase{
             return;
         }
 
-        // if (positions.get(desiredState)[0] >= 1 && !robotContainer.getSensation().clawCoralPresent()) {
-        //     System.out.println("Elevator cannot reach state " + desiredState + " because coral is not present in claw");
-        //     System.out.println(positions.get(desiredState)[0]);
-        //     System.out.println(robotContainer.getSensation().clawCoralPresent());
-        //     return;
-        // }
+        if (positions.get(desiredState)[0] > minFrameDistance && !robotContainer.getSensation().clawCoralPresent()) {
+            System.out.println("Elevator should not reach state " + desiredState + " because coral is not present in claw");
+            System.out.println(positions.get(desiredState)[0]);
+            System.out.println(robotContainer.getSensation().clawCoralPresent());
+            return;
+        }
 
         isIdle = false;
         double carriagePosition = getCarriagePosition();
         double framePosition = getFramePosition();
-        double tolerance = 20.0; 
+        double carriageTolerance = 20.0;
+        double frameTolerance = 40.0; 
+        double carriagePID = 0.005;
+        double framePID = 0.01;
+
         Double[] desiredPosition = positions.get(desiredState);
-        if (carriageTOF.isRangeValidRegularCheck() && Math.abs(desiredPosition[1] - carriagePosition) >= tolerance) {
-            // double calculatedDutyCycle = pidController.calculate(desiredPosition[1] - carriagePosition);
-            double calculatedDutyCycle = -0.01 * (desiredPosition[1] - carriagePosition);
+         if (frameTOF.isRangeValidRegularCheck() && Math.abs(desiredPosition[0] - framePosition) >= frameTolerance) {
+            // double calculatedDutyCycle = pidController.calculate(desiredPosition[0] - framePosition);
+            double calculatedDutyCycle = carriagePID * (desiredPosition[0] - framePosition) + (robotContainer.getSensation().clawCoralPresent()? 0.02 : 0.01);
             Logger.recordOutput("Elevator/unclampedDC", calculatedDutyCycle);
+            System.out.println("difference in position for frame: " + (desiredPosition[0] - framePosition));
             double clampedResult = clampDutyCycle(calculatedDutyCycle);
             Logger.recordOutput("Elevator/clampedDC", clampedResult);
             elevatorDutyCycle = clampedResult;
-        } else if (frameTOF.isRangeValidRegularCheck() && Math.abs(desiredPosition[0] - framePosition) >= tolerance) {
-            // double calculatedDutyCycle = pidController.calculate(desiredPosition[0] - framePosition);
-            double calculatedDutyCycle = 0.01 * (desiredPosition[0] - framePosition);
+        } else if (carriageTOF.isRangeValidRegularCheck() && Math.abs(desiredPosition[1] - carriagePosition) >= carriageTolerance) {
+            // double calculatedDutyCycle = pidController.calculate(desiredPosition[1] - carriagePosition);
+            double calculatedDutyCycle = -framePID * (desiredPosition[1] - carriagePosition) + (robotContainer.getSensation().clawCoralPresent()? 0.02 : 0.01);
             Logger.recordOutput("Elevator/unclampedDC", calculatedDutyCycle);
+            System.out.println("difference in position for carriage: " + (desiredPosition[1] - carriagePosition));
             double clampedResult = clampDutyCycle(calculatedDutyCycle);
             Logger.recordOutput("Elevator/clampedDC", clampedResult);
             elevatorDutyCycle = clampedResult;
