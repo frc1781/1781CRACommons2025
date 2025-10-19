@@ -177,15 +177,15 @@ public class Elevator extends SubsystemBase{
         double tolerance = 10; 
         Double[] desiredPosition = positions.get(desiredState);
         if (carriageTOF.isRangeValidRegularCheck() && Math.abs(desiredPosition[1] - carriagePosition) >= tolerance) {
-            //double calculatedDC = -pidController.calculate(desiredPosition[1] - carriagePosition);
-            double calculatedDC = -0.005 * (desiredPosition[1] - carriagePosition);
+            //double pidDC = pidController.calculate(carriagePosition, desiredPosition[1]);
+            double calculatedDC = -0.005 * (desiredPosition[1] - carriagePosition); //simple P only pid no need to call function
             Logger.recordOutput("Elevator/calculatedDC", calculatedDC);
             double clampedResult = clampDutyCycle(calculatedDC);
             Logger.recordOutput("Elevator/clampedDC", clampedResult);
             elevatorDutyCycle = clampedResult;
         } else if (frameTOF.isRangeValidRegularCheck() && Math.abs(desiredPosition[0] - framePosition) >= tolerance) {
-            //double calculatedDC = pidController.calculate(desiredPosition[0] - framePosition);
-            double calculatedDC = 0.005 * (desiredPosition[0] - framePosition);
+            //double pidDC = pidController.calculate(framePosition, desiredPosition[0]);
+            double calculatedDC = 0.005 * (desiredPosition[0] - framePosition); //simple P only pid no need to call function
             Logger.recordOutput("Elevator/calculatedDC", calculatedDC);
             double clampedResult = clampDutyCycle(calculatedDC);
             Logger.recordOutput("Elevator/clampedDC", clampedResult);
