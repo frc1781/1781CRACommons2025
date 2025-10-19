@@ -259,8 +259,8 @@ public class RobotContainer {
       //driverXbox.b().onTrue(new Collecting(elevator, arm, sensation));
       driverXbox.y().onTrue(new L4(elevator, arm));
       //driverXbox.leftBumper().whileTrue(new ScoreL4(arm, drivebase));
-      
-     
+      driverXbox.leftBumper().whileTrue(Commands.runOnce(elevator::testNegativeDutyCycle).repeatedly());
+      driverXbox.rightBumper().whileTrue(Commands.runOnce(elevator::testPositiveDutyCycle).repeatedly());
       driverXbox.povUp().whileTrue(climber.ascend().repeatedly());
       driverXbox.povDown().whileTrue(climber.descend().repeatedly());
       driverXbox.povLeft()
@@ -422,7 +422,8 @@ public class RobotContainer {
     }
     
     if(isElevatorUp()){
-      return () -> driverXbox.getLeftX() * -0.1;
+      //return () -> driverXbox.getLeftX() * -0.1;
+      return () -> driverXbox.getLeftX() * -0.075;
     }
     return () -> driverXbox.getLeftX() * -1;
   }
@@ -436,8 +437,9 @@ public class RobotContainer {
       return () -> 0;
     }
     if(isElevatorUp()){
-      return () -> driverXbox.getLeftY() * -0.1;
-    }
+    //return () -> driverXbox.getLeftX() * -0.1;
+    return () -> driverXbox.getLeftX() * -0.075;    
+  }
     return () -> driverXbox.getLeftY() * -1;
   }
 
