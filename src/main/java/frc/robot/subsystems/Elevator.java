@@ -14,6 +14,8 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -32,7 +34,7 @@ public class Elevator extends SubsystemBase{
     private SparkMax motorLeft;
     private double elevatorDutyCycle;
     private RobotContainer robotContainer;
-
+    private Double[] desiredPosition = new Double[2];
     private EEtimeOfFlight frameTOF;
     private EEtimeOfFlight carriageTOF;
 
@@ -45,6 +47,20 @@ public class Elevator extends SubsystemBase{
     private final double IDLE_DUTY_CYCLE = 0.02;
 
     private PIDController pidController = new PIDController(0.005, 0, 0);
+    
+    private ProfiledPIDController frameController = new ProfiledPIDController(
+      0.005,
+      0,
+      0,
+      new TrapezoidProfile.Constraints(100, 10)
+    );
+
+    private ProfiledPIDController carriageController = new ProfiledPIDController(
+        0.005,
+        0,
+        0,
+        new TrapezoidProfile.Constraints(100, 10)
+      );
 
     private ElevatorFeedforward feedforwardController = new ElevatorFeedforward
     (
@@ -59,6 +75,8 @@ public class Elevator extends SubsystemBase{
     public Elevator(RobotContainer robotContainer) {
         this.robotContainer = robotContainer;
         elevatorDutyCycle = clampDutyCycle(0);
+        desiredPosition[0] = 0.0;
+        desiredPosition[1] = 300.0; //aproximate starting position, not used anyway
 
         frameTOF = new EEtimeOfFlight(Constants.Elevator.FRAME_TOF, 20);
         carriageTOF = new EEtimeOfFlight(Constants.Elevator.CARRIAGE_TOF, 20);
@@ -175,17 +193,27 @@ public class Elevator extends SubsystemBase{
         double carriagePosition = getCarriagePosition();
         double framePosition = getFramePosition();
         double tolerance = 10; 
-        Double[] desiredPosition = positions.get(desiredState);
+        Double[] newDesiredPosition = positions.get(desiredState);
         if (carriageTOF.isRangeValidRegularCheck() && Math.abs(desiredPosition[1] - carriagePosition) >= tolerance) {
+            if (newDesiredPosition[1] != desiredPosition[1]) {
+                desiredPosition[1] = newDesiredPosition[1];
+                carriageController.setGoal(desiredPosition[1]);
+            }
             //double pidDC = pidController.calculate(carriagePosition, desiredPosition[1]);
-            double calculatedDC = -0.005 * (desiredPosition[1] - carriagePosition); //simple P only pid no need to call function
+            double calculatedDC = -carriageController.calculate(carriagePosition);
+           // double calculatedDC = -0.005 * (desiredPosition[1] - carriagePosition); //simple P only pid no need to call function
             Logger.recordOutput("Elevator/calculatedDC", calculatedDC);
             double clampedResult = clampDutyCycle(calculatedDC);
             Logger.recordOutput("Elevator/clampedDC", clampedResult);
             elevatorDutyCycle = clampedResult;
         } else if (frameTOF.isRangeValidRegularCheck() && Math.abs(desiredPosition[0] - framePosition) >= tolerance) {
+            if (newDesiredPosition[0] != desiredPosition[0]) {
+                desiredPosition[0] = newDesiredPosition[0];
+                frameController.setGoal(desiredPosition[0]);
+            }
             //double pidDC = pidController.calculate(framePosition, desiredPosition[0]);
-            double calculatedDC = 0.005 * (desiredPosition[0] - framePosition); //simple P only pid no need to call function
+            double calculatedDC = frameController.calculate(framePosition);
+            //double calculatedDC = 0.005 * (desiredPosition[0] - framePosition); //simple P only pid no need to call function
             Logger.recordOutput("Elevator/calculatedDC", calculatedDC);
             double clampedResult = clampDutyCycle(calculatedDC);
             Logger.recordOutput("Elevator/clampedDC", clampedResult);
