@@ -193,14 +193,10 @@ public class Elevator extends SubsystemBase{
         } else {
             elevatorDutyCycle = IDLE_DUTY_CYCLE;
         }
-
-        // if (((!robotContainer.isSafeForElevatorCarriagetoMove()) && Math.abs(carriagePosition - desiredPosition[1]) > 100)) { //|| !robotController.driveController.isSafeForElevatorStage2toMove()) && Math.abs(secondStagePosition - desiredPosition[1]) > 100) {
-        //     elevatorDutyCycle = IDLE_DUTY_CYCLE;
-        // }
     }
 
     public double clampDutyCycle(double dutyCycle) {
-        return EEUtil.clamp(-0.2, 0.2, dutyCycle);
+        return EEUtil.clamp(-0.2, 0.2, dutyCycle);  //needs to be greatly increased but be carefull
     }
 
     public enum ElevatorState {
