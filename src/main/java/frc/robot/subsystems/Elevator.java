@@ -36,15 +36,15 @@ public class Elevator extends SubsystemBase{
     private EEtimeOfFlight frameTOF;
     private EEtimeOfFlight carriageTOF;
 
-    public double minCarriageDistance = 120;
+    public double minCarriageDistance = 150;
     public double maxCarriageDistance = 605;
 
     public double minFrameDistance = 0;
-    public double maxFrameDistance = 730; 
+    public double maxFrameDistance = 700; 
 
-    private final double IDLE_DUTY_CYCLE = 0.02;
+    private final double IDLE_DUTY_CYCLE = 0.0;
 
-    private PIDController pidController = new PIDController(0.01, 0, 0);
+    private PIDController pidController = new PIDController(0.005, 0, 0);
 
     private ElevatorFeedforward feedforwardController = new ElevatorFeedforward
     (
@@ -78,12 +78,12 @@ public class Elevator extends SubsystemBase{
         leftMotorConfig.smartCurrentLimit(30);
         motorLeft.configure(leftMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-        positions.put(ElevatorState.POLE, new Double[]{730.0, minCarriageDistance});
-        positions.put(ElevatorState.SAFE, new Double[]{minFrameDistance, 150.0});
+        positions.put(ElevatorState.POLE, new Double[]{maxFrameDistance, minCarriageDistance});
+        positions.put(ElevatorState.SAFE, new Double[]{minFrameDistance, 100.0});
         positions.put(ElevatorState.SAFE_CORAL, new Double[]{minFrameDistance, 150.0});
         positions.put(ElevatorState.L1, new Double[]{0.0, 0.0});
         positions.put(ElevatorState.L2, new Double[]{minFrameDistance, 540.0});
-        positions.put(ElevatorState.L3, new Double[]{60.0, 150.0});
+        positions.put(ElevatorState.L3, new Double[]{minFrameDistance, 150.0});
         positions.put(ElevatorState.L3_LOW, new Double[]{minFrameDistance, 350.0});
         positions.put(ElevatorState.L4, new Double[]{maxFrameDistance, minCarriageDistance});
         positions.put(ElevatorState.BARGE_SCORE, new Double[]{maxFrameDistance, minCarriageDistance});
@@ -126,12 +126,12 @@ public class Elevator extends SubsystemBase{
     }
 
     public void testPositiveDutyCycle() {
-        elevatorDutyCycle = 0.05;
+        elevatorDutyCycle = 0.35;
         motorRight.set(elevatorDutyCycle);
     }
 
     public void testNegativeDutyCycle() {
-        elevatorDutyCycle = -0.05;
+        elevatorDutyCycle = -0.35;
         motorRight.set(elevatorDutyCycle);
     }
 
@@ -164,31 +164,34 @@ public class Elevator extends SubsystemBase{
             return;
         }
 
-        if (positions.get(desiredState)[0] >= 1 && !robotContainer.getSensation().clawCoralPresent()) {
-            System.out.println("Elevator cannot reach state " + desiredState + " because coral is not present in claw");
-            System.out.println(positions.get(desiredState)[0]);
-            System.out.println(robotContainer.getSensation().clawCoralPresent());
-            return;
-        }
+        // if (positions.get(desiredState)[0] >= 1 && !robotContainer.getSensation().clawCoralPresent()) {
+        //     System.out.println("Elevator cannot reach state " + desiredState + " because coral is not present in claw");
+        //     System.out.println(positions.get(desiredState)[0]);
+        //     System.out.println(robotContainer.getSensation().clawCoralPresent());
+        //     return;
+        // }
 
         isIdle = false;
         double carriagePosition = getCarriagePosition();
         double framePosition = getFramePosition();
-        double tolerance = 20; // obviously subject to change
+        double tolerance = 20.0; 
         Double[] desiredPosition = positions.get(desiredState);
         if (carriageTOF.isRangeValidRegularCheck() && Math.abs(desiredPosition[1] - carriagePosition) >= tolerance) {
-            double ff = -pidController.calculate(desiredPosition[1] - carriagePosition);
-            Logger.recordOutput("Elevator/FFUnClamped", ff);
-            double clampedResult = clampDutyCycle(ff);
-            Logger.recordOutput("Elevator/FFClampedOutput", clampedResult);
+            double calculatedDutyCycle = pidController.calculate(desiredPosition[1] - carriagePosition);
+            // double calculatedDutyCycle = -0.005 * (desiredPosition[1] - carriagePosition);
+            Logger.recordOutput("Elevator/unclampedDC", calculatedDutyCycle);
+            double clampedResult = clampDutyCycle(calculatedDutyCycle);
+            Logger.recordOutput("Elevator/clampedDC", clampedResult);
             elevatorDutyCycle = clampedResult;
         } else if (frameTOF.isRangeValidRegularCheck() && Math.abs(desiredPosition[0] - framePosition) >= tolerance) {
-            double ff = pidController.calculate(desiredPosition[0] - framePosition);
-            Logger.recordOutput("Elevator/FFUnClamped", ff);
-            double clampedResult = clampDutyCycle(ff);
-            Logger.recordOutput("Elevator/FFClampedOutput", clampedResult);
+            double calculatedDutyCycle = pidController.calculate(desiredPosition[0] - framePosition);
+            // double calculatedDutyCycle = 0.005 * (desiredPosition[0] - framePosition);
+            Logger.recordOutput("Elevator/unclampedDC", calculatedDutyCycle);
+            double clampedResult = clampDutyCycle(calculatedDutyCycle);
+            Logger.recordOutput("Elevator/clampedDC", clampedResult);
             elevatorDutyCycle = clampedResult;
         } else {
+            pidController.reset();
             elevatorDutyCycle = IDLE_DUTY_CYCLE;
         }
 
@@ -198,7 +201,7 @@ public class Elevator extends SubsystemBase{
     }
 
     public double clampDutyCycle(double dutyCycle) {
-        return EEUtil.clamp(-0.2, 0.2, dutyCycle);
+        return EEUtil.clamp(-0.8, 1, dutyCycle);
     }
 
     public enum ElevatorState {
