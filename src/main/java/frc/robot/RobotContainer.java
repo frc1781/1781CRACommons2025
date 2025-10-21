@@ -187,7 +187,11 @@ public class RobotContainer {
   }
 
   public void periodic() {
-    lights.run(Lights.Colors.RED, Lights.Patterns.TRAVEL);
+   if(isRed()) {
+     lights.run(Lights.Colors.RED, Lights.Patterns.TRAVEL);
+   } else {
+    lights.run(Lights.Colors.BLUE, Lights.Patterns.TRAVEL);
+   }
     SmartDashboard.getNumber("Target Apriltag", targetAprilTagID);
     Logger.recordOutput("RobotContainer/isSafeForArmToMoveUp", isSafeForArmToMoveUp());
     Logger.recordOutput("RobotContainer/isSafeForArmToMoveDown", isSafeForArmToMoveDown());
