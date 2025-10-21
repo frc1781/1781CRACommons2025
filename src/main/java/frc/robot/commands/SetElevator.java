@@ -38,7 +38,7 @@ public class SetElevator extends Command
   @Override
   public void initialize()
   {
-
+    
   }
 
   @Override
@@ -51,6 +51,11 @@ public class SetElevator extends Command
   @Override
   public boolean isFinished()
   {
-    return elevator.hasReachedPosition(desiredState);
+    return elevator.isFinishedSettingElevator(desiredState);
+  }
+
+  @Override
+  public void end(boolean interrupted) {
+    Logger.recordOutput("Elevator/CurrentCommand", "SetElevator: " + desiredState.name());
   }
 }

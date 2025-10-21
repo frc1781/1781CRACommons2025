@@ -751,6 +751,7 @@ public class SwerveSubsystem extends SubsystemBase
         inputSpeeds.vxMetersPerSecond = EEUtil.clamp(-0.5, 0.5, 0.008 * (avgDist - 295));
       }
       swerveDrive.drive(inputSpeeds);
+      System.out.println();
       Logger.recordOutput("Drive/CurrentCommand", "MoveToPositionToScore");
     }
 
@@ -763,7 +764,7 @@ public class SwerveSubsystem extends SubsystemBase
     @Override
     public void end(boolean interrupted)
     {
-      Logger.recordOutput("Drive/CurrentCommand", "EndedMoveToPositionToScore");
+      Logger.recordOutput("Drive/CurrentCommand", "EndedPositionToScore");
     }
   }
 

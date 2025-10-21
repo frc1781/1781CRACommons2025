@@ -70,7 +70,11 @@ public class Arm extends SubsystemBase {
         return new InstantCommand(() -> {
                 //the only time it is not safe to move up is when the arm is in collect with a coral and the elevator is down and just collected, needs to move up a bit first
             if (isSafeForArmToMoveUp.getAsBoolean() || funkyPositionConversionFromActualToState(getPosition()) < ArmState.L3.getPosition()) {
-                new SetArm(this, ArmState.START_MID).schedule();
+                if (!clawCoralPresent.getAsBoolean()) {
+                    new SetArm(this, ArmState.COLLECT).schedule();
+                } else {
+                    new SetArm(this, ArmState.START_MID).schedule();
+                }
             }
         }, this);
     }

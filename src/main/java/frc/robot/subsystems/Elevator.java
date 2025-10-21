@@ -27,10 +27,9 @@ import frc.robot.commands.SetElevator;
 public class Elevator extends SubsystemBase{
 
     private boolean isIdle = true;
-    private ElevatorState currentState;
     private SparkMax motorRight;
     private SparkMax motorLeft;
-    private double elevatorDutyCycle;
+    public double elevatorDutyCycle;
     private RobotContainer robotContainer;
 
     private EEtimeOfFlight frameTOF;
@@ -42,17 +41,14 @@ public class Elevator extends SubsystemBase{
     public double minFrameDistance = 25;
     public double maxFrameDistance = 700; 
 
+    double carriageTolerance = 20.0;
+    double frameTolerance = 40.0; 
+    double carriagePID = 0.005;
+    double framePID = 0.01;
+
     private final double IDLE_DUTY_CYCLE = 0.02;
 
     private PIDController pidController = new PIDController(0.005, 0, 0);
-
-    private ElevatorFeedforward feedforwardController = new ElevatorFeedforward
-    (
-        Constants.Elevator.ELEVATOR_KS,
-        Constants.Elevator.ELEVATOR_KG,
-        Constants.Elevator.ELEVATOR_KV,
-        Constants.Elevator.ELEVATOR_KA
-    );
     
     private final HashMap<ElevatorState, Double[]> positions = new HashMap<>();
     
@@ -88,7 +84,7 @@ public class Elevator extends SubsystemBase{
         positions.put(ElevatorState.L4, new Double[]{maxFrameDistance, minCarriageDistance});
         positions.put(ElevatorState.BARGE_SCORE, new Double[]{maxFrameDistance, minCarriageDistance});
         positions.put(ElevatorState.COLLECT_LOW, new Double[]{minFrameDistance, 257.0});
-        positions.put(ElevatorState.GROUND_COLLECT, new Double[]{0.0, 290.0});
+        positions.put(ElevatorState.GROUND_COLLECT, new Double[]{minFrameDistance, 290.0});
         positions.put(ElevatorState.HIGH_ALGAE, new Double[]{minFrameDistance, minCarriageDistance});
         positions.put(ElevatorState.LOW_ALGAE, new Double[]{maxFrameDistance, 350.0});
         positions.put(ElevatorState.SMART_ALGAE, new Double[]{minFrameDistance, minCarriageDistance});
@@ -96,14 +92,20 @@ public class Elevator extends SubsystemBase{
     
     public Command idle(BooleanSupplier isArmInsideElevator, BooleanSupplier clawCoralPresent) {
         return new InstantCommand(() -> {
+            Logger.recordOutput("Elevator/CurrentCommand", "IDLE");
             if(isArmInsideElevator.getAsBoolean()) {
-                Logger.recordOutput("Elevator/CurrentCommand", "Waiting for arm to clear");
+                Logger.recordOutput("Elevator/CurrentCommand", "Waiting for arm to clear (IDLE)");
                 elevatorDutyCycle = IDLE_DUTY_CYCLE;
             } else if (clawCoralPresent.getAsBoolean() && !hasReachedPosition(ElevatorState.L4)) {
                 new SetElevator(this, ElevatorState.L3).schedule();
-            } else {
+                Logger.recordOutput("Elevator/CurrentCommand", "moving to L3 for coral");
+            } else if (!clawCoralPresent.getAsBoolean()) {
                 new SetElevator(this, ElevatorState.SAFE_CORAL).schedule();
+                Logger.recordOutput("Elevator/CurrentCommand", "moving to Precollect for collecting");
+            } else {
+                elevatorDutyCycle = IDLE_DUTY_CYCLE;
             }
+            
         }, this);
     }
 
@@ -115,23 +117,8 @@ public class Elevator extends SubsystemBase{
         Logger.recordOutput("Elevator/CarriageTOFvalid", carriageTOF.isRangeValidRegularCheck());
         Logger.recordOutput("Elevator/ElevatorMotorEncoderCounts", motorRight.getEncoder().getPosition());
         Logger.recordOutput("Elevator/DutyCycle", elevatorDutyCycle);
-        Logger.recordOutput("Elevator/CurrentState", currentState);
         Logger.recordOutput("Elevator/hasReachedSafePosition", hasReachedPosition(ElevatorState.SAFE));
-        
-        if (currentState == ElevatorState.STOP) {
-            elevatorDutyCycle = 0;
-        }
 
-        motorRight.set(elevatorDutyCycle);
-    }
-
-    public void testPositiveDutyCycle() {
-        elevatorDutyCycle = 0.35;
-        motorRight.set(elevatorDutyCycle);
-    }
-
-    public void testNegativeDutyCycle() {
-        elevatorDutyCycle = -0.35;
         motorRight.set(elevatorDutyCycle);
     }
 
@@ -158,6 +145,21 @@ public class Elevator extends SubsystemBase{
         return firstStageDiff <= tolerance && secondStageDiff <= tolerance;
     }
 
+    public boolean isFinishedSettingElevator(ElevatorState desiredState) {
+        if(desiredState == ElevatorState.STOP) {
+            return true;
+        }
+        double carriagePosition = getCarriagePosition();
+        double framePosition = getFramePosition();
+        double desiredCarriagePosition = positions.get(desiredState)[1];
+        double desiredFramePosition = positions.get(desiredState)[0];
+        double frameDiff = Math.abs(desiredFramePosition - framePosition);
+        double carriageDiff = Math.abs(desiredCarriagePosition - carriagePosition);
+        boolean ifTest = (frameDiff <= frameTolerance) && 
+        (carriageDiff <= carriageTolerance || desiredFramePosition > minFrameDistance + 20); //advanced logic
+        return ifTest;
+    }
+
     public void setElevatorPosition(ElevatorState desiredState) {
 
         if(desiredState == ElevatorState.STOP) {
@@ -174,27 +176,21 @@ public class Elevator extends SubsystemBase{
         isIdle = false;
         double carriagePosition = getCarriagePosition();
         double framePosition = getFramePosition();
-        double carriageTolerance = 20.0;
-        double frameTolerance = 40.0; 
-        double carriagePID = 0.005;
-        double framePID = 0.01;
+        
 
         Double[] desiredPosition = positions.get(desiredState);
          if (frameTOF.isRangeValidRegularCheck() && Math.abs(desiredPosition[0] - framePosition) >= frameTolerance) {
             // double calculatedDutyCycle = pidController.calculate(desiredPosition[0] - framePosition);
             double calculatedDutyCycle = carriagePID * (desiredPosition[0] - framePosition) + 0.01;
-            Logger.recordOutput("Elevator/unclampedDC", calculatedDutyCycle);
             System.out.println("difference in position for frame: " +  desiredPosition[0] + " " + framePosition);
             double clampedResult = clampDutyCycle(calculatedDutyCycle);
-            Logger.recordOutput("Elevator/clampedDC", clampedResult);
             elevatorDutyCycle = clampedResult;
-        } else if (carriageTOF.isRangeValidRegularCheck() && Math.abs(desiredPosition[1] - carriagePosition) >= carriageTolerance) {
+        } 
+        else if (desiredPosition[0] < minFrameDistance + 20 && carriageTOF.isRangeValidRegularCheck() && Math.abs(desiredPosition[1] - carriagePosition) >= carriageTolerance) {
             // double calculatedDutyCycle = pidController.calculate(desiredPosition[1] - carriagePosition);
             double calculatedDutyCycle = -framePID * (desiredPosition[1] - carriagePosition) + 0.01;
-            Logger.recordOutput("Elevator/unclampedDC", calculatedDutyCycle);
             System.out.println("difference in position for carriage: " +  desiredPosition[1] + " " + carriagePosition);
             double clampedResult = clampDutyCycle(calculatedDutyCycle);
-            Logger.recordOutput("Elevator/clampedDC", clampedResult);
             elevatorDutyCycle = clampedResult;
         } else {
             pidController.reset();

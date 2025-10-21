@@ -31,5 +31,10 @@ public class SetAndHoldArm extends Command {
     public boolean isFinished() {  //hold this command open until interrupted
         return false;
     }
+
+    @Override
+    public void end(boolean interrupted) {
+        Logger.recordOutput("Arm/CurrentCommand", "FinishedSetArm: " + desiredState.name());
+    }
     
 }

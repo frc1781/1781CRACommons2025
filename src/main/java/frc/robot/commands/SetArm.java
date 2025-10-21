@@ -31,5 +31,10 @@ public class SetArm extends Command {
     public boolean isFinished() {
         return arm.matchesState();
     }
+
+    @Override
+    public void end(boolean interrupted) {
+        Logger.recordOutput("Arm/CurrentCommand", "FinishedSetArm: " + desiredState.name());
+    }
     
 }

@@ -15,7 +15,7 @@ public class ScoreLow extends SequentialCommandGroup {
         this.swervedrive = swervedrive;
         addRequirements(arm, swervedrive);
         addCommands(
-            new SetAndHoldArm(arm, Arm.ArmState.SCORE_MID).alongWith(new WaitCommand(1).andThen(new MoveBack(swervedrive)))
+            new SetAndHoldArm(arm, Arm.ArmState.SCORE_MID).alongWith(new WaitCommand(0.5).andThen(new MoveBack(swervedrive)))
             // makes sure to HOLD the arm position while moving back (bad code, we can do it later)
         );
     }

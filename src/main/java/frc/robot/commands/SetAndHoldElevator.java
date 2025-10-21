@@ -53,4 +53,9 @@ public class SetAndHoldElevator extends Command
   {
     return false;
   }
+
+  @Override
+  public void end(boolean interrupted) {
+    Logger.recordOutput("Elevator/CurrentCommand", "FinishedSetElevator: " + desiredState.name());
+  }
 }
