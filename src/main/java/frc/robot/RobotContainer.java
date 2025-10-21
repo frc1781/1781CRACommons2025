@@ -187,6 +187,7 @@ public class RobotContainer {
   }
 
   public void periodic() {
+    lights.run(Lights.Colors.RED, Lights.Patterns.TRAVEL);
     SmartDashboard.getNumber("Target Apriltag", targetAprilTagID);
     Logger.recordOutput("RobotContainer/isSafeForArmToMoveUp", isSafeForArmToMoveUp());
     Logger.recordOutput("RobotContainer/isSafeForArmToMoveDown", isSafeForArmToMoveDown());
@@ -218,7 +219,7 @@ public class RobotContainer {
     // -----------------------------------------------------------------------Default Commands-----------------------------------------------------------------------
     drivebase.setDefaultCommand(driveFieldOrientedAngularVelocity);
     conveyor.setDefaultCommand(conveyor.clearCoral(coralPresent, elevator));
-    lights.setDefaultCommand(lights.set(Lights.Special.OFF));
+    lights.setDefaultCommand(lights.set(Lights.Colors.GREEN, Lights.Patterns.MARCH));
     elevator.setDefaultCommand(elevator.idle(this::isArmInsideElevator, sensation::clawCoralPresent).repeatedly());
     sensation.setDefaultCommand(Commands.idle(sensation));
     arm.setDefaultCommand(

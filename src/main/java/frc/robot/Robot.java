@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.subsystems.Lights;
 import edu.wpi.first.wpilibj.PowerDistribution;
 
 import java.sql.Driver;
@@ -69,6 +70,7 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void disabledPeriodic() {
+    //robotContainer().getLights().run(Lights.Colors.GREEN, Lights.Patterns.MARCH);
     if (disabledTimer.hasElapsed(Constants.DrivebaseConstants.WHEEL_LOCK_TIME)) {
       theRobotContainer.setMotorBrake(false);
       disabledTimer.stop();

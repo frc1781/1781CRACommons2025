@@ -36,7 +36,7 @@ public class Elevator extends SubsystemBase{
     private EEtimeOfFlight frameTOF;
     private EEtimeOfFlight carriageTOF;
 
-    public double minCarriageDistance = 80;
+    public double minCarriageDistance = 115;
     public double maxCarriageDistance = 605;
 
     public double minFrameDistance = 25;
@@ -87,7 +87,7 @@ public class Elevator extends SubsystemBase{
         positions.put(ElevatorState.L3_LOW, new Double[]{minFrameDistance, 350.0});
         positions.put(ElevatorState.L4, new Double[]{maxFrameDistance, minCarriageDistance});
         positions.put(ElevatorState.BARGE_SCORE, new Double[]{maxFrameDistance, minCarriageDistance});
-        positions.put(ElevatorState.COLLECT_LOW, new Double[]{minFrameDistance, 340.0});
+        positions.put(ElevatorState.COLLECT_LOW, new Double[]{minFrameDistance, 257.0});
         positions.put(ElevatorState.GROUND_COLLECT, new Double[]{0.0, 290.0});
         positions.put(ElevatorState.HIGH_ALGAE, new Double[]{minFrameDistance, minCarriageDistance});
         positions.put(ElevatorState.LOW_ALGAE, new Double[]{maxFrameDistance, 350.0});
