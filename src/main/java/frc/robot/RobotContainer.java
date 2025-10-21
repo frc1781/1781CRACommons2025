@@ -109,8 +109,8 @@ public class RobotContainer {
   // Driving the robot during teleOp
   SwerveInputStream driveAngularVelocity = SwerveInputStream.of(
       drivebase.getSwerveDrive(),
-      () -> driverXbox.getLeftY() * -1,
-      () -> driverXbox.getLeftX() * -1)
+      driverJoystickY(),
+      driverJoystickX())
       .withControllerRotationAxis(() -> driverXbox.getRightX() * -1)
       .deadband(OperatorConstants.DEADBAND)
       .scaleTranslation(0.8) // might be changed to 1
@@ -120,7 +120,7 @@ public class RobotContainer {
   // Clone's the angular velocity input stream and converts it to a fieldRelative
   // input stream.
   SwerveInputStream driveDirectAngle = driveAngularVelocity.copy()
-      .withControllerHeadingAxis(() -> driverXbox.getRightX() * -1, () -> driverXbox.getRightY() * -1)
+      .withControllerHeadingAxis(driverJoystickY(), driverJoystickX())
       .headingWhile(true);
 
   // Clone's the angular velocity input stream and converts it to a robotRelative
@@ -131,8 +131,8 @@ public class RobotContainer {
 
   SwerveInputStream driveAngularVelocityKeyboard = SwerveInputStream.of(
       drivebase.getSwerveDrive(),
-       driverJoystickX(),
-       driverJoystickY())
+       driverJoystickY(),
+       driverJoystickX())
       .withControllerRotationAxis(() -> driverXbox.getRawAxis(2))
       .deadband(OperatorConstants.DEADBAND)
       .scaleTranslation(0.8)
@@ -409,7 +409,7 @@ public class RobotContainer {
   }
 
   public boolean isElevatorUp () {
-    return elevator.getFramePosition() > 10;
+    return elevator.getFramePosition() > 40;
   }
 
   public void teleopInit() {
@@ -426,8 +426,8 @@ public class RobotContainer {
     }
     
     if(isElevatorUp()){
-      //return () -> driverXbox.getLeftX() * -0.1;
-      return () -> driverXbox.getLeftX() * -0.075;
+      System.out.println("inhibited");
+      return () -> driverXbox.getLeftX() * -0.2;
     }
     return () -> driverXbox.getLeftX() * -1;
   }
@@ -441,9 +441,8 @@ public class RobotContainer {
       return () -> 0;
     }
     if(isElevatorUp()){
-    //return () -> driverXbox.getLeftX() * -0.1;
-    return () -> driverXbox.getLeftX() * -0.075;    
-  }
+      return () -> driverXbox.getLeftY() * -0.2;    
+    }
     return () -> driverXbox.getLeftY() * -1;
   }
 
