@@ -427,7 +427,7 @@ public class RobotContainer {
     
     if(isElevatorUp()){
       System.out.println("inhibited");
-      return () -> driverXbox.getLeftX() * -0.2;
+      return () -> driverXbox.getLeftX() * -0.15;
     }
     return () -> driverXbox.getLeftX() * -1;
   }
@@ -441,7 +441,7 @@ public class RobotContainer {
       return () -> 0;
     }
     if(isElevatorUp()){
-      return () -> driverXbox.getLeftY() * -0.2;    
+      return () -> driverXbox.getLeftY() * -0.15;    
     }
     return () -> driverXbox.getLeftY() * -1;
   }
