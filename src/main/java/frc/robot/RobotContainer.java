@@ -378,6 +378,9 @@ public class RobotContainer {
     Translation2d vectorToRobot = robotTranslation.minus(centerOfReef);
     Rotation2d angleToRobot = vectorToRobot.getAngle(); 
     Rotation2d angleDiff = angleToRobot.minus(aprilTagFacing.rotateBy(Rotation2d.fromDegrees(180)));
+    Logger.recordOutput("RobotContainer/vectorToRobot", vectorToRobot);
+    Logger.recordOutput("RobotContainer/angleToRobot", angleToRobot);
+    Logger.recordOutput("RobotContainer/angleDiff", angleDiff);
     if (Math.abs(angleDiff.getDegrees()) < 30) {
       return true;
     }

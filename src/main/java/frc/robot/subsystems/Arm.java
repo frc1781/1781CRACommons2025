@@ -85,11 +85,12 @@ public class Arm extends SubsystemBase {
         return new InstantCommand(() -> {
                 //the only time it is not safe to move up is when the arm is in collect with a coral and the elevator is down and just collected, needs to move up a bit first
             if (isSafeForArmToMoveUp.getAsBoolean() || getPosition() < ArmState.L3.getPosition()) {
-                if (!clawCoralPresent.getAsBoolean()) {
-                    new SetArm(this, ArmState.COLLECT).schedule();
-                } else {
-                    new SetArm(this, ArmState.START_MID).schedule();
-                }
+                // if (!clawCoralPresent.getAsBoolean()) {
+                //     new SetArm(this, ArmState.COLLECT).schedule();
+                // } else {
+                //     new SetArm(this, ArmState.START_MID).schedule();
+                // }
+                new SetArm(this, ArmState.START_MID).schedule();
             }
         }, this);
     }
@@ -232,12 +233,12 @@ public class Arm extends SubsystemBase {
         L1(45.0),
         L2(90.0), // why was this 0.0
         L3(25.0),
-        SCORE_L4(75.0),
-        COLLECT(179.5),
+        SCORE_L4(72.0),
+        COLLECT(185.0),
         WAIT(25.0),
         POLE(28.0),
         SCORE_MID(60.0),
-        START_MID(35.0),
+        START_MID(50.0),
         START_HIGH(5.0),
         GROUND_ALGAE(159.0),
         REEF_ALGAE(60.0),
