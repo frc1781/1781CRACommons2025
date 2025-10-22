@@ -39,7 +39,7 @@ public class Elevator extends SubsystemBase{
     public double maxCarriageDistance = 605;
 
     public double minFrameDistance = 25;
-    public double maxFrameDistance = 700; 
+    public double maxFrameDistance = 700;
 
     double carriageTolerance = 20.0;
     double frameTolerance = 40.0; 
@@ -182,14 +182,12 @@ public class Elevator extends SubsystemBase{
          if (frameTOF.isRangeValidRegularCheck() && Math.abs(desiredPosition[0] - framePosition) >= frameTolerance) {
             // double calculatedDutyCycle = pidController.calculate(desiredPosition[0] - framePosition);
             double calculatedDutyCycle = carriagePID * (desiredPosition[0] - framePosition) + 0.01;
-            System.out.println("difference in position for frame: " +  desiredPosition[0] + " " + framePosition);
             double clampedResult = clampDutyCycle(calculatedDutyCycle);
             elevatorDutyCycle = clampedResult;
         } 
         else if (desiredPosition[0] < minFrameDistance + 20 && carriageTOF.isRangeValidRegularCheck() && Math.abs(desiredPosition[1] - carriagePosition) >= carriageTolerance) {
             // double calculatedDutyCycle = pidController.calculate(desiredPosition[1] - carriagePosition);
             double calculatedDutyCycle = -framePID * (desiredPosition[1] - carriagePosition) + 0.01;
-            System.out.println("difference in position for carriage: " +  desiredPosition[1] + " " + carriagePosition);
             double clampedResult = clampDutyCycle(calculatedDutyCycle);
             elevatorDutyCycle = clampedResult;
         } else {

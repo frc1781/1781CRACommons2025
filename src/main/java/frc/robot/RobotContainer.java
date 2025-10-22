@@ -109,8 +109,8 @@ public class RobotContainer {
   // Driving the robot during teleOp
   SwerveInputStream driveAngularVelocity = SwerveInputStream.of(
       drivebase.getSwerveDrive(),
-      driverJoystickY(),
-      driverJoystickX())
+      () -> driverJoystickY(),
+      () -> driverJoystickX())
       .withControllerRotationAxis(() -> driverXbox.getRightX() * -1)
       .deadband(OperatorConstants.DEADBAND)
       .scaleTranslation(0.8) // might be changed to 1
@@ -120,7 +120,7 @@ public class RobotContainer {
   // Clone's the angular velocity input stream and converts it to a fieldRelative
   // input stream.
   SwerveInputStream driveDirectAngle = driveAngularVelocity.copy()
-      .withControllerHeadingAxis(driverJoystickY(), driverJoystickX())
+      .withControllerHeadingAxis(() -> driverJoystickY(), () -> driverJoystickX())
       .headingWhile(true);
 
   // Clone's the angular velocity input stream and converts it to a robotRelative
@@ -131,8 +131,8 @@ public class RobotContainer {
 
   SwerveInputStream driveAngularVelocityKeyboard = SwerveInputStream.of(
       drivebase.getSwerveDrive(),
-       driverJoystickY(),
-       driverJoystickX())
+       () -> driverJoystickY(),
+       () -> driverJoystickX())
       .withControllerRotationAxis(() -> driverXbox.getRawAxis(2))
       .deadband(OperatorConstants.DEADBAND)
       .scaleTranslation(0.8)
@@ -197,6 +197,7 @@ public class RobotContainer {
     Logger.recordOutput("RobotContainer/isSafeForArmToMoveDown", isSafeForArmToMoveDown());
     Logger.recordOutput("RobotContainer/isArmInsideElevator", isArmInsideElevator());
     Logger.recordOutput("RobotContainer/readyToCollect", readyToCollect());
+    Logger.recordOutput("RobotContainer/isElevatorUp", isElevatorUp());
 
     //APRILTAGS
     aquireTargetAprilTag();
@@ -258,7 +259,7 @@ public class RobotContainer {
       driverXbox.x().onTrue(new L3(elevator, arm));
       driverXbox.b().onTrue(new PreCollect(elevator, arm, sensation));
       //driverXbox.b().onTrue(new Collecting(elevator, arm, sensation));
-      driverXbox.y().onTrue(new L4(elevator, arm));
+      driverXbox.y().onTrue(new ScoreL4(arm, drivebase));
       //driverXbox.leftBumper().whileTrue(new ScoreL4(arm, drivebase));
       driverXbox.povUp().whileTrue(climber.ascend().repeatedly());
       driverXbox.povDown().whileTrue(climber.descend().repeatedly());
@@ -417,33 +418,33 @@ public class RobotContainer {
     arm.setState(ArmState.START);
   }
 
-  public DoubleSupplier driverJoystickX() { 
+  public double driverJoystickX() { 
     if(copilotXbox.getHID().getLeftBumperButton() || 
     copilotXbox.getHID().getRightBumperButton() || 
     copilotXbox.getHID().getLeftTriggerAxis() > 0.1 || 
     copilotXbox.getHID().getRightTriggerAxis() > 0.1){
-      return () -> 0;
+      return 0;
     }
     
     if(isElevatorUp()){
       System.out.println("inhibited");
-      return () -> driverXbox.getLeftX() * -0.15;
+      return driverXbox.getLeftX() * -0.15;
     }
-    return () -> driverXbox.getLeftX() * -1;
+    return driverXbox.getLeftX() * -1;
   }
 
 
-  public DoubleSupplier driverJoystickY() {
+  public double driverJoystickY() {
     if(copilotXbox.getHID().getLeftBumperButton() || 
     copilotXbox.getHID().getRightBumperButton() || 
     copilotXbox.getHID().getLeftTriggerAxis() > 0.1 || 
     copilotXbox.getHID().getRightTriggerAxis() > 0.1){
-      return () -> 0;
+      return 0;
     }
     if(isElevatorUp()){
-      return () -> driverXbox.getLeftY() * -0.15;    
+      return driverXbox.getLeftY() * -0.15;    
     }
-    return () -> driverXbox.getLeftY() * -1;
+    return driverXbox.getLeftY() * -1;
   }
 
   public SwerveSubsystem getDrivebase() {
