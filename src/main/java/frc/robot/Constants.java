@@ -169,6 +169,7 @@ public final class Constants
 
   public static class Arm {
         public static final int ARM_MOTOR_ID = 13;
+        public static final int THUMB_MOTOR_ID = 17;
   }
   
   public enum Vision {
