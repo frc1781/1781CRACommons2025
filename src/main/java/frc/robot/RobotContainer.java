@@ -98,7 +98,6 @@ public class RobotContainer {
   Trigger coralPresent = new Trigger(sensation::coralPresent);
   Trigger coralHopper = new Trigger(sensation::coralInHopper);
   Trigger coralExit = new Trigger(sensation::coralExitedHopper);
-  Trigger armHasCoral = new Trigger(sensation::clawCoralPresent);
   Trigger robotInPosition = new Trigger(this::inPosition);
   Trigger readyToCollectTrigger = new Trigger(this::readyToCollect);
   Trigger isTeleopTrigger = new Trigger(DriverStation::isTeleop);
@@ -307,15 +306,15 @@ public class RobotContainer {
       // isTeleopTrigger.and(coralExit).and(readyToCollectTrigger).onTrue(new CollectAndPost(elevator, arm, sensation));
       targetAquired.and(seeingReefPole.negate()).whileTrue(lights.set(Lights.Colors.RED, Lights.Patterns.SOLID));
 
-      seeingReefPole.and(armHasCoral).whileTrue(lights.set(Lights.Colors.RED, Lights.Patterns.FAST_FLASH));
+      seeingReefPole.and(coralInClaw).whileTrue(lights.set(Lights.Colors.RED, Lights.Patterns.FAST_FLASH));
 
       coralInClaw.and(seeingReefPole.negate()).and(targetAquired.negate())
             .whileTrue(lights.set(Lights.Colors.GREEN, Lights.Patterns.SOLID));
 
-      armHasCoral.and(targetAquired.negate()).and(seeingReefPole.negate())
+      coralInClaw.and(targetAquired.negate()).and(seeingReefPole.negate())
            .whileTrue(lights.set(Lights.Colors.GREEN, Lights.Patterns.SOLID));
 
-      coralPresent.and(armHasCoral.negate()).and(seeingReefPole.negate()).and(targetAquired.negate())
+      coralPresent.and(coralInClaw.negate()).and(seeingReefPole.negate()).and(targetAquired.negate())
            .whileTrue(lights.set(Lights.Colors.GREEN, Lights.Patterns.FAST_FLASH));
     }
   }
