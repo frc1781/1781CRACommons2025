@@ -309,6 +309,9 @@ public class RobotContainer {
 
       seeingReefPole.and(armHasCoral).whileTrue(lights.set(Lights.Colors.RED, Lights.Patterns.FAST_FLASH));
 
+      coralInClaw.and(seeingReefPole.negate()).and(targetAquired.negate())
+            .whileTrue(lights.set(Lights.Colors.GREEN, Lights.Patterns.SOLID));
+
       armHasCoral.and(targetAquired.negate()).and(seeingReefPole.negate())
            .whileTrue(lights.set(Lights.Colors.GREEN, Lights.Patterns.SOLID));
 
