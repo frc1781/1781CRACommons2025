@@ -307,9 +307,6 @@ public class RobotContainer {
       coralInClaw.and(seeingReefPole.negate()).and(targetAquired.negate())
             .whileTrue(lights.set(Lights.Colors.GREEN, Lights.Patterns.SOLID));
 
-      coralInClaw.and(targetAquired.negate()).and(seeingReefPole.negate())
-           .whileTrue(lights.set(Lights.Colors.GREEN, Lights.Patterns.SOLID));
-
       coralPresent.and(coralInClaw.negate()).and(seeingReefPole.negate()).and(targetAquired.negate())
            .whileTrue(lights.set(Lights.Colors.GREEN, Lights.Patterns.FAST_FLASH));
     }
