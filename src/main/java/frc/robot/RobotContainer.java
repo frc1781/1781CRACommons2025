@@ -335,10 +335,12 @@ public class RobotContainer {
       if (drivebase.vision.getDistanceFromAprilTag(i) == -1 || i == -1) {
         continue;
       }
+
       Pose2d atPose = Vision.getAprilTagPose(i, Transform2d.kZero);
       if (atPose == null) {
         continue;
       }
+      
       //filter out tags that are not on our side of the field
       if (isRed()) {
         if (i < 6 || i > 11) { //red reef tags are 6-11
@@ -348,12 +350,6 @@ public class RobotContainer {
         if (i < 17 || i > 22) { //blue reef tags are 17-22
           continue;
         }
-      }
-      
-      if (drivebase.vision.getDistanceFromAprilTag(i) < minimumDistance) // && 
-      {
-        minimumDistance = drivebase.vision.getDistanceFromAprilTag(i);
-        aprilTagID = i;
       }
 
       Rotation2d aprilTagAngle = Vision.getAprilTagPose(aprilTagID, Transform2d.kZero).getRotation().rotateBy(Rotation2d.fromDegrees(180));
