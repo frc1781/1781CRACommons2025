@@ -9,9 +9,12 @@ import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkClosedLoopController;
+import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.ClosedLoopConfig;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -28,6 +31,7 @@ import frc.robot.commands.Clear;
 import frc.robot.commands.L3;
 import frc.robot.commands.PreCollect;
 import frc.robot.commands.SetArm;
+import frc.robot.utils.EEUtil;
 import frc.robot.utils.EEtimeOfFlight;
 
 public class Arm extends SubsystemBase {
@@ -35,6 +39,9 @@ public class Arm extends SubsystemBase {
     private double currentPosition;
     private SparkMax armMotor;
     private ArmState currentState = ArmState.START;
+    private SparkFlex spinMotor;
+    private ThumbState currentThumbState = ThumbState.IDLE;
+    private double dutyCycle = 0;
 
     private SparkMaxConfig armMotorConfig;
     private RobotContainer robotContainer;
@@ -48,6 +55,7 @@ public class Arm extends SubsystemBase {
     public Arm(RobotContainer robotContainer) {
         this.robotContainer = robotContainer;
         currentState = ArmState.START;
+        currentThumbState = ThumbState.IDLE;
         armMotor = new SparkMax(Constants.Arm.ARM_MOTOR_ID, SparkLowLevel.MotorType.kBrushless);
         armMotor.setControlFramePeriodMs(20);
         armMotorConfig = new SparkMaxConfig();
@@ -63,13 +71,20 @@ public class Arm extends SubsystemBase {
         armMotorConfig.softLimit.reverseSoftLimit(0);
         armMotorConfig.closedLoop.feedbackSensor(ClosedLoopConfig.FeedbackSensor.kAbsoluteEncoder);
         armMotor.configure(armMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
+        spinMotor = new SparkFlex(Constants.Arm.THUMB_MOTOR_ID, SparkLowLevel.MotorType.kBrushless);
+        SparkFlexConfig spinMotorConfig = new SparkFlexConfig();
+        spinMotorConfig.idleMode(IdleMode.kBrake);
+        spinMotorConfig.smartCurrentLimit(30);
+        spinMotorConfig.inverted(false);
+        spinMotor.configure(spinMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
     public Command idle(BooleanSupplier isSafeForArmToMoveUp, BooleanSupplier isSafeForArmToMoveDown, BooleanSupplier clawCoralPresent) {
         //Arm should always be in L3 when doing nothing
         return new InstantCommand(() -> {
                 //the only time it is not safe to move up is when the arm is in collect with a coral and the elevator is down and just collected, needs to move up a bit first
-            if (isSafeForArmToMoveUp.getAsBoolean() || funkyPositionConversionFromActualToState(getPosition()) < ArmState.L3.getPosition()) {
+            if (isSafeForArmToMoveUp.getAsBoolean() || getPosition() < ArmState.L3.getPosition()) {
                 if (!clawCoralPresent.getAsBoolean()) {
                     new SetArm(this, ArmState.COLLECT).schedule();
                 } else {
@@ -78,29 +93,6 @@ public class Arm extends SubsystemBase {
             }
         }, this);
     }
-
-    // public Command idle(BooleanSupplier isSafeForArmToMoveUp, BooleanSupplier isSafeForArmToMoveDown, BooleanSupplier clawCoralPresent) {
-    //     //Arm should always be in L3 when doing nothing but will only move there on purpose if coral is present
-    //     return new InstantCommand(() -> {
-    //         ArmState correctArmState = ArmState.IDLE;
-    //         if (clawCoralPresent.getAsBoolean()) {
-    //             //the only time it is not safe to move up is when the arm is in collect with a coral and the elevator is down and just collected, needs to move up a bit first
-    //             if (isSafeForArmToMoveUp.getAsBoolean() || funkyPositionConversionFromActualToState(getPosition()) < ArmState.L3.getPosition()) {
-    //                 correctArmState = ArmState.L3;
-    //             }
-    //         } 
-    //         // took this out driver should hit X to explicitly go to collect state or will go there after a score if coral is not present
-    //         // else {
-    //         //     if (isSafeForArmToMoveDown.getAsBoolean()) {
-    //         //         correctArmState = ArmState.COLLECT;
-    //         //     }
-    //         // }
-
-    //         if (correctArmState != ArmState.IDLE) {
-    //             new SetArm(this, correctArmState).schedule();
-    //         }
-    //     }, this);
-    // }
 
     @Override
     public void periodic() {
@@ -140,18 +132,36 @@ public class Arm extends SubsystemBase {
             armMotor.set(0.0);
             return;
         }
+
+        //thumb stuff
+        if (currentState == ArmState.REEF_ALGAE || currentState == ArmState.GROUND_ALGAE) {
+            currentThumbState = ThumbState.SPIN_IN;
+        } else if (currentState == ArmState.READY_ALGAE || currentState == ArmState.SLIGHT_TOSS) {
+            currentThumbState = ThumbState.SPIN_OUT;
+        } else {
+            currentThumbState = ThumbState.IDLE;            
+        }
+
+        spinMotor.set(currentThumbState.getDutyCycle());
         
-        armMotor.getClosedLoopController().setReference(
-            targetPosition,
-            ControlType.kPosition,
-            ClosedLoopSlot.kSlot0,
-            gravityFeedForward,
-            SparkClosedLoopController.ArbFFUnits.kPercentOut
-        );  
+        // armMotor.getClosedLoopController().setReference(
+        //     targetPosition,
+        //     ControlType.kPosition,
+        //     ClosedLoopSlot.kSlot0,
+        //     gravityFeedForward,
+        //     SparkClosedLoopController.ArbFFUnits.kPercentOut
+        // );  
+
+        //manual PID!!
+        dutyCycle = 0.004*(targetPosition - getPosition()) + gravityFeedForward;   //Basic P control plus gravity feedforward for PID
+        if (Math.abs(armMotor.getAppliedOutput() - dutyCycle) > 0.3) {
+            dutyCycle = armMotor.getAppliedOutput() + Math.signum(dutyCycle - armMotor.getAppliedOutput()) * 0.03;
+        }  //rate limit changes via actual applied output
+        armMotor.set(clampDutyCycle(dutyCycle));  //clamp and set duty cycle
     }
 
     private boolean armNeedsToMoveUp() {
-        return funkyPositionConversionFromActualToState(getPosition()) > targetPosition;
+        return getPosition() > targetPosition;
     }
 
     public void setState(ArmState newState) {
@@ -206,11 +216,11 @@ public class Arm extends SubsystemBase {
     }
 
     public boolean matchesState(ArmState state) {
-        return Math.abs(state.getPosition() - funkyPositionConversionFromActualToState(getPosition())) <= 8.0; //tolerance
+        return Math.abs(state.getPosition() - getPosition()) <= 8.0; //tolerance
     }
 
-    private double funkyPositionConversionFromActualToState(double actualPosition) {
-        return 149.0/180.0 * actualPosition;
+    public double clampDutyCycle(double dutyCycle) {
+        return EEUtil.clamp(-0.35, 0.35, dutyCycle);
     }
 
     public enum ArmState  {
@@ -223,7 +233,7 @@ public class Arm extends SubsystemBase {
         L2(90.0), // why was this 0.0
         L3(25.0),
         SCORE_L4(75.0),
-        COLLECT(149.0),
+        COLLECT(179.5),
         WAIT(25.0),
         POLE(28.0),
         SCORE_MID(60.0),
@@ -242,6 +252,20 @@ public class Arm extends SubsystemBase {
     
         public double getPosition() {
             return position;
+        }
+    }
+
+    public enum ThumbState {
+        SPIN_IN(-1), SPIN_OUT(1), IDLE(0);
+
+        private final double dutyCycle;
+
+        ThumbState(double dutyCycle) {
+            this.dutyCycle = dutyCycle;
+        }
+
+        public double getDutyCycle() {
+            return dutyCycle;
         }
     }
 }
