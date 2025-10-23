@@ -352,10 +352,11 @@ public class RobotContainer {
         }
       }
 
-      Rotation2d aprilTagAngle = Vision.getAprilTagPose(aprilTagID, Transform2d.kZero).getRotation().rotateBy(Rotation2d.fromDegrees(180));
+      Rotation2d aprilTagAngle = Vision.getAprilTagPose(i, Transform2d.kZero).getRotation().rotateBy(Rotation2d.fromDegrees(180));
       if (!isRobotInSegment(aprilTagAngle, drivebase.getPose())) {  //disregard too oblique angles
         continue;
       }
+      aprilTagID = i;
     }
     targetAprilTagID = aprilTagID;  // -1 if none appropriate seen, still need to filter by only red or blue reef tags
   }
