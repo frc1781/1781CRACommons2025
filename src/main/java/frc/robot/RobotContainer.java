@@ -225,7 +225,7 @@ public class RobotContainer {
     // -----------------------------------------------------------------------Default Commands-----------------------------------------------------------------------
     drivebase.setDefaultCommand(driveFieldOrientedAngularVelocity);
     conveyor.setDefaultCommand(conveyor.clearCoral(coralPresent, elevator));
-    lights.setDefaultCommand(lights.set(Lights.Colors.GREEN, Lights.Patterns.MARCH));
+    //lights.setDefaultCommand(lights.set(Lights.Colors.GREEN, Lights.Patterns.MARCH));
     elevator.setDefaultCommand(elevator.idle(this::isArmInsideElevator, sensation::clawCoralPresent).repeatedly());
     sensation.setDefaultCommand(Commands.idle(sensation));
     arm.setDefaultCommand(
@@ -304,15 +304,15 @@ public class RobotContainer {
       // coralHopper.and(coralExit.negate()).onTrue(lights.set(Lights.Colors.RED, Lights.Patterns.MARCH));
       // coralExit.onFalse(lights.set(Lights.Colors.RED, Lights.Patterns.SOLID));
       // isTeleopTrigger.and(coralExit).and(readyToCollectTrigger).onTrue(new CollectAndPost(elevator, arm, sensation));
-      targetAquired.and(seeingReefPole.negate()).whileTrue(lights.set(Lights.Colors.RED, Lights.Patterns.SOLID));
+      targetAquired.whileTrue(lights.set(Lights.Colors.RED, Lights.Patterns.SOLID));
 
-      seeingReefPole.and(coralInClaw).whileTrue(lights.set(Lights.Colors.RED, Lights.Patterns.FAST_FLASH));
+      // seeingReefPole.and(coralInClaw).whileTrue(lights.set(Lights.Colors.RED, Lights.Patterns.FAST_FLASH));
 
-      coralInClaw.and(seeingReefPole.negate()).and(targetAquired.negate())
-            .whileTrue(lights.set(Lights.Colors.GREEN, Lights.Patterns.SOLID));
+      // coralInClaw.and(seeingReefPole.negate()).and(targetAquired.negate())
+      //       .whileTrue(lights.set(Lights.Colors.GREEN, Lights.Patterns.SOLID));
 
-      coralPresent.and(coralInClaw.negate()).and(seeingReefPole.negate()).and(targetAquired.negate())
-           .whileTrue(lights.set(Lights.Colors.GREEN, Lights.Patterns.FAST_FLASH));
+      // coralPresent.and(coralInClaw.negate()).and(seeingReefPole.negate()).and(targetAquired.negate())
+      //      .whileTrue(lights.set(Lights.Colors.GREEN, Lights.Patterns.FAST_FLASH));
     }
   }
 
