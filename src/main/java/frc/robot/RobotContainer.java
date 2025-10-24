@@ -187,12 +187,15 @@ public class RobotContainer {
     // });
   }
 
+  public void disabledRunningLights() {
+    if(isRed()) {
+      lights.run(Lights.Colors.RED, Lights.Patterns.TRAVEL);
+    } else {
+      lights.run(Lights.Colors.BLUE, Lights.Patterns.TRAVEL);
+    }
+  }
+
   public void periodic() {
-   if(isRed()) {
-    lights.run(Lights.Colors.RED, Lights.Patterns.TRAVEL);
-   } else {
-    lights.run(Lights.Colors.BLUE, Lights.Patterns.TRAVEL);
-   }
     SmartDashboard.getNumber("Target Apriltag", targetAprilTagID);
     Logger.recordOutput("RobotContainer/isSafeForArmToMoveUp", isSafeForArmToMoveUp());
     Logger.recordOutput("RobotContainer/isSafeForArmToMoveDown", isSafeForArmToMoveDown());
@@ -225,7 +228,7 @@ public class RobotContainer {
     // -----------------------------------------------------------------------Default Commands-----------------------------------------------------------------------
     drivebase.setDefaultCommand(driveFieldOrientedAngularVelocity);
     conveyor.setDefaultCommand(conveyor.clearCoral(coralPresent, elevator));
-    //lights.setDefaultCommand(lights.set(Lights.Colors.GREEN, Lights.Patterns.MARCH));
+    lights.setDefaultCommand(lights.set(Lights.Special.OFF));
     elevator.setDefaultCommand(elevator.idle(this::isArmInsideElevator, sensation::clawCoralPresent).repeatedly());
     sensation.setDefaultCommand(Commands.idle(sensation));
     arm.setDefaultCommand(
@@ -327,8 +330,6 @@ public class RobotContainer {
   public void setTargetPose(int targetAprilTagID) {
     this.targetAprilTagID = targetAprilTagID;
   }
-
-  
 
   private void aquireTargetAprilTag() {
     List<Integer> aprilTagIDs = Vision.seenAprilTagIDs;
