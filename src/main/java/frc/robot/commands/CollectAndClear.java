@@ -1,5 +1,7 @@
 package frc.robot.commands;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Elevator;
@@ -16,6 +18,7 @@ public class CollectAndClear extends SequentialCommandGroup {
         this.arm = arm;
         this.sensation = sensation;
         addRequirements(elevator, arm);
+        Logger.recordOutput("RobotContainer/LastRunningCommand", this.getName());
         addCommands(
             new SetElevator(elevator, Elevator.ElevatorState.SAFE_CORAL),
             new Collect(elevator, arm, sensation),

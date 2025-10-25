@@ -2,6 +2,9 @@ package frc.robot.commands;
 
 import java.util.function.BooleanSupplier;
 
+import org.littletonrobotics.junction.Logger;
+
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.Arm;
@@ -26,6 +29,7 @@ public class CenterAndScoreL4 extends SequentialCommandGroup {
         this.elevator = robotContainer.getElevator();
         this.arm = robotContainer.getArm();
         this.sensation = robotContainer.getSensation();
+        Logger.recordOutput("RobotContainer/LastRunningCommand", this.getName());
         addRequirements(swerveDrive, elevator, arm);
         addCommands(
             new L4(elevator, arm),
@@ -34,6 +38,5 @@ public class CenterAndScoreL4 extends SequentialCommandGroup {
             new ScoreL4(arm, swerveDrive),
             new PreCollect(elevator, arm, sensation)
         );
-
     }
 }

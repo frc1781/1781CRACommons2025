@@ -2,6 +2,8 @@ package frc.robot.commands;
 
 import java.util.function.BooleanSupplier;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.Arm;
@@ -27,6 +29,7 @@ public class CenterAndScoreL3 extends SequentialCommandGroup {
         this.arm = robotContainer.getArm();
         this.sensation = robotContainer.getSensation();
         addRequirements(swerveDrive, elevator, arm);
+        Logger.recordOutput("RobotContainer/LastRunningCommand", this.getName());
         addCommands(
             new L3(elevator, arm),
             swerveDrive.new MoveToPositionToScoreL3(sensation).withTimeout(5),
