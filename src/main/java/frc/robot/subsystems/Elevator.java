@@ -120,9 +120,13 @@ public class Elevator extends SubsystemBase{
         Logger.recordOutput("Elevator/hasReachedSafePosition", hasReachedPosition(ElevatorState.SAFE));
         Logger.recordOutput("Elevator/current", motorRight.getOutputCurrent());
         Logger.recordOutput("Elevator/trueDC", motorRight.getAppliedOutput());
-        if (getFramePosition() > maxFrameDistance || getCarriagePosition() > maxCarriageDistance) {
+        if (getFramePosition() > maxFrameDistance && elevatorDutyCycle > 0) {
             elevatorDutyCycle = IDLE_DUTY_CYCLE;
         }
+        if (getCarriagePosition() > maxCarriageDistance && elevatorDutyCycle < 0) {
+            elevatorDutyCycle = IDLE_DUTY_CYCLE;
+        }
+        
 
         motorRight.set(elevatorDutyCycle);
     }
