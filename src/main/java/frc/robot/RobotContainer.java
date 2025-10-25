@@ -205,6 +205,14 @@ public class RobotContainer {
     Logger.recordOutput("RobotContainer/readyToCollect", readyToCollect());
     Logger.recordOutput("RobotContainer/isElevatorUp", isElevatorUp());
 
+    if (arm.getCurrentCommand() == null && elevator.getCurrentCommand() == null) {
+      if (conveyor.getCurrentCommand() != null) {
+        Logger.recordOutput("RobotContainer/LastRunningCommand", "Conveyor");
+      } else {
+        Logger.recordOutput("RobotContainer/LastRunningCommand", "None");
+      }
+    }
+
     //APRILTAGS
     aquireTargetAprilTag();
     Logger.recordOutput("RobotContainer/targetAprilTagID", targetAprilTagID);
