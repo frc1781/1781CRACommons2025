@@ -38,6 +38,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.TargetSide;
+import frc.robot.commands.AutoCollect;
 import frc.robot.commands.CenterAndScoreL3;
 import frc.robot.commands.CenterAndScoreL4;
 import frc.robot.commands.Clear;
@@ -164,6 +165,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("SafeConfig", new SafeConfig(elevator, arm));
     NamedCommands.registerCommand("MoveBack", new MoveBack(drivebase));
     NamedCommands.registerCommand("WaitForCoral", new WaitForCoral(sensation, drivebase));
+    NamedCommands.registerCommand("AutoCollect", new AutoCollect(elevator, conveyor, arm, sensation));
 
     configureBindings();
     DriverStation.silenceJoystickConnectionWarning(true);
