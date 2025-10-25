@@ -334,7 +334,6 @@ public class RobotContainer {
 
   private void aquireTargetAprilTag() {
     List<Integer> aprilTagIDs = Vision.seenAprilTagIDs;
-    double minimumDistance = Double.MAX_VALUE;
     int aprilTagID = -1;
 
     for (Integer i : aprilTagIDs) {
