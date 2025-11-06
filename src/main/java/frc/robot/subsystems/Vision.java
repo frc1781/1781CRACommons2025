@@ -360,14 +360,14 @@ public class Vision
     public enum Cameras
     {
       LEFT_CAM("LeftApriltag",
-            new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(0), Units.degreesToRadians(0)),
-            new Translation3d(Units.inchesToMeters(6.75), Units.inchesToMeters(7.75), Units.inchesToMeters(11.5)),
-               VecBuilder.fill(4, 4, 8), VecBuilder.fill(0.5, 0.5, 1)),
-  
-      RIGHT_CAM("RightApriltag",
-                new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(0), Units.degreesToRadians(0)),
-                new Translation3d(Units.inchesToMeters(9.5), Units.inchesToMeters(-9), Units.inchesToMeters(10.5)),
-                VecBuilder.fill(4, 4, 8), VecBuilder.fill(0.5, 0.5, 1));
+          new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(-25), Units.degreesToRadians(-20)),
+          new Translation3d(Units.inchesToMeters(8.5), Units.inchesToMeters(8.5), Units.inchesToMeters(6.5)),
+             VecBuilder.fill(4, 4, 8), VecBuilder.fill(0.5, 0.5, 1)),
+
+    RIGHT_CAM("RightApriltag",
+              new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(-25), Units.degreesToRadians(20)),
+              new Translation3d(Units.inchesToMeters(8.5), Units.inchesToMeters(-8.5), Units.inchesToMeters(6.5)),
+              VecBuilder.fill(4, 4, 8), VecBuilder.fill(0.5, 0.5, 1));
   
       // LEFT_SIDE_CAM("LeftSide",
       //            new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(0), Units.degreesToRadians(90)),
