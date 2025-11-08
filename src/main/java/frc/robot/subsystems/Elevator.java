@@ -63,7 +63,7 @@ public class Elevator extends SubsystemBase{
         motorRight = new SparkMax(Constants.Elevator.RIGHT_ELEVATOR_MOTOR, MotorType.kBrushless);
         SparkMaxConfig rightMotorConfig = new SparkMaxConfig();
         rightMotorConfig.idleMode(IdleMode.kCoast);
-        rightMotorConfig.smartCurrentLimit(30);
+        rightMotorConfig.smartCurrentLimit(38);
         motorRight.configure(rightMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
         //Left Elevator Motor (Follows Right Elevator Motor)
@@ -71,7 +71,7 @@ public class Elevator extends SubsystemBase{
         SparkMaxConfig leftMotorConfig = new SparkMaxConfig();
         leftMotorConfig.idleMode(IdleMode.kCoast);
         leftMotorConfig.follow(motorRight, true);
-        leftMotorConfig.smartCurrentLimit(30);
+        leftMotorConfig.smartCurrentLimit(38);
         motorLeft.configure(leftMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
         positions.put(ElevatorState.POLE, new Double[]{maxFrameDistance, minCarriageDistance});
@@ -124,7 +124,7 @@ public class Elevator extends SubsystemBase{
             elevatorDutyCycle = IDLE_DUTY_CYCLE;
         }
 
-        motorRight.set(elevatorDutyCycle);
+        motorRight.set(clampDutyCycle(elevatorDutyCycle));
     }
 
     public double getFramePosition() {
@@ -167,7 +167,8 @@ public class Elevator extends SubsystemBase{
 
     public void setElevatorPosition(ElevatorState desiredState) {
 
-        if(desiredState == ElevatorState.STOP) {
+        if(desiredState == ElevatorState.STOP || desiredState == ElevatorState.MANUAL_DOWN || desiredState == ElevatorState.MANUAL_UP) {
+            elevatorDutyCycle = IDLE_DUTY_CYCLE;
             return;
         }
 
@@ -205,8 +206,22 @@ public class Elevator extends SubsystemBase{
         // }
     }
 
+    public Command moveUp() {
+        return new InstantCommand(() -> {
+            setElevatorPosition(ElevatorState.MANUAL_UP);
+            elevatorDutyCycle = 0.35;
+        }, this);
+    }
+
+    public Command moveDown() {
+        return new InstantCommand(() -> {
+            setElevatorPosition(ElevatorState.MANUAL_DOWN);
+            elevatorDutyCycle = -0.35;
+        }, this);
+    }
+
     public double clampDutyCycle(double dutyCycle) {
-        return EEUtil.clamp(-1, 1, dutyCycle);
+        return EEUtil.clamp(1, 1, dutyCycle);
     }
 
     public enum ElevatorState {

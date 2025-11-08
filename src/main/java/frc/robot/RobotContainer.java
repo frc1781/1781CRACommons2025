@@ -105,6 +105,10 @@ public class RobotContainer {
   Trigger coralInClaw = new Trigger(sensation::clawCoralPresent);
   Trigger targetAquired = new Trigger(()->{return targetAprilTagID != -1;});
   Trigger seeingReefPole = new Trigger(sensation::armTOFisValid);
+  Trigger copilotLeftStickUp = new Trigger(() -> copilotXbox.getLeftY() < -0.2);
+  Trigger copilotLeftStickDown = new Trigger(() -> copilotXbox.getLeftY() > 0.2);
+  Trigger copilotRightStickUp = new Trigger(() -> copilotXbox.getRightY() < -0.2);
+  Trigger copilotRightStickDown = new Trigger(() -> copilotXbox.getRightY() > 0.2);
  
 
   // Driving the robot during teleOp
@@ -208,7 +212,6 @@ public class RobotContainer {
     Logger.recordOutput("RobotContainer/targetAprilTagID", targetAprilTagID);
     Logger.recordOutput("RobotContainer/targetPose", scorePose(targetAprilTagID, targetedSide));
     Logger.recordOutput("targetedSide", targetedSide.toString());
-
   }
 
   private void configureBindings() {
@@ -282,6 +285,8 @@ public class RobotContainer {
       copilotXbox.b().whileTrue(new L3(elevator, arm));
       copilotXbox.a().whileTrue(new L2hold(elevator, arm));
       copilotXbox.x().whileTrue(new ScoreLow(arm, drivebase));
+      copilotLeftStickUp.whileTrue(elevator.moveUp().repeatedly());
+      copilotLeftStickDown.whileTrue(elevator.moveDown().repeatedly());
 
       // copilot poses blue
       // copilotButtons.button(1).and(isRedAllianceTrigger.negate()).onTrue(new SetTargetPose(this, 18));
