@@ -141,13 +141,13 @@ public class Arm extends SubsystemBase {
             return;
         }
         
-        armMotor.getClosedLoopController().setReference(
-            targetPosition,
-            ControlType.kPosition,
-            ClosedLoopSlot.kSlot0,
-            gravityFeedForward,
-            SparkClosedLoopController.ArbFFUnits.kPercentOut
-        );  
+        // armMotor.getClosedLoopController().setReference(
+        //     targetPosition,
+        //     ControlType.kPosition,
+        //     ClosedLoopSlot.kSlot0,
+        //     gravityFeedForward,
+        //     SparkClosedLoopController.ArbFFUnits.kPercentOut
+        // );  
     }
 
     private boolean armNeedsToMoveUp() {

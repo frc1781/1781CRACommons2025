@@ -167,7 +167,7 @@ public class Elevator extends SubsystemBase{
 
     public void setElevatorPosition(ElevatorState desiredState) {
 
-        if(desiredState == ElevatorState.STOP) {
+        if(true) {
             return;
         }
 

@@ -36,7 +36,7 @@ public class Conveyor extends SubsystemBase {
     public Command clearCoral(BooleanSupplier coralPresent, Elevator elevator) {
         return new RunCommand(() -> {
             if (coralPresent.getAsBoolean() && elevator.getFramePosition() < 50) {
-                dc = 0.5;
+                dc = 0.0;
             } else {
                 dc = 0;
             }
