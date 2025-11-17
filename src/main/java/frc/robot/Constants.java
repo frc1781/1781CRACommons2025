@@ -183,4 +183,23 @@ public final class Constants
     RIGHT
   }
 
+  public enum AprilTagSet{
+    BLUE_ALLI(new int[]{12,13,14,15,16,17,18,19,20,21,22}),
+    RED_ALLI(new int[]{1,2,3,4,5,6,7,8,9,10,11}),
+    BLUE_REEF(new int[]{17,18,19,20,21,22}),
+    RED_REEF(new int[]{6,7,8,9,10,11}),
+    ALL_SIDE(new int[]{1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22});
+
+    private final int[] tagIDs;
+
+    AprilTagSet(int[] tagIDs){
+      this.tagIDs = tagIDs;
+    }
+    public int[] getTagIDs(){
+      return tagIDs;
+    }
+
+  }
+
+
 }

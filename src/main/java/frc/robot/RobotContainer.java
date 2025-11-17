@@ -36,6 +36,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.AprilTagSet;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.TargetSide;
 import frc.robot.commands.CenterAndScoreL3;
@@ -93,6 +94,7 @@ public class RobotContainer {
   private double wait_seconds = 5;
   public int targetAprilTagID = -1;
   public TargetSide targetedSide = TargetSide.LEFT;
+  public AprilTagSet chosenSet = AprilTagSet.ALL_SIDE;
   private boolean sendyPressed = false;
 
   Trigger coralPresent = new Trigger(sensation::coralPresent);
@@ -212,6 +214,7 @@ public class RobotContainer {
     Logger.recordOutput("RobotContainer/targetAprilTagID", targetAprilTagID);
     Logger.recordOutput("RobotContainer/targetPose", scorePose(targetAprilTagID, targetedSide));
     Logger.recordOutput("targetedSide", targetedSide.toString());
+    Logger.recordOutput("chosenSet", chosenSet.toString());
   }
 
   private void configureBindings() {
@@ -352,13 +355,7 @@ public class RobotContainer {
       
       //filter out tags that are not on our side of the field
       if (isRed()) {
-        if (i < 6 || i > 11) { //red reef tags are 6-11
-          continue;
-        }
-      } else {
-        if (i < 17 || i > 22) { //blue reef tags are 17-22
-          continue;
-        }
+        chosenSet.RED_ALLI;
       }
 
       Rotation2d aprilTagAngle = Vision.getAprilTagPose(i, Transform2d.kZero).getRotation().rotateBy(Rotation2d.fromDegrees(180));
