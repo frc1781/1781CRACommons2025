@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.subsystems.*;
@@ -32,6 +33,7 @@ import swervelib.SwerveInputStream;
 public class RobotContainer
 {
   final CommandXboxController driverXbox = new CommandXboxController(0);
+  final CommandPS4Controller driverPS = new CommandPS4Controller(0);
   //private final Sensation sensation = new Sensation();
   private final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve/robot"));
   // private final TankDriveTrain tankDrive = new TankDriveTrain(driverXbox);
@@ -128,6 +130,11 @@ public class RobotContainer
       driverXbox.button(1).whileTrue(drivebase.sysIdDriveMotorCommand());
       driverXbox.button(2).whileTrue(Commands.runEnd(() -> driveDirectAngleKeyboard.driveToPoseEnabled(true),
                                                       () -> driveDirectAngleKeyboard.driveToPoseEnabled(false)));
+
+      driverPS.options().onTrue(Commands.runOnce(() -> drivebase.resetOdometry(new Pose2d(3, 3, new Rotation2d()))));
+      driverPS.button(1).whileTrue(drivebase.sysIdDriveMotorCommand());
+      driverPS.button(2).whileTrue(Commands.runEnd(() -> driveDirectAngleKeyboard.driveToPoseEnabled(true),
+                                                      () -> driveDirectAngleKeyboard.driveToPoseEnabled(false)));
     }
 
     if (DriverStation.isTest())
@@ -139,6 +146,13 @@ public class RobotContainer
       driverXbox.back().whileTrue(drivebase.centerModulesCommand());
       driverXbox.leftBumper().onTrue(Commands.none());
       driverXbox.rightBumper().onTrue(Commands.none());
+
+      driverPS.square().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
+      driverPS.triangle().whileTrue(drivebase.driveToDistanceCommand(1.0, 0.2));
+      driverPS.options().onTrue((Commands.runOnce(drivebase::zeroGyro)));
+      driverPS.share().whileTrue(drivebase.centerModulesCommand());
+      driverPS.L1().onTrue(Commands.none());
+      driverPS.R1().onTrue(Commands.none());
     } 
     else
     {
@@ -152,6 +166,17 @@ public class RobotContainer
      // driverXbox.povDown().whileTrue(climber.descend());
      // driverXbox.y().onTrue(lights.set(Lights.Special.RAINBOW));
      // driverXbox.b().onTrue(lights.set(Lights.Colors.WHITE, Lights.Patterns.MARCH));
+
+      driverPS.cross().onTrue((Commands.runOnce(drivebase::zeroGyro)));
+      driverPS.square().onTrue(Commands.runOnce(drivebase::addFakeVisionReading));
+      driverPS.options().whileTrue(Commands.none());
+      driverPS.share().whileTrue(Commands.none());
+      driverPS.L1().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
+      driverPS.R1().onTrue(Commands.none());
+      // driverPS.povUp().whileTrue(climber.ascend());
+      // driverPS.povDown().whileTrue(climber.descend());
+      // driverPS.triangle().onTrue(lights.set(Lights.Special.RAINBOW));
+      // driverPS.circle().onTrue(lights.set(Lights.Colors.WHITE, Lights.Patterns.MARCH));
 
       //coralEnter.and(coralExit.negate()).and(coralHopper.negate()).onTrue(lights.set(Lights.Colors.RED, Lights.Patterns.FAST_FLASH));
      // coralHopper.and(coralExit.negate()).onTrue(lights.set(Lights.Colors.RED, Lights.Patterns.MARCH));
