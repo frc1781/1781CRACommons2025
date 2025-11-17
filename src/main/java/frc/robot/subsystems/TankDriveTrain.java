@@ -9,9 +9,11 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.PS4Controller;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import frc.robot.Constants;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -26,6 +28,8 @@ public class TankDriveTrain extends SubsystemBase {
 
   DifferentialDrive drive;
   private final CommandXboxController controller;
+  private final CommandPS4Controller controllerPS;
+
 
   /** Creates a new TankDriveTrain. */
   public TankDriveTrain(CommandXboxController driverXbox) {
@@ -36,6 +40,18 @@ public class TankDriveTrain extends SubsystemBase {
     configureMotors();
     
     this.controller = driverXbox;
+    
+    drive = new DifferentialDrive(left1::set, right1::set);
+  }
+
+  public TankDriveTrain(CommandPS4Controller driverPS) {
+    left1 = new TalonFX(Constants.TankDrivebaseConstants.LEFT_1);
+    left2 = new TalonFX(Constants.TankDrivebaseConstants.LEFT_2);
+    right1 = new TalonFX(Constants.TankDrivebaseConstants.RIGHT_1);
+    right2 = new TalonFX(Constants.TankDrivebaseConstants.RIGHT_2);
+    configureMotors();
+    
+    this.controllerPS = driverPS;
     
     drive = new DifferentialDrive(left1::set, right1::set);
   }
