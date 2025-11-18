@@ -210,6 +210,7 @@ public class RobotContainer {
     Logger.recordOutput("RobotContainer/isElevatorUp", isElevatorUp());
 
     //APRILTAGS
+    //drivebase.vision.setCurrentAprilTags(chosenSet);
     aquireTargetAprilTag();
     Logger.recordOutput("RobotContainer/targetAprilTagID", targetAprilTagID);
     Logger.recordOutput("RobotContainer/targetPose", scorePose(targetAprilTagID, targetedSide));
