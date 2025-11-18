@@ -27,34 +27,29 @@ public class TankDriveTrain extends SubsystemBase {
   TalonFX right2;
 
   DifferentialDrive drive;
-  private final CommandXboxController controller;
-  private final CommandPS4Controller controllerPS;
-
+  CommandPS4Controller driverPS;
+  CommandXboxController driverXbox;
 
   /** Creates a new TankDriveTrain. */
-  public TankDriveTrain(CommandXboxController driverXbox) {
+  public TankDriveTrain() {
     left1 = new TalonFX(Constants.TankDrivebaseConstants.LEFT_1);
     left2 = new TalonFX(Constants.TankDrivebaseConstants.LEFT_2);
     right1 = new TalonFX(Constants.TankDrivebaseConstants.RIGHT_1);
     right2 = new TalonFX(Constants.TankDrivebaseConstants.RIGHT_2);
     configureMotors();
-    
-    this.controller = driverXbox;
-    
+
     drive = new DifferentialDrive(left1::set, right1::set);
   }
 
-  public TankDriveTrain(CommandPS4Controller driverPS) {
-    left1 = new TalonFX(Constants.TankDrivebaseConstants.LEFT_1);
-    left2 = new TalonFX(Constants.TankDrivebaseConstants.LEFT_2);
-    right1 = new TalonFX(Constants.TankDrivebaseConstants.RIGHT_1);
-    right2 = new TalonFX(Constants.TankDrivebaseConstants.RIGHT_2);
-    configureMotors();
-    
-    this.controllerPS = driverPS;
-    
-    drive = new DifferentialDrive(left1::set, right1::set);
-  }
+  public TankDriveTrain(CommandXboxController driverXbox) {
+    this();
+    this.driverXbox = driverXbox;
+}
+
+public TankDriveTrain(CommandPS4Controller driverPS) {
+    this();
+    this.driverPS = driverPS;
+}
   
   public void configureMotors() {
     TalonFXConfiguration leftConfig = new TalonFXConfiguration();
@@ -79,11 +74,24 @@ public class TankDriveTrain extends SubsystemBase {
 
   @Override
   public void periodic() {
-    if (controller.getLeftY() >= 0.1 || controller.getLeftY() <= -0.1 || controller.getRightX() >= 0.1 || controller.getRightX() <= -0.1) {
-      drive.arcadeDrive(-controller.getLeftY(), controller.getRightX());
-    }
-    else {
-      drive.arcadeDrive(0, 0);
-    }
+      double forward = 0;
+      double turn = 0;
+  
+      // Pick whichever controller was supplied in the constructor
+      if (driverXbox != null) {
+          forward = -driverXbox.getLeftY();
+          turn = driverXbox.getRightX();
+      } 
+      else {
+          forward = -driverPS.getLeftY();
+          turn = driverPS.getRightX();
+      }
+  
+      // Deadband (optional)
+      if (Math.abs(forward) < 0.1) forward = 0;
+      if (Math.abs(turn) < 0.1)    turn = 0;
+  
+      drive.arcadeDrive(forward, turn);
   }
+  
 }
