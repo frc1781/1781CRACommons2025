@@ -4,6 +4,7 @@ import static edu.wpi.first.units.Units.Microseconds;
 import static edu.wpi.first.units.Units.Milliseconds;
 import static edu.wpi.first.units.Units.Seconds;
 
+import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Matrix;
@@ -23,6 +24,8 @@ import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import frc.robot.Robot;
+import frc.robot.Constants.AprilTagSet;
+
 import java.awt.Desktop;
 import java.io.IOException;
 import java.net.URI;
@@ -70,8 +73,6 @@ public class Vision
 
   public static List<Pose3d> seenAprilTags = new ArrayList<>();
   public static List<Integer> seenAprilTagIDs = new ArrayList<>();
-    
-  
   
     /**
      * Constructor for the Vision class.
@@ -106,11 +107,20 @@ public class Vision
      *                    itself correctly.
      * @return The target pose of the AprilTag.
      */
+
+    static int tagBeingUsed = aprilTag;
+    private static boolean useableAprilTag(){
+      for(int[] getTagIDs:tagBeingUsed){
+        return true;
+      } 
+      return false;
+    } 
+
     public static Pose2d getAprilTagPose(int aprilTag, Transform2d robotOffset)
     {
       if (aprilTag == -1) return null;
       Optional<Pose3d> aprilTagPose3d = fieldLayout.getTagPose(aprilTag);
-      if (aprilTagPose3d.isPresent())
+      if (aprilTagPose3d.isPresent() && useableAprilTag())
       {
         return aprilTagPose3d.get().toPose2d().transformBy(robotOffset);
       } else
