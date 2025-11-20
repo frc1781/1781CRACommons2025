@@ -912,6 +912,9 @@ public class SwerveDrive implements AutoCloseable
    */
   public void resetOdometry(Pose2d pose)
   {
+    if (pose == null) {
+      return; 
+    }
     odometryLock.lock();
     swerveDrivePoseEstimator.resetPosition(getYaw(), getModulePositions(), pose);
     if (SwerveDriveTelemetry.isSimulation)

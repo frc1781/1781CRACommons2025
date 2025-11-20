@@ -4,8 +4,13 @@
 
 package frc.robot;
 
+import java.util.HashMap;
+import java.lang.Integer;
+
 import com.revrobotics.spark.config.ClosedLoopConfig;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import swervelib.math.Matter;
@@ -20,7 +25,9 @@ import swervelib.math.Matter;
  */
 public final class Constants
 {
-  public static final Vision USING_VISION = Vision.NO_VISION;
+
+
+  public static final Vision USING_VISION = Vision.PHOTON_VISION;  //set true if you have working vision
   public static final boolean UPDATE_HEADING_FROM_VISION = false;  //if false heading is only from gyro
   public static final double ROBOT_MASS = (148 - 20.3) * 0.453592; // 32lbs * kg per pound
   public static final Matter CHASSIS    = new Matter(new Translation3d(0, 0, Units.inchesToMeters(8)), ROBOT_MASS);
@@ -55,7 +62,7 @@ public final class Constants
   {
 
     // Joystick Deadband
-    public static final double DEADBAND        = 0.1;
+    public static final double DEADBAND        = 0.05;
     public static final double LEFT_Y_DEADBAND = 0.1;
     public static final double RIGHT_X_DEADBAND = 0.1;
     public static final double TURN_CONSTANT    = 6;
@@ -63,6 +70,18 @@ public final class Constants
 
   public static class SensationConstants
   {
+    public static double ARM_TOF_DISTANCE = 700;
+    public static double MAX_TIME_LOOKING_FOR_POLE = 0.5;
+
+    public static int ARM_TOF_ID = 51;
+    public static int RIGHT_FRONT_TOF_ID = 52;
+    public static int LEFT_FRONT_TOF_ID = 53;
+    public static final int CLAW_CORAL_TOF_ID = 54;
+
+    public static double TARGET_TOF_PARALLEL_DISTANCE = 280;
+    public static double TARGET_TOF_PARALLEL_DISTANCE_SHORT = 170;
+    public static double TARGET_TOF_CENTERING_PARALLEL_DISTANCE = 250;
+
     public static final int enter = 3;
     public static final int hopperBack = 1;
     public static final int hopperFront = 0;
@@ -74,7 +93,7 @@ public final class Constants
     public static final int CURRENT_LIMIT = 30;
   }
 
- public class Climber {
+  public static class Climber {
         public static final int MOTOR = 14;
 
         public static final double RADIANS_PER_REVOLUTION = (Math.PI * 2) / 125;
@@ -92,12 +111,76 @@ public final class Constants
                 .p(P)
                 .i(I)
                 .d(D);
-    }
+
+        public static final double GEAR_RATIO = 5/1;
+  }
+
+  public static class Positions {
+
+
+        private static final HashMap<String, Pose2d> startingPoseOfAuto;
+
+        static {
+          startingPoseOfAuto = new HashMap<String, Pose2d>();
+
+            // STARTING POSITIONS FOR PATHS
+            startingPoseOfAuto.put("StandardLeft", new Pose2d(7.2, 7.5, Rotation2d.fromDegrees(-90))); 
+            startingPoseOfAuto.put("StandardRight", new Pose2d(7.2, 0.5, Rotation2d.fromDegrees(90)));
+            startingPoseOfAuto.put("StandardCenter", new Pose2d(7.165, 4, Rotation2d.fromDegrees(180)));
+
+            //  BLUE ALLIANCE        
+              // positionForRobot.put(17, new Pose2d(3.570, 2.332, Rotation2d.fromDegrees(60)));
+              // positionForRobot.put(18, new Pose2d(2.55,4, Rotation2d.fromDegrees(0))); 
+              // positionForRobot.put(19, new Pose2d(3.417,5.813, Rotation2d.fromDegrees(-60)));
+              // positionForRobot.put(20, new Pose2d(5.3, 5.4, Rotation2d.fromDegrees(-120)));
+              // positionForRobot.put(21, new Pose2d(6.4,4, Rotation2d.fromDegrees(-180)));
+              // positionForRobot.put(22, new Pose2d(5.436,2.370, Rotation2d.fromDegrees(120)));
+
+            // RED ALLIANCE
+
+              // positionForRobot.put(6, new Pose2d(13.914, 2.605, Rotation2d.fromDegrees(120)));
+              // positionForRobot.put(7, new Pose2d(14.749,4.113, Rotation2d.fromDegrees(-180)));
+              // positionForRobot.put(8, new Pose2d(13.945,5.447, Rotation2d.fromDegrees(-120)));
+              // positionForRobot.put(9, new Pose2d(12.245, 5.441, Rotation2d.fromDegrees(-60)));
+              // positionForRobot.put(10, new Pose2d(13.11,6.241, Rotation2d.fromDegrees(0)));
+              // positionForRobot.put(11, new Pose2d(12.224,2.582, Rotation2d.fromDegrees(60)));
+        }
+
+        public static Pose2d getPositionForRobot(String autoName) {
+            return startingPoseOfAuto.get(autoName);
+        }       
+  }
+
+  public static class Elevator {
+        public static final int RIGHT_ELEVATOR_MOTOR = 12;
+        public static final int LEFT_ELEVATOR_MOTOR = 11;
+        public static final int FRAME_TOF = 58;
+        public static final int CARRIAGE_TOF = 57;
+        // https://www.reca.lc/linear?angle=%7B%22s%22%3A90%2C%22u%22%3A%22deg%22%7D&currentLimit=%7B%22s%22%3A30%2C%22u%22%3A%22A%22%7D&efficiency=100&limitAcceleration=0&limitDeceleration=0&limitVelocity=0&limitedAcceleration=%7B%22s%22%3A400%2C%22u%22%3A%22in%2Fs2%22%7D&limitedDeceleration=%7B%22s%22%3A50%2C%22u%22%3A%22in%2Fs2%22%7D&limitedVelocity=%7B%22s%22%3A10%2C%22u%22%3A%22in%2Fs%22%7D&load=%7B%22s%22%3A5.93175%2C%22u%22%3A%22lbs%22%7D&motor=%7B%22quantity%22%3A2%2C%22name%22%3A%22NEO%22%7D&ratio=%7B%22magnitude%22%3A9%2C%22ratioType%22%3A%22Reduction%22%7D&spoolDiameter=%7B%22s%22%3A1%2C%22u%22%3A%22in%22%7D&travelDistance=%7B%22s%22%3A35%2C%22u%22%3A%22in%22%7D
+        public static final double MAX_ELEVATION_MPS = 0.87;
+        public static final double ELEVATOR_KS = 0.02; // KS cannot be modeled and needs to be measured
+        // public static final double ELEVATOR_KG = 0.13;
+        // public static final double ELEVATOR_KV = 13.81;
+        // Changing these back because may be causing the rope to break
+        public static final double ELEVATOR_KG = 0.07;
+        public static final double ELEVATOR_KV = 4.60;
+        public static final double ELEVATOR_KA = 0.01;  
+  }
+
+  public static class Arm {
+        public static final int ARM_MOTOR_ID = 13;
+        public static final int THUMB_MOTOR_ID = 17;
+  }
   
   public enum Vision {
     NO_VISION,
     PHOTON_VISION,
     LIMELIGHT_VISION
+  }
+
+  public enum TargetSide{
+    LEFT,
+    RIGHT
   }
 
 }

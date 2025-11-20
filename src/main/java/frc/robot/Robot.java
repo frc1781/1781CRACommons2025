@@ -10,7 +10,11 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.subsystems.Lights;
 import edu.wpi.first.wpilibj.PowerDistribution;
+
+import java.sql.Driver;
+
 import org.littletonrobotics.junction.LoggedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -19,11 +23,19 @@ import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
 public class Robot extends LoggedRobot {
-  private Command exampleAuto;
+  private Command autoroutine;
   private RobotContainer theRobotContainer;
   private Timer disabledTimer;
 
+  public RobotContainer robotContainer() {
+    return theRobotContainer;
+  }
   
+  public Robot getInstance() {
+    return this;
+  }
+
+  @Override
   public void robotInit() {
     theRobotContainer = new RobotContainer();
     disabledTimer = new Timer(); //for turning off breaking when disabled
@@ -46,6 +58,7 @@ public class Robot extends LoggedRobot {
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
+    theRobotContainer.periodic();
   }
 
   @Override
@@ -57,20 +70,26 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void disabledPeriodic() {
+    //robotContainer().getLights().run(Lights.Colors.GREEN, Lights.Patterns.MARCH);
     if (disabledTimer.hasElapsed(Constants.DrivebaseConstants.WHEEL_LOCK_TIME)) {
       theRobotContainer.setMotorBrake(false);
       disabledTimer.stop();
       disabledTimer.reset();
     }
+
+    theRobotContainer.disabledRunningLights();
+    theRobotContainer.periodic();
+    theRobotContainer.initializeRobotPositionBasedOnAutoRoutine();
   }
 
   @Override
   public void autonomousInit() {
+    theRobotContainer.initializeRobotPositionBasedOnAutoRoutine();
     theRobotContainer.setMotorBrake(true);
-    exampleAuto = theRobotContainer.getAutonomousCommand();
+    autoroutine = theRobotContainer.getAutonomousCommand();
 
-    if (exampleAuto != null) {
-      exampleAuto.schedule();
+    if (autoroutine != null) {
+      autoroutine.schedule();
     }
   }
 
@@ -80,9 +99,9 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void teleopInit() {
-    theRobotContainer.setMotorBrake(true);
-    if (exampleAuto != null) {
-      exampleAuto.cancel();
+    theRobotContainer.teleopInit();
+    if (autoroutine != null) {
+      autoroutine.cancel();
     } 
     else {
       CommandScheduler.getInstance().cancelAll();
@@ -100,6 +119,7 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void testPeriodic() {
+    
   }
 
   @Override
