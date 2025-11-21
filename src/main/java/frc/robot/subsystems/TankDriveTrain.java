@@ -78,7 +78,7 @@ public TankDriveTrain(CommandPS4Controller driverPS) {
       double turn = 0;
   
       // Pick whichever controller was supplied in the constructor
-      if (driverXbox != null) {
+      if (driverXbox.isConnected()) {
           forward = -driverXbox.getLeftY();
           turn = driverXbox.getRightX();
       } 

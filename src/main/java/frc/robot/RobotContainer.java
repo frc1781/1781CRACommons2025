@@ -35,6 +35,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.TargetSide;
@@ -81,6 +82,8 @@ public class RobotContainer {
   private String robotPoseHasBeenSetFor = "nothing"; 
   final CommandXboxController driverXbox = new CommandXboxController(0);
   final CommandXboxController copilotXbox = new CommandXboxController(1);
+  final CommandPS4Controller driverPS = new CommandPS4Controller(0);
+  final CommandPS4Controller copilotPS = new CommandPS4Controller(1);
   final CommandJoystick copilotButtons = new CommandJoystick(2);
   private Sensation sensation = new Sensation();
   private SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve/ava"));
@@ -105,14 +108,18 @@ public class RobotContainer {
   Trigger coralInClaw = new Trigger(sensation::clawCoralPresent);
   Trigger targetAquired = new Trigger(()->{return targetAprilTagID != -1;});
   Trigger seeingReefPole = new Trigger(sensation::armTOFisValid);
-  Trigger copilotLeftStickUp = new Trigger(() -> copilotXbox.getLeftY() < -0.2);
-  Trigger copilotLeftStickDown = new Trigger(() -> copilotXbox.getLeftY() > 0.2);
-  Trigger copilotRightStickUp = new Trigger(() -> copilotXbox.getRightY() < -0.2);
-  Trigger copilotRightStickDown = new Trigger(() -> copilotXbox.getRightY() > 0.2);
+  Trigger XboxcopilotLeftStickUp = new Trigger(() -> copilotXbox.getLeftY() < -0.2);
+  Trigger XboxcopilotLeftStickDown = new Trigger(() -> copilotXbox.getLeftY() > 0.2);
+  Trigger XboxcopilotRightStickUp = new Trigger(() -> copilotXbox.getRightY() < -0.2);
+  Trigger XboxcopilotRightStickDown = new Trigger(() -> copilotXbox.getRightY() > 0.2);
+  Trigger PScopilotLeftStickUp = new Trigger(() -> copilotPS.getLeftY() < -0.2);
+  Trigger PScopilotLeftStickDown = new Trigger(() -> copilotPS.getLeftY() > 0.2);
+  Trigger PScopilotRightStickUp = new Trigger(() -> copilotPS.getRightY() < -0.2);
+  Trigger PScopilotRightStickDown = new Trigger(() -> copilotPS.getRightY() > 0.2);
  
 
   // Driving the robot during teleOp
-  SwerveInputStream driveAngularVelocity = SwerveInputStream.of(
+  SwerveInputStream driveAngularVelocityXbox = SwerveInputStream.of(
       drivebase.getSwerveDrive(),
       () -> driverJoystickY(),
       () -> driverJoystickX())
@@ -122,19 +129,37 @@ public class RobotContainer {
       .allianceRelativeControl(true)
       .cubeRotationControllerAxis(true);
 
+    SwerveInputStream driveAngularVelocityPS = SwerveInputStream.of(
+        drivebase.getSwerveDrive(),
+        () -> driverJoystickY(),
+        () -> driverJoystickX())
+        .withControllerRotationAxis(() -> driverPS.getRightX() * -1)
+        .deadband(OperatorConstants.DEADBAND)
+        .scaleTranslation(0.8) // might be changed to 1
+        .allianceRelativeControl(true)
+        .cubeRotationControllerAxis(true);
+
   // Clone's the angular velocity input stream and converts it to a fieldRelative
   // input stream.
-  SwerveInputStream driveDirectAngle = driveAngularVelocity.copy()
+  SwerveInputStream driveDirectAngleXbox = driveAngularVelocityXbox.copy()
+      .withControllerHeadingAxis(() -> driverJoystickY(), () -> driverJoystickX())
+      .headingWhile(true);
+
+  SwerveInputStream driveDirectAnglePS = driveAngularVelocityPS.copy()
       .withControllerHeadingAxis(() -> driverJoystickY(), () -> driverJoystickX())
       .headingWhile(true);
 
   // Clone's the angular velocity input stream and converts it to a robotRelative
   // input stream.
-  SwerveInputStream driveRobotOriented = driveAngularVelocity.copy()
+  SwerveInputStream driveRobotOrientedXbox = driveAngularVelocityXbox.copy()
+      .robotRelative(true)
+      .allianceRelativeControl(false);
+      
+  SwerveInputStream driveRobotOrientedPS = driveAngularVelocityPS.copy()
       .robotRelative(true)
       .allianceRelativeControl(false);
 
-  SwerveInputStream driveAngularVelocityKeyboard = SwerveInputStream.of(
+  SwerveInputStream driveAngularVelocityKeyboardXbox = SwerveInputStream.of(
       drivebase.getSwerveDrive(),
        () -> driverJoystickY(),
        () -> driverJoystickX())
@@ -143,10 +168,27 @@ public class RobotContainer {
       .scaleTranslation(0.8)
       .allianceRelativeControl(true);
 
-  SwerveInputStream driveDirectAngleKeyboard = driveAngularVelocityKeyboard.copy()
+  SwerveInputStream driveAngularVelocityKeyboardPS = SwerveInputStream.of(
+      drivebase.getSwerveDrive(),
+        () -> driverJoystickY(),
+        () -> driverJoystickX())
+      .withControllerRotationAxis(() -> driverPS.getRawAxis(2))
+      .deadband(OperatorConstants.DEADBAND)
+      .scaleTranslation(0.8)
+      .allianceRelativeControl(true);
+
+  SwerveInputStream driveDirectAngleKeyboardXbox = driveAngularVelocityKeyboardXbox.copy()
       .withControllerHeadingAxis(
           () -> Math.sin(driverXbox.getRawAxis(2) * Math.PI) * (Math.PI * 2),
           () -> Math.cos(driverXbox.getRawAxis(2) * Math.PI) * (Math.PI * 2))
+      .headingWhile(true)
+      .translationHeadingOffset(true)
+      .translationHeadingOffset(Rotation2d.fromDegrees(0));
+
+  SwerveInputStream driveDirectAngleKeyboardPS = driveAngularVelocityKeyboardPS.copy()
+      .withControllerHeadingAxis(
+          () -> Math.sin(driverPS.getRawAxis(2) * Math.PI) * (Math.PI * 2),
+          () -> Math.cos(driverPS.getRawAxis(2) * Math.PI) * (Math.PI * 2))
       .headingWhile(true)
       .translationHeadingOffset(true)
       .translationHeadingOffset(Rotation2d.fromDegrees(0));
@@ -238,15 +280,25 @@ public class RobotContainer {
 
     if (Robot.isSimulation()) {
       Pose2d target = new Pose2d(new Translation2d(1, 4), Rotation2d.fromDegrees(90));
-      driveDirectAngleKeyboard.driveToPose(
+      driveDirectAngleKeyboardXbox.driveToPose(
           () -> target,
           new ProfiledPIDController(5, 0, 0, new Constraints(5, 2)),
           new ProfiledPIDController(5, 0, 0,
               new Constraints(Units.degreesToRadians(360), Units.degreesToRadians(180))));
       driverXbox.start().onTrue(Commands.runOnce(() -> drivebase.resetOdometry(new Pose2d(3, 3, new Rotation2d()))));
       driverXbox.button(1).whileTrue(drivebase.sysIdDriveMotorCommand());
-      driverXbox.button(2).whileTrue(Commands.runEnd(() -> driveDirectAngleKeyboard.driveToPoseEnabled(true),
-          () -> driveDirectAngleKeyboard.driveToPoseEnabled(false)));
+      driverXbox.button(2).whileTrue(Commands.runEnd(() -> driveDirectAngleKeyboardXbox.driveToPoseEnabled(true),
+          () -> driveDirectAngleKeyboardXbox.driveToPoseEnabled(false)));
+
+          driveDirectAngleKeyboardPS.driveToPose(
+          () -> target,
+          new ProfiledPIDController(5, 0, 0, new Constraints(5, 2)),
+          new ProfiledPIDController(5, 0, 0,
+              new Constraints(Units.degreesToRadians(360), Units.degreesToRadians(180))));
+      driverPS.options().onTrue(Commands.runOnce(() -> drivebase.resetOdometry(new Pose2d(3, 3, new Rotation2d()))));
+      driverPS.button(1).whileTrue(drivebase.sysIdDriveMotorCommand());
+      driverPS.button(2).whileTrue(Commands.runEnd(() -> driveDirectAngleKeyboardPS.driveToPoseEnabled(true),
+          () -> driveDirectAngleKeyboardPS.driveToPoseEnabled(false)));
     }
 
     if (DriverStation.isTest()) {
@@ -258,6 +310,13 @@ public class RobotContainer {
       driverXbox.back().whileTrue(drivebase.centerModulesCommand());
       driverXbox.leftBumper().onTrue(Commands.none());
       driverXbox.rightBumper().onTrue(Commands.none());
+
+      driverPS.square().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
+      driverPS.triangle().whileTrue(drivebase.driveToDistanceCommand(1.0, 0.2));
+      driverPS.options().onTrue((Commands.runOnce(drivebase::zeroGyro)));
+      driverPS.share().whileTrue(drivebase.centerModulesCommand());
+      driverPS.L1().onTrue(Commands.none());
+      driverPS.R1().onTrue(Commands.none());
     } else {
       driverXbox.start().onTrue((Commands.runOnce(drivebase::zeroGyro)));
       driverXbox.back().whileTrue(Commands.none());
@@ -272,6 +331,20 @@ public class RobotContainer {
       driverXbox.povLeft()
           .whileTrue(new SetArm(arm, ArmState.STOP).alongWith(new SetElevator(elevator, ElevatorState.STOP)));
 
+          driverPS.options().onTrue((Commands.runOnce(drivebase::zeroGyro)));
+      driverPS.share().whileTrue(Commands.none());
+      driverPS.cross().onTrue(new Collect(elevator, arm, sensation));
+      driverPS.square().onTrue(new L3(elevator, arm));
+      driverPS.circle().onTrue(new PreCollect(elevator, arm, sensation));
+      //driverPS.circle().onTrue(new Collecting(elevator, arm, sensation));
+      driverPS.triangle().onTrue(new ScoreL4(arm, drivebase));
+      //driverPS.L1().whileTrue(new ScoreL4(arm, drivebase));
+      driverPS.povUp().whileTrue(climber.ascend().repeatedly());
+      driverPS.povDown().whileTrue(climber.descend().repeatedly());
+      driverPS.povLeft()
+          .whileTrue(new SetArm(arm, ArmState.STOP).alongWith(new SetElevator(elevator, ElevatorState.STOP)));
+
+
       // copilot buttons
       copilotXbox.leftBumper().whileTrue(new MoveToTarget(this, TargetSide.LEFT));
       copilotXbox.rightBumper().whileTrue(new MoveToTarget(this, TargetSide.RIGHT));
@@ -285,8 +358,23 @@ public class RobotContainer {
       copilotXbox.b().whileTrue(new L3(elevator, arm));
       copilotXbox.a().whileTrue(new L2hold(elevator, arm));
       copilotXbox.x().whileTrue(new ScoreLow(arm, drivebase));
-      copilotLeftStickUp.whileTrue(elevator.moveUp().repeatedly());
-      copilotLeftStickDown.whileTrue(elevator.moveDown().repeatedly());
+      XboxcopilotLeftStickUp.whileTrue(elevator.moveUp().repeatedly());
+      XboxcopilotLeftStickDown.whileTrue(elevator.moveDown().repeatedly());
+
+      copilotPS.L1().whileTrue(new MoveToTarget(this, TargetSide.LEFT));
+      copilotPS.R1().whileTrue(new MoveToTarget(this, TargetSide.RIGHT));
+      copilotPS.L2().whileTrue(new CenterAndScoreL4(this, () -> true));
+      copilotPS.R2().whileTrue(new CenterAndScoreL4(this, () -> false));
+      copilotPS.povLeft().whileTrue(new CenterAndScoreL3(this, () -> true));
+      copilotPS.povRight().whileTrue(new CenterAndScoreL3(this, () -> false));
+      copilotPS.povDown().whileTrue(new GroundAlgaePickUp(elevator, arm));
+      copilotPS.povUp().whileTrue(new ScoreAlgaeNet(elevator, arm));
+      copilotPS.triangle().whileTrue(new L4hold(elevator, arm));
+      copilotPS.circle().whileTrue(new L3(elevator, arm));
+      copilotPS.cross().whileTrue(new L2hold(elevator, arm));
+      copilotPS.square().whileTrue(new ScoreLow(arm, drivebase));
+      PScopilotLeftStickUp.whileTrue(elevator.moveUp().repeatedly());
+      PScopilotLeftStickDown.whileTrue(elevator.moveDown().repeatedly());
 
       // copilot poses blue
       // copilotButtons.button(1).and(isRedAllianceTrigger.negate()).onTrue(new SetTargetPose(this, 18));
@@ -430,12 +518,28 @@ public class RobotContainer {
     copilotXbox.getHID().getRightTriggerAxis() > 0.1){
       return 0;
     }
+
+    if(copilotPS.getHID().getL1Button() || 
+    copilotPS.getHID().getR1Button() || 
+    copilotPS.getHID().getL2Axis() > 0.1 || 
+    copilotPS.getHID().getR2Axis() > 0.1){
+      return 0;
+    }
     
+    if(driverXbox.isConnected()){
     if(isElevatorUp()){
       System.out.println("inhibited");
       return driverXbox.getLeftX() * -0.15;
+
     }
     return driverXbox.getLeftX() * -1;
+  }
+    if(isElevatorUp()){
+      System.out.println("inhibited");
+      return driverPS.getLeftX() * -0.15;
+
+    }
+    return driverPS.getLeftX() * -1;
   }
 
 
@@ -446,10 +550,28 @@ public class RobotContainer {
     copilotXbox.getHID().getRightTriggerAxis() > 0.1){
       return 0;
     }
+
+    if(copilotPS.getHID().getL1Button() || 
+    copilotPS.getHID().getR1Button() || 
+    copilotPS.getHID().getL2Axis() > 0.1 || 
+    copilotPS.getHID().getR2Axis() > 0.1){
+      return 0;
+    }
+    
+    if(driverXbox.isConnected()){
     if(isElevatorUp()){
-      return driverXbox.getLeftY() * -0.15;    
+      System.out.println("inhibited");
+      return driverXbox.getLeftY() * -0.15;
+
     }
     return driverXbox.getLeftY() * -1;
+  }
+    if(isElevatorUp()){
+      System.out.println("inhibited");
+      return driverPS.getLeftY() * -0.15;
+
+    }
+    return driverPS.getLeftY() * -1;
   }
 
   public SwerveSubsystem getDrivebase() {
