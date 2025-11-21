@@ -258,13 +258,18 @@ public class RobotContainer {
 
   private void configureBindings() {
     //Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveDirectAngle);
-     Command driveFieldOrientedAngularVelocity =
-    drivebase.driveFieldOriented(driveAngularVelocity);
+    if(driverXbox.isConnected()){
+    Command driveFieldOrientedAngularVelocity =
+    drivebase.driveFieldOriented(driveAngularVelocityXbox);}
+    Command driveFieldOrientedAngularVelocity =
+    drivebase.driveFieldOriented(driveAngularVelocityPS);
     // Command driveRobotOrientedAngularVelocity =
     // drivebase.driveFieldOriented(driveRobotOriented);
     // Command driveSetpointGen =
     // drivebase.driveWithSetpointGeneratorFieldRelative(driveDirectAngle);
-    Command driveFieldOrientedDirectAngleKeyboard = drivebase.driveFieldOriented(driveDirectAngleKeyboard);
+    if(driverXbox.isConnected()){
+    Command driveFieldOrientedDirectAngleKeyboard = drivebase.driveFieldOriented(driveDirectAngleKeyboardXbox);}
+    Command driveFieldOrientedDirectAngleKeyboard = drivebase.driveFieldOriented(driveDirectAngleKeyboardPS);
     // Command driveFieldOrientedAnglularVelocityKeyboard =
     // drivebase.driveFieldOriented(driveAngularVelocityKeyboard);
     // Command driveSetpointGenKeyboard =
@@ -280,6 +285,7 @@ public class RobotContainer {
 
     if (Robot.isSimulation()) {
       Pose2d target = new Pose2d(new Translation2d(1, 4), Rotation2d.fromDegrees(90));
+      if(driverXbox.isConnected()){
       driveDirectAngleKeyboardXbox.driveToPose(
           () -> target,
           new ProfiledPIDController(5, 0, 0, new Constraints(5, 2)),
@@ -289,7 +295,7 @@ public class RobotContainer {
       driverXbox.button(1).whileTrue(drivebase.sysIdDriveMotorCommand());
       driverXbox.button(2).whileTrue(Commands.runEnd(() -> driveDirectAngleKeyboardXbox.driveToPoseEnabled(true),
           () -> driveDirectAngleKeyboardXbox.driveToPoseEnabled(false)));
-
+      }
           driveDirectAngleKeyboardPS.driveToPose(
           () -> target,
           new ProfiledPIDController(5, 0, 0, new Constraints(5, 2)),
@@ -304,13 +310,14 @@ public class RobotContainer {
     if (DriverStation.isTest()) {
       // drivebase.setDefaultCommand(driveFieldOrienteAnglularVelocity); // Overrides
       // drive command above!
+      if(driverXbox.isConnected()){
       driverXbox.x().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
       driverXbox.y().whileTrue(drivebase.driveToDistanceCommand(1.0, 0.2));
       driverXbox.start().onTrue((Commands.runOnce(drivebase::zeroGyro)));
       driverXbox.back().whileTrue(drivebase.centerModulesCommand());
       driverXbox.leftBumper().onTrue(Commands.none());
       driverXbox.rightBumper().onTrue(Commands.none());
-
+      }
       driverPS.square().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
       driverPS.triangle().whileTrue(drivebase.driveToDistanceCommand(1.0, 0.2));
       driverPS.options().onTrue((Commands.runOnce(drivebase::zeroGyro)));
@@ -318,6 +325,7 @@ public class RobotContainer {
       driverPS.L1().onTrue(Commands.none());
       driverPS.R1().onTrue(Commands.none());
     } else {
+      if(driverXbox.isConnected()){
       driverXbox.start().onTrue((Commands.runOnce(drivebase::zeroGyro)));
       driverXbox.back().whileTrue(Commands.none());
       driverXbox.a().onTrue(new Collect(elevator, arm, sensation));
@@ -330,7 +338,7 @@ public class RobotContainer {
       driverXbox.povDown().whileTrue(climber.descend().repeatedly());
       driverXbox.povLeft()
           .whileTrue(new SetArm(arm, ArmState.STOP).alongWith(new SetElevator(elevator, ElevatorState.STOP)));
-
+      }
           driverPS.options().onTrue((Commands.runOnce(drivebase::zeroGyro)));
       driverPS.share().whileTrue(Commands.none());
       driverPS.cross().onTrue(new Collect(elevator, arm, sensation));
@@ -346,6 +354,7 @@ public class RobotContainer {
 
 
       // copilot buttons
+      if(driverXbox.isConnected()){
       copilotXbox.leftBumper().whileTrue(new MoveToTarget(this, TargetSide.LEFT));
       copilotXbox.rightBumper().whileTrue(new MoveToTarget(this, TargetSide.RIGHT));
       copilotXbox.leftTrigger().whileTrue(new CenterAndScoreL4(this, () -> true));
@@ -360,7 +369,7 @@ public class RobotContainer {
       copilotXbox.x().whileTrue(new ScoreLow(arm, drivebase));
       XboxcopilotLeftStickUp.whileTrue(elevator.moveUp().repeatedly());
       XboxcopilotLeftStickDown.whileTrue(elevator.moveDown().repeatedly());
-
+      }
       copilotPS.L1().whileTrue(new MoveToTarget(this, TargetSide.LEFT));
       copilotPS.R1().whileTrue(new MoveToTarget(this, TargetSide.RIGHT));
       copilotPS.L2().whileTrue(new CenterAndScoreL4(this, () -> true));
@@ -512,12 +521,14 @@ public class RobotContainer {
   }
 
   public double driverJoystickX() { 
+    if(driverXbox.isConnected()){
     if(copilotXbox.getHID().getLeftBumperButton() || 
     copilotXbox.getHID().getRightBumperButton() || 
     copilotXbox.getHID().getLeftTriggerAxis() > 0.1 || 
     copilotXbox.getHID().getRightTriggerAxis() > 0.1){
       return 0;
     }
+  }
 
     if(copilotPS.getHID().getL1Button() || 
     copilotPS.getHID().getR1Button() || 
@@ -544,11 +555,13 @@ public class RobotContainer {
 
 
   public double driverJoystickY() {
+    if(driverXbox.isConnected()){
     if(copilotXbox.getHID().getLeftBumperButton() || 
     copilotXbox.getHID().getRightBumperButton() || 
     copilotXbox.getHID().getLeftTriggerAxis() > 0.1 || 
     copilotXbox.getHID().getRightTriggerAxis() > 0.1){
       return 0;
+    }
     }
 
     if(copilotPS.getHID().getL1Button() || 
