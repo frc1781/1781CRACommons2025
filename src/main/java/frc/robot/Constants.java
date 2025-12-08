@@ -184,21 +184,17 @@ public final class Constants
   }
 
   public enum AprilTagSet{
-    BLUE_SIDE(new int[]{12,13,14,15,16,17,18,19,20,21,22}),
-    RED_SIDE(new int[]{1,2,3,4,5,6,7,8,9,10,11}),
-    BLUE_REEF(new int[]{17,18,19,20,21,22}),
-    RED_REEF(new int[]{6,7,8,9,10,11}),
-    ALL_TAGS(new int[]{1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22});
+    BLUE_SIDE,
+    RED_SIDE,
+    BLUE_REEF,
+    RED_REEF,
+    ALL_TAGS;
 
-    private final int[] tagIDs;
-
-    AprilTagSet(int[] tagIDs){
-      this.tagIDs = tagIDs;
-    }
-    public int[] getTagIDs(){
-      return tagIDs;
-    }
-
+    public static final int [] BLUE_Tags = {12,13,14,15,16,17,18,19,20,21,22};
+    public static final int [] RED_Tags = {1,2,3,4,5,6,7,8,9,10,11};
+    public static final int [] BLUE_REEF_Tags = {17,18,19,20,21,22};
+    public static final int [] RED_REEF_Tags = {6,7,8,9,10,11};
+    public static final int [] ALL_Tags = {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22};
   }
 
 
