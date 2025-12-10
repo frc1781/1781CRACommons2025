@@ -94,7 +94,6 @@ public class RobotContainer {
   private double wait_seconds = 5;
   public int targetAprilTagID = -1;
   public TargetSide targetedSide = TargetSide.LEFT;
-  public AprilTagSet chosenSet = AprilTagSet.ALL_TAGS;
   private boolean sendyPressed = false;
 
   Trigger coralPresent = new Trigger(sensation::coralPresent);
@@ -215,7 +214,7 @@ public class RobotContainer {
     Logger.recordOutput("RobotContainer/targetAprilTagID", targetAprilTagID);
     Logger.recordOutput("RobotContainer/targetPose", scorePose(targetAprilTagID, targetedSide));
     Logger.recordOutput("targetedSide", targetedSide.toString());
-    Logger.recordOutput("chosenSet", chosenSet.toString());
+    Logger.recordOutput("chosenSet", Constants.AprilTagSet.chosenSide.toString());
   }
 
   private void configureBindings() {
@@ -356,10 +355,10 @@ public class RobotContainer {
       
       //filter out tags that are not on our side of the field
       if (isRed()) {
-        chosenSet = AprilTagSet.RED_SIDE;
+        Constants.AprilTagSet.chosenSide = AprilTagSet.RED_SIDE;
       } 
       else{
-        chosenSet = AprilTagSet.BLUE_SIDE;
+        Constants.AprilTagSet.chosenSide = AprilTagSet.BLUE_SIDE;
       }
 
       Rotation2d aprilTagAngle = Vision.getAprilTagPose(i, Transform2d.kZero).getRotation().rotateBy(Rotation2d.fromDegrees(180));

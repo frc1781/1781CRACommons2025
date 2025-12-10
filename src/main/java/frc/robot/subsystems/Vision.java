@@ -108,19 +108,22 @@ public class Vision
      * @return The target pose of the AprilTag.
      */
 
-    static int tagBeingUsed = aprilTag;
-    private static boolean useableAprilTag(){
-      for(int[] getTagIDs:tagBeingUsed){
-        return true;
-      } 
-      return false;
+    if(Constants.AprilTagSet.chosenSet == Constants.AprilTagSet.chosenSet.BLUE_SIDE){
+      Constants.AprilTagSet.setTags = AprilTagSet.BLUE_Tags;
     } 
+    else if(Constants.AprilTagSet.chosenSet == Constants.AprilTagSet.chosenSet.RED_SIDE){
+      Constants.AprilTagSet.setTags = AprilTagSet.RED_Tags;
+    }
+    
 
     public static Pose2d getAprilTagPose(int aprilTag, Transform2d robotOffset)
     {
       if (aprilTag == -1) return null;
       Optional<Pose3d> aprilTagPose3d = fieldLayout.getTagPose(aprilTag);
-      if (aprilTagPose3d.isPresent() && useableAprilTag())
+      if (aprilTagPose3d.isPresent() == (AprilTagSet TagSet)->{
+        aprilTag == Constants.AprilTagSet.set
+
+      })
       {
         return aprilTagPose3d.get().toPose2d().transformBy(robotOffset);
       } else
@@ -462,7 +465,7 @@ public class Vision
         systemSim.addCamera(cameraSim, robotToCamTransform);
       }
     }
-
+    
     /**
      * Get the result with the least ambiguity from the best tracked target within the Cache. This may not be the most
      * recent result!

@@ -188,13 +188,18 @@ public final class Constants
     RED_SIDE,
     BLUE_REEF,
     RED_REEF,
-    ALL_TAGS;
+    ALL_SIDE;
 
     public static final int [] BLUE_Tags = {12,13,14,15,16,17,18,19,20,21,22};
     public static final int [] RED_Tags = {1,2,3,4,5,6,7,8,9,10,11};
     public static final int [] BLUE_REEF_Tags = {17,18,19,20,21,22};
     public static final int [] RED_REEF_Tags = {6,7,8,9,10,11};
     public static final int [] ALL_Tags = {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22};
+
+    public static AprilTagSet chosenSide = AprilTagSet.ALL_SIDE;
+    public static int [] setTags = AprilTagSet.ALL_Tags;
+
+    
   }
 
 
