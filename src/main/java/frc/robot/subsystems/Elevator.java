@@ -43,8 +43,8 @@ public class Elevator extends SubsystemBase{
 
     double carriageTolerance = 20.0;
     double frameTolerance = 40.0; 
-    double carriagePID = 0.005;
-    double framePID = 0.01;
+    double carriagePID = 0.003;
+    double framePID = 0.005;
 
     private final double IDLE_DUTY_CYCLE = 0.02;
 
@@ -160,9 +160,8 @@ public class Elevator extends SubsystemBase{
         double desiredFramePosition = positions.get(desiredState)[0];
         double frameDiff = Math.abs(desiredFramePosition - framePosition);
         double carriageDiff = Math.abs(desiredCarriagePosition - carriagePosition);
-        boolean ifTest = (frameDiff <= frameTolerance) && 
+        return (frameDiff <= frameTolerance) && 
         (carriageDiff <= carriageTolerance || desiredFramePosition > minFrameDistance + 20); //advanced logic
-        return ifTest;
     }
 
     public void setElevatorPosition(ElevatorState desiredState) {
@@ -187,13 +186,13 @@ public class Elevator extends SubsystemBase{
         Double[] desiredPosition = positions.get(desiredState);
          if (frameTOF.isRangeValidRegularCheck() && Math.abs(desiredPosition[0] - framePosition) >= frameTolerance) {
             // double calculatedDutyCycle = pidController.calculate(desiredPosition[0] - framePosition);
-            double calculatedDutyCycle = carriagePID * (desiredPosition[0] - framePosition) + 0.01;
+            double calculatedDutyCycle = carriagePID * (desiredPosition[0] - framePosition);
             double clampedResult = clampDutyCycle(calculatedDutyCycle);
             elevatorDutyCycle = clampedResult;
         } 
         else if (desiredPosition[0] < minFrameDistance + 20 && carriageTOF.isRangeValidRegularCheck() && Math.abs(desiredPosition[1] - carriagePosition) >= carriageTolerance) {
             // double calculatedDutyCycle = pidController.calculate(desiredPosition[1] - carriagePosition);
-            double calculatedDutyCycle = -framePID * (desiredPosition[1] - carriagePosition) + 0.01;
+            double calculatedDutyCycle = -framePID * (desiredPosition[1] - carriagePosition);
             double clampedResult = clampDutyCycle(calculatedDutyCycle);
             elevatorDutyCycle = clampedResult;
         } else {
@@ -221,7 +220,7 @@ public class Elevator extends SubsystemBase{
     }
 
     public double clampDutyCycle(double dutyCycle) {
-        return EEUtil.clamp(1, 1, dutyCycle);
+        return EEUtil.clamp(-0.75, 0.75, dutyCycle);
     }
 
     public enum ElevatorState {
