@@ -46,7 +46,7 @@ public class Elevator extends SubsystemBase{
     double carriagePID = 0.003;
     double framePID = 0.005;
 
-    private final double IDLE_DUTY_CYCLE = 0.02;
+    private final double IDLE_DUTY_CYCLE = 0.04;
 
     private PIDController pidController = new PIDController(0.005, 0, 0);
     
